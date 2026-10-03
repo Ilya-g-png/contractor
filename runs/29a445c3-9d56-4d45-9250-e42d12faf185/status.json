@@ -1,0 +1,118 @@
+{
+  "runtimeMetadata": {
+    "objectiveContext": {
+      "raw_user_goal": "CD-5: Bootstrap the monorepo, scanner CLI, API, web app, and deterministic fixture project\n\nCreate the empty-repository foundation for a Python scanner/CLI, FastAPI report service, TypeScript web application, and a checked-in fixture project. Establish reproducible local commands and CI checks before product logic is added.\n\nh2. Acceptance criteria\n\n* The repository contains separately runnable Python scanner, FastAPI service, TypeScript web application, and fixture-project areas with a short root quickstart.\n* A single documented command runs each test suite locally without external credentials.\n* The scanner can emit a deterministic empty JSON report from a minimal fixture configuration.\n* CI runs formatting/linting and focused tests for the initialized components.",
+      "clarification_goal": "CD-5: Bootstrap the monorepo, scanner CLI, API, web app, and deterministic fixture project\n\nCreate the empty-repository foundation for a Python scanner/CLI, FastAPI report service, TypeScript web application, and a checked-in fixture project. Establish reproducible local commands and CI checks before product logic is added.\n\nh2. Acceptance criteria\n\n* The repository contains separately runnable Python scanner, FastAPI service, TypeScript web application, and fixture-project areas with a short root quickstart.\n* A single documented command runs each test suite locally without external credentials.\n* The scanner can emit a deterministic empty JSON report from a minimal fixture configuration.\n* CI runs formatting/linting and focused tests for the initialized components.",
+      "run_objective": "CD-5: Bootstrap the monorepo, scanner CLI, API, web app, and deterministic fixture project\n\nCreate the empty-repository foundation for a Python scanner/CLI, FastAPI report service, TypeScript web application, and a checked-in fixture project. Establish reproducible local commands and CI checks before product logic is added.\n\nh2. Acceptance criteria\n\n* The repository contains separately runnable Python scanner, FastAPI service, TypeScript web application, and fixture-project areas with a short root quickstart.\n* A single documented command runs each test suite locally without external credentials.\n* The scanner can emit a deterministic empty JSON report from a minimal fixture configuration.\n* CI runs formatting/linting and focused tests for the initialized components.",
+      "planner_objective": "CD-5: Bootstrap the monorepo, scanner CLI, API, web app, and deterministic fixture project\n\nCreate the empty-repository foundation for a Python scanner/CLI, FastAPI report service, TypeScript web application, and a checked-in fixture project. Establish reproducible local commands and CI checks before product logic is added.\n\nh2. Acceptance criteria\n\n* The repository contains separately runnable Python scanner, FastAPI service, TypeScript web application, and fixture-project areas with a short root quickstart.\n* A single documented command runs each test suite locally without external credentials.\n* The scanner can emit a deterministic empty JSON report from a minimal fixture configuration.\n* CI runs formatting/linting and focused tests for the initialized components.",
+      "architecture_objective": "",
+      "ui_ux_objective": "",
+      "supervisor_summary": "Execute the approved run objective without reinterpreting the original request.",
+      "clarification_history": [],
+      "previous_attempt": null,
+      "bundle_id": "web-development",
+      "origin_jira_key": "CD-5",
+      "prior_work": [
+        {
+          "run_id": "9c37b285-b35d-4dc2-be1c-2347272422e0",
+          "origin_jira_key": "CD-2",
+          "source": "jira_link",
+          "relation": "blocks",
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "completed",
+          "exit_reason": "normal_completion",
+          "completed_at": "2026-10-03T12:16:11.195128Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "a4dd5320-b083-43c1-9806-1cceb0a6ed19",
+          "origin_jira_key": "CD-2",
+          "source": "jira_link",
+          "relation": "blocks",
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:22.023434Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "15559cfe-b43b-48d2-b7b1-94b9c6fdbb68",
+          "origin_jira_key": "CD-2",
+          "source": "jira_link",
+          "relation": "blocks",
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:34:52.045292Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "7ee72c98-20e3-41ff-9321-386775b7a72e",
+          "origin_jira_key": "CD-3",
+          "source": "epic",
+          "relation": null,
+          "title": "Research configurable Python import-boundary policy semantics",
+          "run_status": "completed",
+          "exit_reason": "normal_completion",
+          "completed_at": "2026-10-03T12:21:53.902298Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "b1cdceb4-580f-4169-bf8c-203d36d500a0",
+          "origin_jira_key": "CD-3",
+          "source": "epic",
+          "relation": null,
+          "title": "Research configurable Python import-boundary policy semantics",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:48.327911Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "702ddebf-34a8-46c6-8d7a-912a2e407a5d",
+          "origin_jira_key": "CD-3",
+          "source": "epic",
+          "relation": null,
+          "title": "Research configurable Python import-boundary policy semantics",
+          "run_status": "completed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:37:32.147595Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "5b28548a-4c88-4600-b7cc-a6df1df95c7b",
+          "origin_jira_key": "CD-4",
+          "source": "epic",
+          "relation": null,
+          "title": "Research the safe OpenAPI compatibility adapter contract",
+          "run_status": "completed",
+          "exit_reason": "normal_completion",
+          "completed_at": "2026-10-03T12:20:00.829750Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "c3aa5af8-9962-4689-879f-ddf43b9ea152",
+          "origin_jira_key": "CD-4",
+          "source": "epic",
+          "relation": null,
+          "title": "Research the safe OpenAPI compatibility adapter contract",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:58.157931Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "1f039cf8-8868-4202-a892-fed38d80cfb8",
+          "origin_jira_key": "CD-4",
+          "source": "epic",
+          "relation": null,
+          "title": "Research the safe OpenAPI compatibility adapter contract",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:37:12.390578Z",
+          "ticket_updated_after_run": false
+        }
+      ]
+    }
+  }
+}

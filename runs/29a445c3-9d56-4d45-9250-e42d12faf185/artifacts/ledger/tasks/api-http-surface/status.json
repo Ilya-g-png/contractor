@@ -1,0 +1,34 @@
+{
+  "task_id": "api-http-surface",
+  "status": "queued",
+  "attempt": 1,
+  "version": 1,
+  "claim_run_id": null,
+  "claim_expires_at": null,
+  "provider": "proxy",
+  "task_kind": "software_engineering",
+  "title": "Implement the app factory, health route, RFC 9457 problems, RequestContext middleware and JSON logging",
+  "depends_on": [
+    "api-project-scaffold"
+  ],
+  "review_required": true,
+  "review_completed": false,
+  "requested_write_scopes": [
+    "api/src/dogwatch_api",
+    "api/tests"
+  ],
+  "followup_for": null,
+  "deliverable_name": "api/src/dogwatch_api/app.py",
+  "summary": null,
+  "error": null,
+  "result_path": null,
+  "final_markdown_path": null,
+  "git_branch": null,
+  "git_base_branch": null,
+  "git_base_commit": null,
+  "git_head_commit": null,
+  "integration_status": null,
+  "hard_block_request": null,
+  "verification_disposition": null,
+  "write_scope_enforcement": null
+}

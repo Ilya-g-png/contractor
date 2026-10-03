@@ -1,0 +1,31 @@
+{
+  "classified_domains": [
+    "dev-ops",
+    "web-backend"
+  ],
+  "domain_confidence": {
+    "dev-ops": 0.5,
+    "web-backend": 0.4
+  },
+  "complexity": "modest",
+  "project_mode": "new-project",
+  "bundle_id": "web-backend-with-ops",
+  "bundle_rationale": "Backend service plus deployment and observability concerns. Use when the\nAPI/service is in scope and the user also wants CI/CD, infrastructure,\nrollout, or reliability work. Designer remains out of scope because no\nUI is being designed.",
+  "preset_id": "backend-service-with-ops",
+  "specialist_sequence": [
+    "planner_v1",
+    "architect_v1",
+    "decomposer_v1",
+    "developer_v1",
+    "reviewer_v1"
+  ],
+  "skipped_specialists": [
+    "designer_v1"
+  ],
+  "needs_hitl_confirmation": false,
+  "mutations": [],
+  "work_kind": "planning",
+  "work_kind_confidence": 0.6,
+  "classifier_model": "claude-opus-5-5",
+  "classifier_latency_ms": 7217
+}

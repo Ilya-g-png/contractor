@@ -1,0 +1,63 @@
+{
+  "runtimeMetadata": {
+    "objectiveContext": {
+      "raw_user_goal": "CD-4: Research the safe OpenAPI compatibility adapter contract\n\nDefine the oasdiff-backed OpenAPI adapter rather than creating another API-diff engine. Choose the baseline strategy, exact supported inputs, version pinning, normalized finding shape, and safe execution posture.\n\nThe adapter compares a checked-in YAML/JSON contract from a candidate checkout with the same path at an explicit baseline Git ref. Consumer request/response fixture validation is valuable but is a separately scoped follow-up, not a V1 claim.\n\nh2. Acceptance criteria\n\n* An ADR pins an oasdiff version/image and records the supported OpenAPI versions, command contract, severity/ignore ownership, and baseline Git-ref strategy.\n* The ADR specifies no-shell execution, read-only temporary inputs, timeout/output caps, and disabled external $ref resolution for untrusted inputs.\n* The ADR defines normalized OpenAPI findings with severity, check ID, locator, message, fingerprint, and base/candidate provenance.\n* A fixture matrix covers no change, removed operation, optional-to-required field, enum/constraint break, invalid spec, missing baseline, timeout/tool failure, and ignored/reclassified finding.",
+      "clarification_goal": "CD-4: Research the safe OpenAPI compatibility adapter contract\n\nDefine the oasdiff-backed OpenAPI adapter rather than creating another API-diff engine. Choose the baseline strategy, exact supported inputs, version pinning, normalized finding shape, and safe execution posture.\n\nThe adapter compares a checked-in YAML/JSON contract from a candidate checkout with the same path at an explicit baseline Git ref. Consumer request/response fixture validation is valuable but is a separately scoped follow-up, not a V1 claim.\n\nh2. Acceptance criteria\n\n* An ADR pins an oasdiff version/image and records the supported OpenAPI versions, command contract, severity/ignore ownership, and baseline Git-ref strategy.\n* The ADR specifies no-shell execution, read-only temporary inputs, timeout/output caps, and disabled external $ref resolution for untrusted inputs.\n* The ADR defines normalized OpenAPI findings with severity, check ID, locator, message, fingerprint, and base/candidate provenance.\n* A fixture matrix covers no change, removed operation, optional-to-required field, enum/constraint break, invalid spec, missing baseline, timeout/tool failure, and ignored/reclassified finding.",
+      "run_objective": "CD-4: Research the safe OpenAPI compatibility adapter contract\n\nDefine the oasdiff-backed OpenAPI adapter rather than creating another API-diff engine. Choose the baseline strategy, exact supported inputs, version pinning, normalized finding shape, and safe execution posture.\n\nThe adapter compares a checked-in YAML/JSON contract from a candidate checkout with the same path at an explicit baseline Git ref. Consumer request/response fixture validation is valuable but is a separately scoped follow-up, not a V1 claim.\n\nh2. Acceptance criteria\n\n* An ADR pins an oasdiff version/image and records the supported OpenAPI versions, command contract, severity/ignore ownership, and baseline Git-ref strategy.\n* The ADR specifies no-shell execution, read-only temporary inputs, timeout/output caps, and disabled external $ref resolution for untrusted inputs.\n* The ADR defines normalized OpenAPI findings with severity, check ID, locator, message, fingerprint, and base/candidate provenance.\n* A fixture matrix covers no change, removed operation, optional-to-required field, enum/constraint break, invalid spec, missing baseline, timeout/tool failure, and ignored/reclassified finding.",
+      "planner_objective": "CD-4: Research the safe OpenAPI compatibility adapter contract\n\nDefine the oasdiff-backed OpenAPI adapter rather than creating another API-diff engine. Choose the baseline strategy, exact supported inputs, version pinning, normalized finding shape, and safe execution posture.\n\nThe adapter compares a checked-in YAML/JSON contract from a candidate checkout with the same path at an explicit baseline Git ref. Consumer request/response fixture validation is valuable but is a separately scoped follow-up, not a V1 claim.\n\nh2. Acceptance criteria\n\n* An ADR pins an oasdiff version/image and records the supported OpenAPI versions, command contract, severity/ignore ownership, and baseline Git-ref strategy.\n* The ADR specifies no-shell execution, read-only temporary inputs, timeout/output caps, and disabled external $ref resolution for untrusted inputs.\n* The ADR defines normalized OpenAPI findings with severity, check ID, locator, message, fingerprint, and base/candidate provenance.\n* A fixture matrix covers no change, removed operation, optional-to-required field, enum/constraint break, invalid spec, missing baseline, timeout/tool failure, and ignored/reclassified finding.",
+      "architecture_objective": "",
+      "ui_ux_objective": "",
+      "supervisor_summary": "Execute the approved run objective without reinterpreting the original request.",
+      "clarification_history": [],
+      "previous_attempt": null,
+      "bundle_id": "web-backend-with-ops",
+      "origin_jira_key": "CD-4",
+      "prior_work": [
+        {
+          "run_id": "a4dd5320-b083-43c1-9806-1cceb0a6ed19",
+          "origin_jira_key": "CD-2",
+          "source": "epic",
+          "relation": null,
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:22.023434Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "15559cfe-b43b-48d2-b7b1-94b9c6fdbb68",
+          "origin_jira_key": "CD-2",
+          "source": "epic",
+          "relation": null,
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:34:52.045292Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "b1cdceb4-580f-4169-bf8c-203d36d500a0",
+          "origin_jira_key": "CD-3",
+          "source": "epic",
+          "relation": null,
+          "title": "Research configurable Python import-boundary policy semantics",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:48.327911Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "702ddebf-34a8-46c6-8d7a-912a2e407a5d",
+          "origin_jira_key": "CD-3",
+          "source": "epic",
+          "relation": null,
+          "title": "Research configurable Python import-boundary policy semantics",
+          "run_status": "completed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:37:32.147595Z",
+          "ticket_updated_after_run": false
+        }
+      ]
+    }
+  }
+}

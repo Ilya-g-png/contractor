@@ -1,0 +1,11 @@
+{
+  "status": "completed",
+  "goal": "CD-5: Bootstrap the monorepo, scanner CLI, API, web app, and deterministic fixture project\n\nCreate the empty-repository foundation for a Python scanner/CLI, FastAPI report service, TypeScript web application, and a checked-in fixture project. Establish reproducible local commands and CI checks before product logic is added.\n\nh2. Acceptance criteria\n\n* The repository contains separately runnable Python scanner, FastAPI service, TypeScript web application, and fixture-project areas with a short root quickstart.\n* A single documented command runs each test suite locally without external credentials.\n* The scanner can emit a deterministic empty JSON report from a minimal fixture configuration.\n* CI runs formatting/linting and focused tests for the initialized components.",
+  "active_step": null,
+  "step_started_at": null,
+  "step_timeout_seconds": null,
+  "research_calls_used": 0,
+  "context_scout_calls_used": 0,
+  "last_error": null,
+  "summary": "Developer task plan: {"
+}

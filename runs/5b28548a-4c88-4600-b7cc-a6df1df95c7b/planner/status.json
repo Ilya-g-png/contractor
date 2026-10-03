@@ -1,0 +1,11 @@
+{
+  "status": "completed",
+  "goal": "CD-4: Research the safe OpenAPI compatibility adapter contract\n\nDefine the oasdiff-backed OpenAPI adapter rather than creating another API-diff engine. Choose the baseline strategy, exact supported inputs, version pinning, normalized finding shape, and safe execution posture.\n\nThe adapter compares a checked-in YAML/JSON contract from a candidate checkout with the same path at an explicit baseline Git ref. Consumer request/response fixture validation is valuable but is a separately scoped follow-up, not a V1 claim.\n\nh2. Acceptance criteria\n\n* An ADR pins an oasdiff version/image and records the supported OpenAPI versions, command contract, severity/ignore ownership, and baseline Git-ref strategy.\n* The ADR specifies no-shell execution, read-only temporary inputs, timeout/output caps, and disabled external $ref resolution for untrusted inputs.\n* The ADR defines normalized OpenAPI findings with severity, check ID, locator, message, fingerprint, and base/candidate provenance.\n* A fixture matrix covers no change, removed operation, optional-to-required field, enum/constraint break, invalid spec, missing baseline, timeout/tool failure, and ignored/reclassified finding.",
+  "active_step": null,
+  "step_started_at": null,
+  "step_timeout_seconds": null,
+  "research_calls_used": 0,
+  "context_scout_calls_used": 0,
+  "last_error": null,
+  "summary": "Research paper: Research provenance**"
+}

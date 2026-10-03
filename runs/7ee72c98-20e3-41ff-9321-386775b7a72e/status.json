@@ -1,0 +1,63 @@
+{
+  "runtimeMetadata": {
+    "objectiveContext": {
+      "raw_user_goal": "CD-3: Research configurable Python import-boundary policy semantics\n\nSpecify the Dogwatch Python-policy model using the current Amneboard import matrix as a reference, but without baking its package names or layers into the product. Resolve the matcher, exclusions, exception, and import-resolution semantics before implementation.\n\nV1 should inspect direct static imports only. It must state that dynamic imports, plugin loading, runtime monkeypatching, and transitive dependency-path policy are outside the guarantee.\n\nh2. Acceptance criteria\n\n* An ADR chooses and exemplifies the config format, scanned-package declaration, named rule IDs, target-prefix matching, and banned external dependencies.\n* The ADR decides direct versus transitive enforcement, relative-import resolution, TYPE_CHECKING behavior, and config-controlled exclusions for tests/scripts/migrations.\n* The ADR specifies narrow, expiring waivers with a required reason and rejects broad or permanent suppressions.\n* Three example policies cover a layered package, a monorepo with two Python packages, and a banned third-party dependency.",
+      "clarification_goal": "CD-3: Research configurable Python import-boundary policy semantics\n\nSpecify the Dogwatch Python-policy model using the current Amneboard import matrix as a reference, but without baking its package names or layers into the product. Resolve the matcher, exclusions, exception, and import-resolution semantics before implementation.\n\nV1 should inspect direct static imports only. It must state that dynamic imports, plugin loading, runtime monkeypatching, and transitive dependency-path policy are outside the guarantee.\n\nh2. Acceptance criteria\n\n* An ADR chooses and exemplifies the config format, scanned-package declaration, named rule IDs, target-prefix matching, and banned external dependencies.\n* The ADR decides direct versus transitive enforcement, relative-import resolution, TYPE_CHECKING behavior, and config-controlled exclusions for tests/scripts/migrations.\n* The ADR specifies narrow, expiring waivers with a required reason and rejects broad or permanent suppressions.\n* Three example policies cover a layered package, a monorepo with two Python packages, and a banned third-party dependency.",
+      "run_objective": "CD-3: Research configurable Python import-boundary policy semantics\n\nSpecify the Dogwatch Python-policy model using the current Amneboard import matrix as a reference, but without baking its package names or layers into the product. Resolve the matcher, exclusions, exception, and import-resolution semantics before implementation.\n\nV1 should inspect direct static imports only. It must state that dynamic imports, plugin loading, runtime monkeypatching, and transitive dependency-path policy are outside the guarantee.\n\nh2. Acceptance criteria\n\n* An ADR chooses and exemplifies the config format, scanned-package declaration, named rule IDs, target-prefix matching, and banned external dependencies.\n* The ADR decides direct versus transitive enforcement, relative-import resolution, TYPE_CHECKING behavior, and config-controlled exclusions for tests/scripts/migrations.\n* The ADR specifies narrow, expiring waivers with a required reason and rejects broad or permanent suppressions.\n* Three example policies cover a layered package, a monorepo with two Python packages, and a banned third-party dependency.",
+      "planner_objective": "CD-3: Research configurable Python import-boundary policy semantics\n\nSpecify the Dogwatch Python-policy model using the current Amneboard import matrix as a reference, but without baking its package names or layers into the product. Resolve the matcher, exclusions, exception, and import-resolution semantics before implementation.\n\nV1 should inspect direct static imports only. It must state that dynamic imports, plugin loading, runtime monkeypatching, and transitive dependency-path policy are outside the guarantee.\n\nh2. Acceptance criteria\n\n* An ADR chooses and exemplifies the config format, scanned-package declaration, named rule IDs, target-prefix matching, and banned external dependencies.\n* The ADR decides direct versus transitive enforcement, relative-import resolution, TYPE_CHECKING behavior, and config-controlled exclusions for tests/scripts/migrations.\n* The ADR specifies narrow, expiring waivers with a required reason and rejects broad or permanent suppressions.\n* Three example policies cover a layered package, a monorepo with two Python packages, and a banned third-party dependency.",
+      "architecture_objective": "",
+      "ui_ux_objective": "",
+      "supervisor_summary": "Execute the approved run objective without reinterpreting the original request.",
+      "clarification_history": [],
+      "previous_attempt": null,
+      "bundle_id": "web-development",
+      "origin_jira_key": "CD-3",
+      "prior_work": [
+        {
+          "run_id": "a4dd5320-b083-43c1-9806-1cceb0a6ed19",
+          "origin_jira_key": "CD-2",
+          "source": "epic",
+          "relation": null,
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:22.023434Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "15559cfe-b43b-48d2-b7b1-94b9c6fdbb68",
+          "origin_jira_key": "CD-2",
+          "source": "epic",
+          "relation": null,
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:34:52.045292Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "c3aa5af8-9962-4689-879f-ddf43b9ea152",
+          "origin_jira_key": "CD-4",
+          "source": "epic",
+          "relation": null,
+          "title": "Research the safe OpenAPI compatibility adapter contract",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:58.157931Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "1f039cf8-8868-4202-a892-fed38d80cfb8",
+          "origin_jira_key": "CD-4",
+          "source": "epic",
+          "relation": null,
+          "title": "Research the safe OpenAPI compatibility adapter contract",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:37:12.390578Z",
+          "ticket_updated_after_run": false
+        }
+      ]
+    }
+  }
+}

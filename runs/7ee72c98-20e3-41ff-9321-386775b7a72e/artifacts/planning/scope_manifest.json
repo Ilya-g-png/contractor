@@ -1,0 +1,25 @@
+{
+  "classified_domains": [],
+  "domain_confidence": {},
+  "complexity": "modest",
+  "project_mode": "existing-project",
+  "bundle_id": "web-development",
+  "bundle_rationale": "Production-grade web system: frontend, backend, and operational\nconcerns (CI/CD, infrastructure-as-code, observability, rollout\nstrategy, secrets management) are all in scope. Use for net-new\nproducts with deploy-on-day-one expectations or for production-\nhardening existing apps. This is the maximal web bundle \u2014 every\nplanning specialist is justified by content from at least one\ncomposed pack.",
+  "preset_id": "existing-web-development-light",
+  "specialist_sequence": [
+    "planner_v1",
+    "decomposer_v1",
+    "developer_v1",
+    "reviewer_v1"
+  ],
+  "skipped_specialists": [
+    "architect_v1",
+    "designer_v1"
+  ],
+  "needs_hitl_confirmation": false,
+  "mutations": [],
+  "work_kind": "planning",
+  "work_kind_confidence": 0.6,
+  "classifier_model": "claude-opus-5-5",
+  "classifier_latency_ms": 8364
+}

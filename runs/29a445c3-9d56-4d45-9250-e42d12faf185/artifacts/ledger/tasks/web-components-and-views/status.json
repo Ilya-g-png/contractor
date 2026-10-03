@@ -1,0 +1,36 @@
+{
+  "task_id": "web-components-and-views",
+  "status": "queued",
+  "attempt": 1,
+  "version": 1,
+  "claim_run_id": null,
+  "claim_expires_at": null,
+  "provider": "proxy",
+  "task_kind": "software_engineering",
+  "title": "Build App, Shell, HomeView, ApiStatus, NotFoundView, ErrorBoundary, ErrorFallback, entry, component CSS and a11y tests",
+  "depends_on": [
+    "web-core-modules"
+  ],
+  "review_required": true,
+  "review_completed": false,
+  "requested_write_scopes": [
+    "web/src",
+    "web/src/views",
+    "web/src/components",
+    "web/src/styles"
+  ],
+  "followup_for": null,
+  "deliverable_name": "web/src/App.tsx",
+  "summary": null,
+  "error": null,
+  "result_path": null,
+  "final_markdown_path": null,
+  "git_branch": null,
+  "git_base_branch": null,
+  "git_base_commit": null,
+  "git_head_commit": null,
+  "integration_status": null,
+  "hard_block_request": null,
+  "verification_disposition": null,
+  "write_scope_enforcement": null
+}

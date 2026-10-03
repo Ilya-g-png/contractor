@@ -1,0 +1,20 @@
+{
+  "contract_id": "contract-0001",
+  "selected_item_ids": [
+    "root-foundation"
+  ],
+  "selected_task_ids": [
+    "root-foundation"
+  ],
+  "review_required": true,
+  "reason": "Continue implementation of the selected acceptance item until criteria pass.",
+  "criteria": [
+    "Only four root files are created: Makefile, .gitignore, .gitattributes, .python-version; no area directory (scanner/, api/, web/, fixtures/, .github/) is created and `git diff --name-only -- .am/` is empty (INV-A4).",
+    "`make -n test`, `make -n lint`, `make -n format`, `make -n install` and `make -n build-web` each exit 0 under GNU make and under /usr/bin/make (BSD) on macOS, printing exactly the AC IC-2 commands in the order scanner, fixtures, api, web.",
+    "Makefile defines every IC-2 target (install[-scanner|-api|-web], test[-scanner|-fixtures|-api|-web], lint[-...], format[-...], build-web, run-scanner, run-api, run-web, regen-fixtures, bench-api), all declared .PHONY, every recipe of the form `cd <area> && ...`, no GNU-only functions, UV_PYTHON passed through unchanged; bench-api invokes Locust (not an httpx script).",
+    "No recipe invokes another area's toolchain: no `uv` in any *-web recipe and no `pnpm` in any scanner/api/fixtures recipe (FR-002).",
+    "`git check-attr eol -- fixtures/any/x.py` returns `lf` (INV-F1 precondition); .gitattributes contains `* text=auto eol=lf` and `fixtures/** text eol=lf`.",
+    "`git check-ignore .playwright-mcp/x`, `.venv/`, `node_modules/`, `dist/`, `.env` match; `!.env.example` re-includes example files; `git check-ignore .am/x` does NOT match (no `.am` line).",
+    ".python-version is a single line matching `^3\\.14\\.\\d+$`."
+  ]
+}

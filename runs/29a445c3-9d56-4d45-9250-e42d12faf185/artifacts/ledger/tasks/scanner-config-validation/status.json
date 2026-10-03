@@ -1,0 +1,34 @@
+{
+  "task_id": "scanner-config-validation",
+  "status": "queued",
+  "attempt": 1,
+  "version": 1,
+  "claim_run_id": null,
+  "claim_expires_at": null,
+  "provider": "proxy",
+  "task_kind": "software_engineering",
+  "title": "Implement staged V0-V4 policy-file validation producing PolicyConfig",
+  "depends_on": [
+    "scanner-project-scaffold"
+  ],
+  "review_required": true,
+  "review_completed": false,
+  "requested_write_scopes": [
+    "scanner/src/dogwatch",
+    "scanner/tests"
+  ],
+  "followup_for": null,
+  "deliverable_name": "scanner/src/dogwatch/config.py",
+  "summary": null,
+  "error": null,
+  "result_path": null,
+  "final_markdown_path": null,
+  "git_branch": null,
+  "git_base_branch": null,
+  "git_base_commit": null,
+  "git_head_commit": null,
+  "integration_status": null,
+  "hard_block_request": null,
+  "verification_disposition": null,
+  "write_scope_enforcement": null
+}

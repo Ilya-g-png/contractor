@@ -1,0 +1,41 @@
+{
+  "runtimeMetadata": {
+    "objectiveContext": {
+      "raw_user_goal": "CD-2: Research V1 workflow, trust boundary, and report lifecycle\n\nDefine the first end-to-end user workflow: a developer runs Dogwatch in a checkout or CI, produces a report artifact, and an operator views that report in the dashboard. Decide what is stored, how a report identifies its repository/revision, and which GitHub integration belongs in V1.\n\nThe key safety constraint is that the web service must not clone arbitrary repositories, execute user commands, or generate an OpenAPI document by importing a user application. CI/local scanner output is the only V1 ingestion path.\n\nh2. Acceptance criteria\n\n* An ADR records the V1 workflow from local/CI scan to dashboard report.\n* The ADR defines report provenance: repository identifier, commit SHA, base SHA, scanner version, and scan timestamp.\n* The ADR explicitly excludes server-side repository execution, arbitrary clone URLs, live OpenAPI URLs, and application-code generation from V1.\n* The ADR decides whether V1 GitHub support is a workflow/action artifact only, rather than a GitHub App integration.",
+      "clarification_goal": "CD-2: Research V1 workflow, trust boundary, and report lifecycle\n\nDefine the first end-to-end user workflow: a developer runs Dogwatch in a checkout or CI, produces a report artifact, and an operator views that report in the dashboard. Decide what is stored, how a report identifies its repository/revision, and which GitHub integration belongs in V1.\n\nThe key safety constraint is that the web service must not clone arbitrary repositories, execute user commands, or generate an OpenAPI document by importing a user application. CI/local scanner output is the only V1 ingestion path.\n\nh2. Acceptance criteria\n\n* An ADR records the V1 workflow from local/CI scan to dashboard report.\n* The ADR defines report provenance: repository identifier, commit SHA, base SHA, scanner version, and scan timestamp.\n* The ADR explicitly excludes server-side repository execution, arbitrary clone URLs, live OpenAPI URLs, and application-code generation from V1.\n* The ADR decides whether V1 GitHub support is a workflow/action artifact only, rather than a GitHub App integration.",
+      "run_objective": "CD-2: Research V1 workflow, trust boundary, and report lifecycle\n\nDefine the first end-to-end user workflow: a developer runs Dogwatch in a checkout or CI, produces a report artifact, and an operator views that report in the dashboard. Decide what is stored, how a report identifies its repository/revision, and which GitHub integration belongs in V1.\n\nThe key safety constraint is that the web service must not clone arbitrary repositories, execute user commands, or generate an OpenAPI document by importing a user application. CI/local scanner output is the only V1 ingestion path.\n\nh2. Acceptance criteria\n\n* An ADR records the V1 workflow from local/CI scan to dashboard report.\n* The ADR defines report provenance: repository identifier, commit SHA, base SHA, scanner version, and scan timestamp.\n* The ADR explicitly excludes server-side repository execution, arbitrary clone URLs, live OpenAPI URLs, and application-code generation from V1.\n* The ADR decides whether V1 GitHub support is a workflow/action artifact only, rather than a GitHub App integration.",
+      "planner_objective": "CD-2: Research V1 workflow, trust boundary, and report lifecycle\n\nDefine the first end-to-end user workflow: a developer runs Dogwatch in a checkout or CI, produces a report artifact, and an operator views that report in the dashboard. Decide what is stored, how a report identifies its repository/revision, and which GitHub integration belongs in V1.\n\nThe key safety constraint is that the web service must not clone arbitrary repositories, execute user commands, or generate an OpenAPI document by importing a user application. CI/local scanner output is the only V1 ingestion path.\n\nh2. Acceptance criteria\n\n* An ADR records the V1 workflow from local/CI scan to dashboard report.\n* The ADR defines report provenance: repository identifier, commit SHA, base SHA, scanner version, and scan timestamp.\n* The ADR explicitly excludes server-side repository execution, arbitrary clone URLs, live OpenAPI URLs, and application-code generation from V1.\n* The ADR decides whether V1 GitHub support is a workflow/action artifact only, rather than a GitHub App integration.",
+      "architecture_objective": "",
+      "ui_ux_objective": "",
+      "supervisor_summary": "Execute the approved run objective without reinterpreting the original request.",
+      "clarification_history": [],
+      "previous_attempt": null,
+      "bundle_id": "web-development",
+      "origin_jira_key": "CD-2",
+      "prior_work": [
+        {
+          "run_id": "702ddebf-34a8-46c6-8d7a-912a2e407a5d",
+          "origin_jira_key": "CD-3",
+          "source": "epic",
+          "relation": null,
+          "title": "Research configurable Python import-boundary policy semantics",
+          "run_status": "completed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:37:32.147595Z",
+          "ticket_updated_after_run": false
+        },
+        {
+          "run_id": "1f039cf8-8868-4202-a892-fed38d80cfb8",
+          "origin_jira_key": "CD-4",
+          "source": "epic",
+          "relation": null,
+          "title": "Research the safe OpenAPI compatibility adapter contract",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:37:12.390578Z",
+          "ticket_updated_after_run": false
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "task_id": "ci-workflow",
+  "status": "queued",
+  "attempt": 1,
+  "version": 1,
+  "claim_run_id": null,
+  "claim_expires_at": null,
+  "provider": "proxy",
+  "task_kind": "software_engineering",
+  "title": "Write the GitHub Actions CI workflow that calls only Makefile targets",
+  "depends_on": [
+    "root-foundation",
+    "scanner-project-scaffold",
+    "api-project-scaffold",
+    "web-toolchain-scaffold"
+  ],
+  "review_required": true,
+  "review_completed": false,
+  "requested_write_scopes": [
+    ".github/workflows"
+  ],
+  "followup_for": null,
+  "deliverable_name": ".github/workflows/ci.yml",
+  "summary": null,
+  "error": null,
+  "result_path": null,
+  "final_markdown_path": null,
+  "git_branch": null,
+  "git_base_branch": null,
+  "git_base_commit": null,
+  "git_head_commit": null,
+  "integration_status": null,
+  "hard_block_request": null,
+  "verification_disposition": null,
+  "write_scope_enforcement": null
+}

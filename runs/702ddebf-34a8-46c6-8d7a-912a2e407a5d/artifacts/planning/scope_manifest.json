@@ -1,0 +1,24 @@
+{
+  "classified_domains": [],
+  "domain_confidence": {},
+  "complexity": "standard",
+  "project_mode": "existing-project",
+  "bundle_id": "web-development",
+  "bundle_rationale": "Scope classification failed \u2014 using maximum-scope fallback.",
+  "preset_id": "ambiguous-fallback",
+  "specialist_sequence": [
+    "planner_v1",
+    "architect_v1",
+    "designer_v1",
+    "decomposer_v1",
+    "developer_v1",
+    "reviewer_v1"
+  ],
+  "skipped_specialists": [],
+  "needs_hitl_confirmation": true,
+  "mutations": [],
+  "work_kind": null,
+  "work_kind_confidence": null,
+  "classifier_model": "unknown",
+  "classifier_latency_ms": 0
+}
