@@ -180,13 +180,18 @@
         "api/.env.example lists only DOGWATCH_API_HOST and DOGWATCH_API_PORT with non-secret example values (no secrets in config)."
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "passed": true,
+        "evidence": [
+          "I'm accepting this. The branch adds exactly the 10 contracted files and nothing else. pyproject.toml matches every declared field. settings.py produces the exact IC-4 messages, and the isolation tests enforce INV-A1 against the real scanner package name, `dogwatch`. One evidence gap: the runtime's verification ran in scanner/, not api/, so I judged the api-side install, lint and test criteria by reading the code instead. I found nothing blocking; two LOW notes are in the findings.",
+          "The runtime's verification attempt ran ruff, mypy and pytest in the scanner/ directory (161 scanner tests, 18 scanner source files), not api/. So none of the api criteria were machine-verified this run. I judged them by reading the branch files, the Makefile (install-api and lint-api recipes, lines 17-18 and 42-43) and architecture_contracts.md IC-4.",
+          "I didn't execute `make install-api`, `make lint-api` or `uv sync` myself, because review mode is read-only. Those criteria rest on inspecting lock/pyproject consistency, formatting and typing.",
+          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
+        ],
+        "verified_at": "2026-10-03T14:03:34.587940Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "api-project-scaffold:accept:low-int-digit-limit,low-main-module-pending",
       "attempts_since_progress": 0
     },
     {
@@ -472,5 +477,5 @@
     }
   ],
   "created_at": "2026-10-03T13:30:04.505951Z",
-  "updated_at": "2026-10-03T13:58:24.719675Z"
+  "updated_at": "2026-10-03T14:03:34.587953Z"
 }
