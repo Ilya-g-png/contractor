@@ -1,20 +1,19 @@
 {
-  "contract_id": "contract-0011",
+  "contract_id": "contract-0012",
   "selected_item_ids": [
-    "web-components-and-views"
+    "web-build-gate"
   ],
   "selected_task_ids": [
-    "web-components-and-views"
+    "web-build-gate"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Only main.tsx, App.tsx, Shell.tsx, ErrorBoundary.tsx, ErrorFallback.tsx, a11y.test.tsx, views/HomeView.tsx, views/NotFoundView.tsx, components/ApiStatus.tsx, styles/app.css and their *.test.tsx files are created; strings.ts, tokens.css, health.ts, router.ts, config.ts, configs and package.json are unchanged.",
-    "Every component-contract invariant checked by unit, axe or static passes: APP-1..5, SHL-1..4, HOME-1..5, STS-1..11, NF-1..6, EB-1..5, EF-1..7.",
-    "State management: ApiStatus holds view-local state with one health request per mount and no global store or router library; INV-W1/W2/W3 hold: a late `ok` after a terminal state does not change text, unmount aborts the request, and an HTML-bearing response body never reaches the DOM.",
-    "INV-W4 / SC-009 (WCAG 2.2 Level AA): axe via src/test/axe.ts reports zero violations for tags wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa on Home in checking/available/unavailable states and on Not Found.",
-    "INV-W8 error boundary: exactly one ErrorBoundary exists (in main.tsx); a throwing child renders strings.error heading \"Something went wrong\" and a \"Reload page\" button inside a non-empty main element.",
-    "Static checks: no dangerouslySetInnerHTML, `style={`, tabIndex, autoFocus, `.focus(` or CSS transitions in the owned files; app.css is mobile-first using only `@media (min-width: 640px)` and `(min-width: 1024px)` breakpoints, logical properties and token-only values (stylelint passes).",
-    "`make lint-web` and `make test-web` pass (checkpoint CP-2/web part)."
+    "Only web/scripts/check-build.mjs and web/scripts/check-build.test.mjs are created (INV-W6 assertions live in check-build.mjs); package.json, vite.config.ts and src/** are unchanged; only Node built-ins (zlib, fs, path) are used.",
+    "check-build.mjs reads dist/.vite/manifest.json, sums gzip level-9 size of the isEntry chunk plus transitive static imports (excluding dynamicImports) against an initial-route JS budget of 100000 bytes, and gzip level-9 of all dist/**/*.css against a 20000-byte CSS budget, printing `js-initial <n>/100000` and `css-total <n>/20000`.",
+    "Synthetic temp-dir tests: over-budget JS -> exit 1; over-budget CSS -> exit 1; inline <script> -> exit 1; `onclick=` (regex /\\son[a-z]+\\s*=/i) -> exit 1; missing manifest -> exit 1; a dynamic-import chunk is excluded from the JS sum; a compliant dist -> exit 0 with both lines printed.",
+    "INV-W6: an `https?://` reference in a src/href/@import/url( context anywhere under dist/ makes the gate exit 1.",
+    "INV-W5 on the real build: `make build-web` exits 0 and prints js-initial <= 100000 and css-total <= 20000.",
+    "`make install-web lint-web test-web build-web` passes in a clean clone with only Node and pnpm (checkpoint CP-2/web complete)."
   ]
 }
