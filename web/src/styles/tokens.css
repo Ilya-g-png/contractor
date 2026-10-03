@@ -1,0 +1,61 @@
+/* Design tokens (DC-11, UI §7). Light theme only; a future theme overrides these names under a selector such as [data-theme="dark"]. */
+/* Contrast ratios use the WCAG 2.2 relative-luminance formula (SC 1.4.3 text, SC 1.4.11 non-text). */
+
+:root {
+  color-scheme: light;
+
+  --font-family-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --line-height-tight: 1.25;
+  --line-height-body: 1.5;
+
+  --color-bg: #ffffff;
+  --color-surface: #f6f7f9;
+  --color-border: #d0d5dd;
+  --color-text: #1a1d23;
+  --color-text-muted: #4a5260;
+  --color-text-inverse: #ffffff;
+  --color-accent: #1f5fbf;
+  --color-accent-hover: #194e9e;
+  --color-link: #1f5fbf;
+  --color-focus: #1f5fbf;
+  --color-status-ok: #1b7f3b;
+  --color-status-error: #b42318;
+  --color-status-neutral: #4a5260;
+
+  /* contrast --color-text on --color-bg: 16.88:1 */
+  /* contrast --color-text on --color-surface: 15.75:1 */
+  /* contrast --color-text-muted on --color-bg: 7.87:1 */
+  /* contrast --color-text-muted on --color-surface: 7.35:1 */
+  /* contrast --color-link on --color-bg: 6.09:1 */
+  /* contrast --color-text-inverse on --color-accent: 6.09:1 */
+  /* contrast --color-text-inverse on --color-accent-hover: 8.00:1 */
+
+  /* Non-text pairs (SC 1.4.11, >= 3:1 required). */
+  /* contrast --color-status-ok on --color-surface: 4.73:1 */
+  /* contrast --color-status-error on --color-surface: 6.13:1 */
+  /* contrast --color-status-neutral on --color-surface: 7.35:1 */
+  /* contrast --color-focus on --color-bg: 6.09:1 */
+  /* contrast --color-focus on --color-surface: 5.68:1 */
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+
+  --layout-max-width: 64rem;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-full: 9999px;
+}
