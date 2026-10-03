@@ -1,20 +1,20 @@
 {
-  "contract_id": "contract-0001",
+  "contract_id": "contract-0002",
   "selected_item_ids": [
-    "root-foundation"
+    "scanner-project-scaffold"
   ],
   "selected_task_ids": [
-    "root-foundation"
+    "scanner-project-scaffold"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Only four root files are created: Makefile, .gitignore, .gitattributes, .python-version; no area directory (scanner/, api/, web/, fixtures/, .github/) is created and `git diff --name-only -- .am/` is empty (INV-A4).",
-    "`make -n test`, `make -n lint`, `make -n format`, `make -n install` and `make -n build-web` each exit 0 under GNU make and under /usr/bin/make (BSD) on macOS, printing exactly the AC IC-2 commands in the order scanner, fixtures, api, web.",
-    "Makefile defines every IC-2 target (install[-scanner|-api|-web], test[-scanner|-fixtures|-api|-web], lint[-...], format[-...], build-web, run-scanner, run-api, run-web, regen-fixtures, bench-api), all declared .PHONY, every recipe of the form `cd <area> && ...`, no GNU-only functions, UV_PYTHON passed through unchanged; bench-api invokes Locust (not an httpx script).",
-    "No recipe invokes another area's toolchain: no `uv` in any *-web recipe and no `pnpm` in any scanner/api/fixtures recipe (FR-002).",
-    "`git check-attr eol -- fixtures/any/x.py` returns `lf` (INV-F1 precondition); .gitattributes contains `* text=auto eol=lf` and `fixtures/** text eol=lf`.",
-    "`git check-ignore .playwright-mcp/x`, `.venv/`, `node_modules/`, `dist/`, `.env` match; `!.env.example` re-includes example files; `git check-ignore .am/x` does NOT match (no `.am` line).",
-    ".python-version is a single line matching `^3\\.14\\.\\d+$`."
+    "Files created are exactly the U2 set: scanner/pyproject.toml, scanner/uv.lock, scanner/src/dogwatch/{__init__.py,py.typed,diagnostics.py}, scanner/tests/{__init__.py,conftest.py,test_diagnostics.py,test_isolation.py}; no other src module and no golden test directory is created.",
+    "pyproject.toml declares name `dogwatch`, version `0.1.0`, `requires-python = \">=3.11\"`, `dependencies = []`, classifiers 3.11-3.14, console script `dogwatch = \"dogwatch.cli:main\"`, build backend uv_build, `[tool.uv] required-version` 0.12.x, dev group {pytest, ruff, mypy, jsonschema}, ruff target-version py311, mypy strict with python_version 3.11 covering src and tests, pytest addopts `--strict-markers` with the `golden` marker registered.",
+    "`make install-scanner` and `make lint-scanner` pass in a clean clone that has only uv installed.",
+    "`UV_PYTHON=3.11 make test-scanner` and `UV_PYTHON=3.14 make test-scanner` both pass.",
+    "test_diagnostics asserts that render() of a DogwatchError with two diagnostics yields two lines each matching `^dogwatch:(config-invalid|config-not-found): .+$` followed by a trailing newline; DogwatchError with zero diagnostics raises; EXIT_OK=0, EXIT_GATE_FAILED=1, EXIT_ERROR=2.",
+    "test_isolation (INV-A1) asserts every import under scanner/src resolves to the stdlib or `dogwatch.*`, and that `[project].dependencies == []`.",
+    "uv.lock resolves for the whole supported CPython range; the 3.15 ceiling decision (included only if 3.15 is final and dev tools resolve) is recorded in this task's report."
   ]
 }
