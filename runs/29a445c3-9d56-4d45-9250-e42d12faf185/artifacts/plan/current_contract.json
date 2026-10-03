@@ -1,22 +1,20 @@
 {
-  "contract_id": "contract-0005",
+  "contract_id": "contract-0006",
   "selected_item_ids": [
-    "scanner-cli-and-output"
+    "api-project-scaffold"
   ],
   "selected_task_ids": [
-    "scanner-cli-and-output"
+    "api-project-scaffold"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Only cli.py, output.py, __main__.py under scanner/src/dogwatch and test_cli.py, test_output.py, test_trust_boundary.py, test_resources.py under scanner/tests are created; config.py, report.py, diagnostics.py and pyproject.toml are unchanged.",
-    "IC-1 response matrix: every row has a test asserting exit code, stdout, stderr and filesystem effect, including `dogwatch --version` -> `dogwatch 0.1.0\\n`, no subcommand -> exit 2, and `python -m dogwatch` behaving identically to the console script; processing order is parse -> V0-V4 -> output-target check -> build -> write -> exit.",
-    "INV-S3: for each exit-2 case (four SC-013 seeds, V0, V2, V3, missing output directory, read-only directory, output == config including a symlink alias) a previously absent target remains absent, a pre-existing target keeps its bytes and mtime, and no `.*.tmp` file remains.",
-    "Atomic write uses a `.<basename>.<random>.tmp` temp file in the target directory, flush+fsync, chmod 0o666 & ~umask, os.replace, and unlinks the temp on any OSError; `--output -` writes to sys.stdout.buffer.",
-    "INV-S4/INV-S5: stderr is empty on exit 0; every exit-2 stderr line matches `^dogwatch:(config-invalid|config-not-found): .+$` or `^dogwatch: error: .+$`; exit 1 is never produced.",
-    "INV-S1/INV-S2 (end-to-end): with socket.socket.connect patched to raise, an in-process run still exits 0, and no module from the declared package directory appears in sys.modules.",
-    "INV-S7: a subprocess run reports peak RSS <= 200 x 10^6 bytes (ru_maxrss normalised: bytes on darwin, KiB x 1024 on linux).",
-    "Two consecutive `--output -` runs on the same tmp_path config give byte-identical stdout; tests build fixture-like trees under tmp_path and do not read the repository fixtures directory.",
-    "`UV_PYTHON=<v> make test-scanner` passes for every supported CPython version and `make lint-scanner` passes (checkpoint CP-2/scanner)."
+    "Files created are exactly api/pyproject.toml, api/uv.lock, api/.env.example, api/src/dogwatch_api/{__init__.py,py.typed,settings.py}, api/tests/{__init__.py,conftest.py,test_settings.py,test_isolation.py}.",
+    "pyproject.toml declares name `dogwatch-api`, version `0.1.0`, `requires-python = \"==3.14.*\"`, runtime dependencies exactly fastapi and uvicorn (no [standard] extra), console script `dogwatch-api = \"dogwatch_api.__main__:main\"`, dev group {pytest, httpx, ruff, mypy}, opt-in `bench` group {locust}, `[tool.uv] default-groups = [\"dev\"]`, required-version 0.12.x, ruff target py314, mypy strict.",
+    "`make install-api` and `make lint-api` pass in a clean clone that has only uv installed.",
+    "INV-P7 (part): load_settings({}) returns host 127.0.0.1 and port 8000; DOGWATCH_API_PORT of `0`, `abc` or `65536` raises SettingsError with a message containing `DOGWATCH_API_PORT`; an empty DOGWATCH_API_HOST raises SettingsError with the exact IC-4 message.",
+    "INV-A1 (api side): test_isolation asserts no module under api/src imports the scanner's top-level package, and the declared runtime dependency set is exactly {fastapi, uvicorn} (no database driver, queue client or rate-limit library, INV-R1).",
+    "`uv sync --locked` does not install locust; `uv sync --locked --group bench` does.",
+    "api/.env.example lists only DOGWATCH_API_HOST and DOGWATCH_API_PORT with non-secret example values (no secrets in config)."
   ]
 }
