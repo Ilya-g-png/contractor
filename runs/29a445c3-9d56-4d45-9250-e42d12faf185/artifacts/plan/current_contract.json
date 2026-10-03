@@ -1,20 +1,22 @@
 {
-  "contract_id": "contract-0004",
+  "contract_id": "contract-0005",
   "selected_item_ids": [
-    "scanner-report-contract"
+    "scanner-cli-and-output"
   ],
   "selected_task_ids": [
-    "scanner-report-contract"
+    "scanner-cli-and-output"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Only scanner/src/dogwatch/report.py, scanner/schemas/report-0.1.schema.json, scanner/tests/test_report.py and scanner/tests/test_schema.py are created; config.py and pyproject.toml are unchanged.",
-    "`build_report(cfg: PolicyConfig, version: str) -> dict` sets policy.path to basename(cfg.path_arg), policy.digest.sha256 to sha256(cfg.raw).hexdigest(), findings to []; `serialize_canonical(obj) -> bytes` is exactly the DC-3 expression.",
-    "INV-D2: `Draft202012Validator.check_schema(schema)` passes, the schema `$id` is `urn:dogwatch:schema:report:0.1`, and build_report output validates against it.",
-    "The schema rejects each forbidden provenance field (commit_sha, object_format, dirty, base_sha, evaluation_date, scan_started_at, scan_finished_at, report_id), a non-empty findings array (`items: false`), and an extra key at every object level.",
-    "INV-D3: serialized bytes have no BOM and no `\\r`, end with `}\\n` and not `\\n\\n`, satisfy `serialize_canonical(json.loads(b)) == b`, and order top-level keys findings, policy, scanner, schema_version.",
-    "INV-D5: a config whose raw bytes contain non-ASCII comments yields a digest equal to hashlib.sha256(raw).hexdigest(); serialized bytes are identical across in-process TZ/LC_ALL monkeypatching.",
-    "`make test-scanner` and `make lint-scanner` pass."
+    "Only cli.py, output.py, __main__.py under scanner/src/dogwatch and test_cli.py, test_output.py, test_trust_boundary.py, test_resources.py under scanner/tests are created; config.py, report.py, diagnostics.py and pyproject.toml are unchanged.",
+    "IC-1 response matrix: every row has a test asserting exit code, stdout, stderr and filesystem effect, including `dogwatch --version` -> `dogwatch 0.1.0\\n`, no subcommand -> exit 2, and `python -m dogwatch` behaving identically to the console script; processing order is parse -> V0-V4 -> output-target check -> build -> write -> exit.",
+    "INV-S3: for each exit-2 case (four SC-013 seeds, V0, V2, V3, missing output directory, read-only directory, output == config including a symlink alias) a previously absent target remains absent, a pre-existing target keeps its bytes and mtime, and no `.*.tmp` file remains.",
+    "Atomic write uses a `.<basename>.<random>.tmp` temp file in the target directory, flush+fsync, chmod 0o666 & ~umask, os.replace, and unlinks the temp on any OSError; `--output -` writes to sys.stdout.buffer.",
+    "INV-S4/INV-S5: stderr is empty on exit 0; every exit-2 stderr line matches `^dogwatch:(config-invalid|config-not-found): .+$` or `^dogwatch: error: .+$`; exit 1 is never produced.",
+    "INV-S1/INV-S2 (end-to-end): with socket.socket.connect patched to raise, an in-process run still exits 0, and no module from the declared package directory appears in sys.modules.",
+    "INV-S7: a subprocess run reports peak RSS <= 200 x 10^6 bytes (ru_maxrss normalised: bytes on darwin, KiB x 1024 on linux).",
+    "Two consecutive `--output -` runs on the same tmp_path config give byte-identical stdout; tests build fixture-like trees under tmp_path and do not read the repository fixtures directory.",
+    "`UV_PYTHON=<v> make test-scanner` passes for every supported CPython version and `make lint-scanner` passes (checkpoint CP-2/scanner)."
   ]
 }
