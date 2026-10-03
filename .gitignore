@@ -1,0 +1,15 @@
+.venv/
+node_modules/
+dist/
+build/
+__pycache__/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+coverage/
+.bench/
+.env
+.env.*
+!.env.example
+.playwright-mcp/
