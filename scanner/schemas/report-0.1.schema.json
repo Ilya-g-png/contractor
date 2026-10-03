@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:dogwatch:schema:report:0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scanner", "policy", "findings"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "scanner": {
+      "type": "object", "additionalProperties": false, "required": ["name", "version"],
+      "properties": {
+        "name": {"const": "dogwatch"},
+        "version": {"type": "string", "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false, "required": ["path", "digest"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1, "pattern": "^[^/\\\\\\u0000-\\u001f]+$"},
+        "digest": {
+          "type": "object", "additionalProperties": false, "required": ["sha256"],
+          "properties": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+        }
+      }
+    },
+    "findings": {"type": "array", "items": false}
+  }
+}
