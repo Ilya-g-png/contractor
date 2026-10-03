@@ -430,13 +430,20 @@
         "The choice of importing the scanner atomic writer vs a local reimplementation in regenerate.py (D-1) is recorded in the task report."
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "passed": true,
+        "evidence": [
+          "Accept. The commit adds only the 5 files the contract names. The harness follows IC-7: sorted discovery, the required argv, a fresh temp cwd and HOME, the 5 environment variants and a random PYTHONHASHSEED. The golden byte-matches the scanner's canonical serializer (268 bytes, sorted keys, trailing newline). The Makefile/pytest marker split routes golden tests correctly. Runtime-only criteria were not machine-run (verification ran only the web toolchain), so they rest on code reading plus on-disk artifacts: the golden test module was compiled under CPython 3.11 and 3.14, and regenerate.py ran just before the golden was written.",
+          "The runtime verification ran only the web/ pnpm lint/build/test commands. No `make test-fixtures`, `test-scanner`, `regen-fixtures` or `run-scanner` output was supplied. The runtime criteria were judged by reading the code (harness.py, regenerate.py, test_fixture_goldens.py, cli.py, output.py, report.py, Makefile, pyproject.toml) plus on-disk artifacts.",
+          "On-disk evidence: tests/golden/__pycache__ has pytest-rewritten pyc files for CPython 3.11 and 3.14, and regenerate pyc files for 3.13 and 3.14. The golden's mtime (17:51) matches regenerate.cpython-314.pyc.",
+          "The golden's byte count (268) matches what I computed by hand from serialize_canonical for this report. dogwatch.toml (62 bytes) is unchanged.",
+          "The git_inspect tool targets the primary repo, which still contains commit 153af60. Its message body records D-1.",
+          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
+        ],
+        "verified_at": "2026-10-03T14:54:56.101631Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "fixtures-golden-harness:accept:low-only[d1-in-commit-body,leak-substring-fragility,no-scanner-runtime-verification]",
       "attempts_since_progress": 0
     },
     {
@@ -522,5 +529,5 @@
     }
   ],
   "created_at": "2026-10-03T13:30:04.505951Z",
-  "updated_at": "2026-10-03T14:48:43.193007Z"
+  "updated_at": "2026-10-03T14:54:56.101642Z"
 }

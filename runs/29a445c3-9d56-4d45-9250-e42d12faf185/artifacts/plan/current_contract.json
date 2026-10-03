@@ -1,21 +1,21 @@
 {
-  "contract_id": "contract-0014",
+  "contract_id": "contract-0015",
   "selected_item_ids": [
-    "fixtures-golden-harness"
+    "ci-workflow"
   ],
   "selected_task_ids": [
-    "fixtures-golden-harness"
+    "ci-workflow"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Only scanner/tests/golden/{__init__.py,harness.py,test_fixture_goldens.py,regenerate.py} and fixtures/minimal/expected-report.json are created; scanner/src, scanner/pyproject.toml, other scanner/tests files and fixture inputs are unchanged.",
-    "Discovery is a sorted glob of <repo>/fixtures/*/dogwatch.toml; each run uses argv [sys.executable, \"-m\", \"dogwatch\", \"check\", \"--config\", <abs>, \"--output\", <tmp>/out.json], a fresh temp cwd, and the IC-7 five-variant environment (TZ, LC_*, LANG, PYTHONHASHSEED, HOME stripped; fresh temp HOME; random PYTHONHASHSEED); a missing locale does not fail the harness; every test carries @pytest.mark.golden and asserts shutil.which(\"dogwatch\") resolves.",
-    "`make test-scanner` collects zero golden tests and `make test-fixtures` runs only golden tests.",
-    "INV-D1 (local): `UV_PYTHON=3.11 make test-fixtures` and `UV_PYTHON=3.14 make test-fixtures` both pass (5 variants x 2 interpreters byte-identical) on the local OS.",
-    "expected-report.json is produced only by `make regen-fixtures`, validates against the scanner report-0.1 JSON Schema, has findings [], policy.path \"dogwatch.toml\", scanner.version \"0.1.0\", and policy.digest.sha256 equal to `shasum -a 256 fixtures/minimal/dogwatch.toml` (INV-D4).",
-    "Flipping one byte of the golden makes `make test-fixtures` fail with a difflib unified diff in the output (stderr included on non-zero exit); reverting it passes again.",
-    "INV-F2: after `make test-fixtures`, `git status --porcelain fixtures/` is empty; `make regen-fixtures` reproduces identical bytes so `git diff --exit-code fixtures/` is clean; `make run-scanner` stdout is byte-identical to the golden (checkpoint CP-3).",
-    "The choice of importing the scanner atomic writer vs a local reimplementation in regenerate.py (D-1) is recorded in the task report."
+    "Only .github/workflows/ci.yml is created; the Makefile is unchanged.",
+    "Triggers are exactly pull_request (branches [main]) and push (branches [main]); no pull_request_target, workflow_run or schedule.",
+    "INV-C1: top-level permissions is exactly `contents: read`; `grep 'secrets\\.'` and `grep pull_request_target` return nothing; no artifact upload step exists; every `uses:` matches `@[0-9a-f]{40}\\s+# v\\d+\\.\\d+\\.\\d+` and only actions/checkout, astral-sh/setup-uv, pnpm/action-setup and actions/setup-node are used.",
+    "setup-uv uses version-file from scanner/pyproject.toml / api/pyproject.toml with caching; setup-node uses node-version-file web/.node-version with pnpm cache keyed on web/pnpm-lock.yaml.",
+    "concurrency group `ci-${{ github.event.pull_request.number || github.ref }}` with cancel-in-progress: true; timeout-minutes: 10 on every job.",
+    "INV-C3: every `run:` value starts with `make ` and names only IC-2 targets; lint-scanner runs only on the 3.11 scanner entry and test-scanner on all entries.",
+    "The matrix expands to exactly the IC-8 status names: `scanner (3.11)`, `scanner (3.12)`, `scanner (3.13)`, `scanner (3.14)`, `api`, `web`, and `fixtures (<os>, <py>)` for ubuntu-24.04/macos-15 x 3.11/3.14 (10 total; 12 only if scanner-project-scaffold recorded 3.15 as included).",
+    "`actionlint` (or an equivalent workflow schema check) passes."
   ]
 }

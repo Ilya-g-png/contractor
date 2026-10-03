@@ -1,8 +1,8 @@
 {
   "task_id": "ci-workflow",
-  "status": "queued",
+  "status": "completed",
   "attempt": 1,
-  "version": 1,
+  "version": 3,
   "claim_run_id": null,
   "claim_expires_at": null,
   "provider": "proxy",
@@ -21,16 +21,16 @@
   ],
   "followup_for": null,
   "deliverable_name": ".github/workflows/ci.yml",
-  "summary": null,
+  "summary": "Developer committed in-scope changes; handed to the reviewer for adjudication.",
   "error": null,
-  "result_path": null,
-  "final_markdown_path": null,
+  "result_path": "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/artifacts/ledger/tasks/ci-workflow/result.json",
+  "final_markdown_path": "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/artifacts/ledger/tasks/ci-workflow/task_response.md",
   "git_branch": null,
   "git_base_branch": null,
   "git_base_commit": null,
   "git_head_commit": null,
   "integration_status": null,
   "hard_block_request": null,
-  "verification_disposition": null,
-  "write_scope_enforcement": null
+  "verification_disposition": "inconclusive",
+  "write_scope_enforcement": "preventive"
 }
