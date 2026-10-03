@@ -1,21 +1,20 @@
 {
-  "contract_id": "contract-0009",
+  "contract_id": "contract-0010",
   "selected_item_ids": [
-    "web-toolchain-scaffold"
+    "web-core-modules"
   ],
   "selected_task_ids": [
-    "web-toolchain-scaffold"
+    "web-core-modules"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Files created are exactly the U9 set: web/{package.json,pnpm-lock.yaml,.node-version,.env.example,tsconfig.json[,tsconfig.node.json],vite.config.ts,eslint.config.js,.prettierrc.json,.prettierignore,.stylelintrc.json,index.html}, web/src/vite-env.d.ts, web/src/test/{setup.ts,axe.ts,toolchain.test.ts}; nothing under web/scripts and no main.tsx.",
-    "package.json is private, `type: module`, `packageManager: pnpm@11.x.y`, `engines.node: 24.x`, browserslist exactly per ARCH \u00a76.21 (last 2 Chrome/Edge/Firefox/Safari/iOS), scripts named exactly dev/build/preview/test/lint/format with IC-2 commands (`build` ends with `node scripts/check-build.mjs`), dependencies exactly {react, react-dom}, and every dev dependency the web lane needs in CD-5.",
-    "Rendering strategy is CSR only: vite.config.ts sets `appType: \"spa\"`, `build.manifest: true` (content-hashed assets), `modulePreload.polyfill: false`, build.target/cssTarget from browserslistToEsbuild() with no literal target array; no SSR entry exists.",
-    "Dev server 127.0.0.1:5173 and preview 127.0.0.1:4173 both use strictPort and proxy `/api` to http://127.0.0.1:8000; Vitest uses jsdom, the setup file, and includes `src/**/*.test.{ts,tsx}` and `scripts/**/*.test.{ts,mjs}`.",
-    "`make install-web` passes with --frozen-lockfile in a clean clone with only Node 24 and pnpm 11 (no Python needed).",
-    "INV-W12: toolchain.test.ts asserts browserslist equals the ARCH \u00a76.21 list and vite.config.ts uses browserslistToEsbuild with no literal targets; `make test-web` passes.",
-    "INV-W7 (analytics/consent guard, no offline worker): a throwaway file using `localStorage.setItem`, `document.cookie`, `sessionStorage`, `indexedDB` or `navigator.serviceWorker.register` fails `pnpm exec eslint`; a literal hex colour in a non-token .css file fails `pnpm exec stylelint` (strict-value on color/spacing/font-size/radius, src/styles/tokens.css ignored); seeded files are not committed.",
-    "index.html has `lang=\"en\"`, `<title>Dogwatch</title>`, viewport `width=device-width, initial-scale=1` without maximum-scale, exactly one `<script type=\"module\" src=\"/src/main.tsx\">`, no inline script and no `on[a-z]+=` attribute; `pnpm exec prettier --check .` passes."
+    "Only web/src/{strings.ts,config.ts,router.ts,router.test.ts,strings.test.ts}, web/src/api/{health.ts,health.test.ts} and web/src/styles/tokens.css are created; package.json, lockfile and configs are unchanged.",
+    "INV-W9 routing: resolveView(\"/\") === \"home\"; \"/x\", \"/index.html\", \"/a/b\", \"/x/\" and \"\" each resolve to \"not-found\" (history paths, no hash routing).",
+    "IC-5.1 API consumption with fetch stubbed: 200 {\"status\":\"ok\"} -> \"available\"; 200 {\"status\":\"degraded\"}, 200 non-JSON, 503, rejected fetch and timeout (AbortSignal.timeout stubbed via vi.spyOn) -> \"unavailable\"; the promise never rejects; the request URL is /api/v1/health with Accept: application/json; baseUrl \"/x//\" becomes \"/x/health\"; the signal combines the caller signal with a 5000 ms timeout.",
+    "config.ts exports API_BASE_URL = import.meta.env.VITE_DOGWATCH_API_BASE_URL ?? \"/api/v1\" (same-origin default, build-time override).",
+    "i18n: strings.ts is the single English string catalogue with every CC X-1 key including notFound.documentTitle and error.documentTitle; strings.test.ts asserts exact values \"Checking API\u2026\" (U+2026), \"API available\", \"API unavailable\", \"Page not found\", \"Something went wrong\", \"Dogwatch\" and error.reload \"Reload page\".",
+    "tokens.css defines every UI \u00a77.1-\u00a77.4 token plus --layout-max-width: 64rem and --color-focus, sets color-scheme: light, and carries a `/* contrast <fg> on <bg>: <ratio>:1 */` comment per UI \u00a75.4 text pair with every ratio >= 4.5:1 (WCAG 2.2 AA SC 1.4.3).",
+    "`pnpm exec stylelint src/styles/tokens.css`, `pnpm exec tsc --noEmit` and `make test-web` pass."
   ]
 }

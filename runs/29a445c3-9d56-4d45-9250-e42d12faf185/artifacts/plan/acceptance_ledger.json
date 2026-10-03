@@ -274,13 +274,20 @@
         "index.html has `lang=\"en\"`, `<title>Dogwatch</title>`, viewport `width=device-width, initial-scale=1` without maximum-scale, exactly one `<script type=\"module\" src=\"/src/main.tsx\">`, no inline script and no `on[a-z]+=` attribute; `pnpm exec prettier --check .` passes."
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "passed": true,
+        "evidence": [
+          "Accept. All 15 files in commit d7d716f are exactly the U9 set, with no web/scripts and no main.tsx, and each criterion checks out against the code. `pnpm run lint` passed (prettier, eslint, stylelint and tsc). The failing `pnpm run build` is expected: this slice is required to leave out src/main.tsx and scripts/check-build.mjs, and the build needs both.",
+          "The verifier's `pnpm run lint` exited 0, covering prettier --check, eslint, stylelint and tsc --noEmit.",
+          "The `pnpm run build` failure is expected: index.html must reference /src/main.tsx and the build script must call scripts/check-build.mjs, but the contract forbids creating either in this slice.",
+          "The git_inspect output showed the proxy target as [redacted-secret]. Reading the workspace file confirmed it is http://127.0.0.1:8000 (vite.config.ts:7).",
+          "`make test-web` and the INV-W7 seeded-file checks were not machine-run. I judged them by reading toolchain.test.ts, eslint.config.js and .stylelintrc.json; the review role is read-only, so I could not run them.",
+          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
+        ],
+        "verified_at": "2026-10-03T14:29:01.395060Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "web-toolchain-scaffold:accept:none",
       "attempts_since_progress": 0
     },
     {
@@ -490,5 +497,5 @@
     }
   ],
   "created_at": "2026-10-03T13:30:04.505951Z",
-  "updated_at": "2026-10-03T14:19:10.345865Z"
+  "updated_at": "2026-10-03T14:29:01.395075Z"
 }
