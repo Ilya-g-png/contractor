@@ -1,20 +1,20 @@
 {
-  "contract_id": "contract-0010",
+  "contract_id": "contract-0011",
   "selected_item_ids": [
-    "web-core-modules"
+    "web-components-and-views"
   ],
   "selected_task_ids": [
-    "web-core-modules"
+    "web-components-and-views"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Only web/src/{strings.ts,config.ts,router.ts,router.test.ts,strings.test.ts}, web/src/api/{health.ts,health.test.ts} and web/src/styles/tokens.css are created; package.json, lockfile and configs are unchanged.",
-    "INV-W9 routing: resolveView(\"/\") === \"home\"; \"/x\", \"/index.html\", \"/a/b\", \"/x/\" and \"\" each resolve to \"not-found\" (history paths, no hash routing).",
-    "IC-5.1 API consumption with fetch stubbed: 200 {\"status\":\"ok\"} -> \"available\"; 200 {\"status\":\"degraded\"}, 200 non-JSON, 503, rejected fetch and timeout (AbortSignal.timeout stubbed via vi.spyOn) -> \"unavailable\"; the promise never rejects; the request URL is /api/v1/health with Accept: application/json; baseUrl \"/x//\" becomes \"/x/health\"; the signal combines the caller signal with a 5000 ms timeout.",
-    "config.ts exports API_BASE_URL = import.meta.env.VITE_DOGWATCH_API_BASE_URL ?? \"/api/v1\" (same-origin default, build-time override).",
-    "i18n: strings.ts is the single English string catalogue with every CC X-1 key including notFound.documentTitle and error.documentTitle; strings.test.ts asserts exact values \"Checking API\u2026\" (U+2026), \"API available\", \"API unavailable\", \"Page not found\", \"Something went wrong\", \"Dogwatch\" and error.reload \"Reload page\".",
-    "tokens.css defines every UI \u00a77.1-\u00a77.4 token plus --layout-max-width: 64rem and --color-focus, sets color-scheme: light, and carries a `/* contrast <fg> on <bg>: <ratio>:1 */` comment per UI \u00a75.4 text pair with every ratio >= 4.5:1 (WCAG 2.2 AA SC 1.4.3).",
-    "`pnpm exec stylelint src/styles/tokens.css`, `pnpm exec tsc --noEmit` and `make test-web` pass."
+    "Only main.tsx, App.tsx, Shell.tsx, ErrorBoundary.tsx, ErrorFallback.tsx, a11y.test.tsx, views/HomeView.tsx, views/NotFoundView.tsx, components/ApiStatus.tsx, styles/app.css and their *.test.tsx files are created; strings.ts, tokens.css, health.ts, router.ts, config.ts, configs and package.json are unchanged.",
+    "Every component-contract invariant checked by unit, axe or static passes: APP-1..5, SHL-1..4, HOME-1..5, STS-1..11, NF-1..6, EB-1..5, EF-1..7.",
+    "State management: ApiStatus holds view-local state with one health request per mount and no global store or router library; INV-W1/W2/W3 hold: a late `ok` after a terminal state does not change text, unmount aborts the request, and an HTML-bearing response body never reaches the DOM.",
+    "INV-W4 / SC-009 (WCAG 2.2 Level AA): axe via src/test/axe.ts reports zero violations for tags wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa on Home in checking/available/unavailable states and on Not Found.",
+    "INV-W8 error boundary: exactly one ErrorBoundary exists (in main.tsx); a throwing child renders strings.error heading \"Something went wrong\" and a \"Reload page\" button inside a non-empty main element.",
+    "Static checks: no dangerouslySetInnerHTML, `style={`, tabIndex, autoFocus, `.focus(` or CSS transitions in the owned files; app.css is mobile-first using only `@media (min-width: 640px)` and `(min-width: 1024px)` breakpoints, logical properties and token-only values (stylelint passes).",
+    "`make lint-web` and `make test-web` pass (checkpoint CP-2/web part)."
   ]
 }
