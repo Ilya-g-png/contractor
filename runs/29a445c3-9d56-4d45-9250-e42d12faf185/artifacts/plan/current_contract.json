@@ -1,19 +1,19 @@
 {
-  "contract_id": "contract-0012",
+  "contract_id": "contract-0013",
   "selected_item_ids": [
-    "web-build-gate"
+    "fixtures-minimal-project"
   ],
   "selected_task_ids": [
-    "web-build-gate"
+    "fixtures-minimal-project"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Only web/scripts/check-build.mjs and web/scripts/check-build.test.mjs are created (INV-W6 assertions live in check-build.mjs); package.json, vite.config.ts and src/** are unchanged; only Node built-ins (zlib, fs, path) are used.",
-    "check-build.mjs reads dist/.vite/manifest.json, sums gzip level-9 size of the isEntry chunk plus transitive static imports (excluding dynamicImports) against an initial-route JS budget of 100000 bytes, and gzip level-9 of all dist/**/*.css against a 20000-byte CSS budget, printing `js-initial <n>/100000` and `css-total <n>/20000`.",
-    "Synthetic temp-dir tests: over-budget JS -> exit 1; over-budget CSS -> exit 1; inline <script> -> exit 1; `onclick=` (regex /\\son[a-z]+\\s*=/i) -> exit 1; missing manifest -> exit 1; a dynamic-import chunk is excluded from the JS sum; a compliant dist -> exit 0 with both lines printed.",
-    "INV-W6: an `https?://` reference in a src/href/@import/url( context anywhere under dist/ makes the gate exit 1.",
-    "INV-W5 on the real build: `make build-web` exits 0 and prints js-initial <= 100000 and css-total <= 20000.",
-    "`make install-web lint-web test-web build-web` passes in a clean clone with only Node and pnpm (checkpoint CP-2/web complete)."
+    "Files created are exactly the fixtures convention markdown at the fixtures/ top level, fixtures/minimal/dogwatch.toml and fixtures/minimal/src/acme_shop/{__init__.py,orders.py,payments.py}; no expected-report.json is hand-written.",
+    "dogwatch.toml follows the ARCH \u00a74.1 example: a [python] table and one [[python.packages]] entry with name = \"acme_shop\" and root = \"src\"; ASCII only with LF endings.",
+    "INV-F1: `git check-attr eol -- fixtures/minimal/dogwatch.toml` reports `lf` and `file` shows no CRLF in any fixture file.",
+    "The fixture directory name matches `^[a-z0-9]+(-[a-z0-9]+)*$` and at least two modules exist under src/acme_shop/; modules are inert (docstring and constants only, no side-effecting imports).",
+    "No pyproject.toml, setup.py or requirements*.txt exists under fixtures/ (FR-031).",
+    "The fixtures convention markdown documents the DC-12 convention (fixtures/<kebab-name>/ with dogwatch.toml, source tree, expected-report.json; static data never installed/imported/executed; goldens change only via `make regen-fixtures`) and notes the git-history sub-layout as pending OQ-8."
   ]
 }
