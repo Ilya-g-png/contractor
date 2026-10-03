@@ -1,10 +1,10 @@
 [
   {
-    "runtime_agent_id": "sdk-developer:4a162abf-e04e-454a-84b0-ed8e97a7a03a",
+    "runtime_agent_id": "sdk-developer:afbf6408-c92d-4d61-914c-1918e652c631",
     "run_id": "29a445c3-9d56-4d45-9250-e42d12faf185",
     "role": "developer",
     "read_roots": [
-      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/worktrees/runtime/29a445c3-9d56-4d45-9250-e42d12faf185/task/001-fixtures-minimal-project",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/worktrees/runtime/29a445c3-9d56-4d45-9250-e42d12faf185/task/001-fixtures-golden-harness",
       "/Users/iliaglushkov/Documents/sandbox/contractor",
       "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185",
       "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/artifacts",
@@ -12,14 +12,14 @@
       "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7"
     ],
     "write_roots": [
-      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/worktrees/runtime/29a445c3-9d56-4d45-9250-e42d12faf185/task/001-fixtures-minimal-project"
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/worktrees/runtime/29a445c3-9d56-4d45-9250-e42d12faf185/task/001-fixtures-golden-harness"
     ],
-    "scope_label": "fixtures-minimal-project",
+    "scope_label": "fixtures-golden-harness",
     "parent_agent_id": null,
     "active": false
   },
   {
-    "runtime_agent_id": "developer-verify:sdk-developer-4a162abf-e04e-454a-84b0-ed8e97a7a03a",
+    "runtime_agent_id": "developer-verify:sdk-developer-afbf6408-c92d-4d61-914c-1918e652c631",
     "run_id": "29a445c3-9d56-4d45-9250-e42d12faf185",
     "role": "reviewer",
     "read_roots": [
@@ -31,7 +31,7 @@
     ],
     "write_roots": [],
     "scope_label": null,
-    "parent_agent_id": "sdk-developer:4a162abf-e04e-454a-84b0-ed8e97a7a03a",
+    "parent_agent_id": "sdk-developer:afbf6408-c92d-4d61-914c-1918e652c631",
     "active": false
   }
 ]

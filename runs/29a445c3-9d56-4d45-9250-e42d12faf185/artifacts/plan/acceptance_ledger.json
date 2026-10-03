@@ -398,13 +398,19 @@
         "The fixtures convention markdown documents the DC-12 convention (fixtures/<kebab-name>/ with dogwatch.toml, source tree, expected-report.json; static data never installed/imported/executed; goldens change only via `make regen-fixtures`) and notes the git-history sub-layout as pending OQ-8."
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "passed": true,
+        "evidence": [
+          "Accept. Commit 176e16d adds exactly the five files the contract names. dogwatch.toml matches the ARCH \u00a74.1 shape, the modules contain only docstrings and constants, every fixture file is ASCII with LF endings, `.gitattributes` on the branch sets `fixtures/** text eol=lf`, and the README documents DC-12 and marks the git-history layout as pending OQ-8. No blocking findings.",
+          "The verifier's commands (pnpm lint/build/test in web/) do not cover fixtures/, so I checked every criterion against the task worktree directly.",
+          "Read-only governance blocked `git check-attr`. INV-F1 was confirmed from the worktree .gitattributes rule `fixtures/** text eol=lf` and from `file` output showing ASCII text with no CRLF for all five fixture files.",
+          "`file` labels the .py files 'Python script text executable' based on content only. The git diff shows mode 100644 for every file.",
+          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
+        ],
+        "verified_at": "2026-10-03T14:48:43.192996Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "fixtures-minimal-project:none",
       "attempts_since_progress": 0
     },
     {
@@ -516,5 +522,5 @@
     }
   ],
   "created_at": "2026-10-03T13:30:04.505951Z",
-  "updated_at": "2026-10-03T14:46:11.431645Z"
+  "updated_at": "2026-10-03T14:48:43.193007Z"
 }
