@@ -1,0 +1,40 @@
+{
+  "plugins": ["stylelint-declaration-strict-value"],
+  "allowEmptyInput": true,
+  "rules": {
+    "scale-unlimited/declaration-strict-value": [
+      [
+        "/color$/",
+        "/^margin/",
+        "/^padding/",
+        "gap",
+        "row-gap",
+        "column-gap",
+        "font-size",
+        "/radius$/"
+      ],
+      {
+        "expandShorthand": true,
+        "ignoreFunctions": false,
+        "ignoreValues": [
+          "0",
+          "auto",
+          "inherit",
+          "initial",
+          "unset",
+          "revert",
+          "currentColor",
+          "transparent"
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/styles/tokens.css"],
+      "rules": {
+        "scale-unlimited/declaration-strict-value": null
+      }
+    }
+  ]
+}
