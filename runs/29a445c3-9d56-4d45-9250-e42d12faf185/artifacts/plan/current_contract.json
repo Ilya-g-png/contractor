@@ -1,21 +1,20 @@
 {
-  "contract_id": "contract-0015",
+  "contract_id": "contract-0016",
   "selected_item_ids": [
-    "ci-workflow"
+    "root-quickstart-readme"
   ],
   "selected_task_ids": [
-    "ci-workflow"
+    "root-quickstart-readme"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Only .github/workflows/ci.yml is created; the Makefile is unchanged.",
-    "Triggers are exactly pull_request (branches [main]) and push (branches [main]); no pull_request_target, workflow_run or schedule.",
-    "INV-C1: top-level permissions is exactly `contents: read`; `grep 'secrets\\.'` and `grep pull_request_target` return nothing; no artifact upload step exists; every `uses:` matches `@[0-9a-f]{40}\\s+# v\\d+\\.\\d+\\.\\d+` and only actions/checkout, astral-sh/setup-uv, pnpm/action-setup and actions/setup-node are used.",
-    "setup-uv uses version-file from scanner/pyproject.toml / api/pyproject.toml with caching; setup-node uses node-version-file web/.node-version with pnpm cache keyed on web/pnpm-lock.yaml.",
-    "concurrency group `ci-${{ github.event.pull_request.number || github.ref }}` with cancel-in-progress: true; timeout-minutes: 10 on every job.",
-    "INV-C3: every `run:` value starts with `make ` and names only IC-2 targets; lint-scanner runs only on the 3.11 scanner entry and test-scanner on all entries.",
-    "The matrix expands to exactly the IC-8 status names: `scanner (3.11)`, `scanner (3.12)`, `scanner (3.13)`, `scanner (3.14)`, `api`, `web`, and `fixtures (<os>, <py>)` for ubuntu-24.04/macos-15 x 3.11/3.14 (10 total; 12 only if scanner-project-scaffold recorded 3.15 as included).",
-    "`actionlint` (or an equivalent workflow schema check) passes."
+    "Only /README.md is created or modified.",
+    "INV-C9: `wc -l README.md` <= 80 and every user-facing IC-2 Makefile target name appears (install, test, lint, format, per-area run/test/lint/format, test-fixtures, regen-fixtures, build-web, bench-api).",
+    "Prerequisites state make, uv 0.12.x, Node 24.x, pnpm 11.x, macOS/Linux only (Windows unsupported), and a scanner CPython range that matches scanner/pyproject.toml requires-python and classifiers.",
+    "Defaults state API 127.0.0.1:8000, web dev :5173, preview :4173, and the DOGWATCH_API_HOST / DOGWATCH_API_PORT / VITE_DOGWATCH_API_BASE_URL variables, with no secrets.",
+    "A 'Direction for later tickets (provisional)' block has one line per item, each containing the word `provisional`: auth via GitHub Actions OIDC JWT (RS256, JWKS-verified) or hashed project API key; HttpOnly SameSite=Lax session cookie plus CSRF token; zero-downtime expand-contract DB migrations; OpenTelemetry -> Collector -> Prometheus (metrics), Grafana Loki (logs), Grafana Tempo (traces); Terraform IaC with OCI image plus static assets, hosting undecided; GitHub Actions OIDC federation plus a cloud-provider secret manager (AWS Secrets Manager / GCP Secret Manager); blue-green rollout with a feature-flag kill-switch, CD-5 rollback = git revert of the merge commit.",
+    "Every deploy-related line contains `provisional`.",
+    "A branch-protection recommendation names the AC IC-8 required status names, and a recovery runbook lists clone -> install pinned tools -> `make install` -> `make test`."
   ]
 }
