@@ -1,21 +1,19 @@
 {
-  "contract_id": "contract-0007",
+  "contract_id": "contract-0008",
   "selected_item_ids": [
-    "api-http-surface"
+    "api-entrypoint-and-bench"
   ],
   "selected_task_ids": [
-    "api-http-surface"
+    "api-entrypoint-and-bench"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Only app.py, health.py, problems.py, middleware.py, log.py under api/src/dogwatch_api and test_health.py, test_openapi.py, test_problems.py, test_request_context.py under api/tests are created; pyproject.toml, uv.lock and settings.py are unchanged.",
-    "IC-3.1/IC-3.2/INV-P6: `GET /api/v1/health` returns 200 with the DC-5 body exactly; `/api/v1/openapi.json` has `openapi` starting `3.1`, `set(paths) == {\"/api/v1/health\"}` and a HealthStatus component; `/docs`, `/redoc` and `/api/v1/health/` return 404 (redirect_slashes=False).",
-    "INV-P2 error taxonomy: every non-2xx response is `application/problem+json` with keys exactly {type,title,status,detail,code}, status equal to the HTTP status and type `urn:dogwatch:problem:<code>`; tested codes are 404 not-found, 405 method-not-allowed (with Allow header), 422 validation-failed (no input echoed), 500 internal-error; reserved constants schema-invalid 400, in-flight 409, payload-too-large 413, idempotency-conflict 422 and rate-limited 429 exist in problems.py with no route using them.",
-    "422 and 500 paths are exercised only via test-only routes registered on a create_app() instance inside tests; the product app exposes no route beyond health and openapi (FR-043).",
-    "INV-P1: each request gets an X-Request-ID response header and exactly one DC-7 compact-JSON stdout log line with matching request_id and correct route (template; partial match for 405; null for 404); RequestContext is a pure ASGI outermost middleware.",
-    "INV-P3: the 500 body contains neither the exception message nor `Traceback`; its log line has level `error` and a non-empty error_traceback.",
-    "INV-P4: an inbound X-Request-ID of `\"a\"*128` is echoed; `\"a\"*129`, `x\\ny` and `\u00e9` are replaced by a UUID4 and the raw value appears in no log line. INV-P5: neither query `token=secret` nor an `Authorization: Bearer x` header appears in any log line.",
-    "`make lint-api test-api` passes."
+    "Only api/src/dogwatch_api/__main__.py, api/scripts/locustfile.py and api/tests/test_main.py are created; app.py and the other api-http-surface files, settings.py and pyproject.toml are unchanged.",
+    "main() calls load_settings; SettingsError prints the IC-4 message to stderr and exits 1; it binds the socket itself and runs `uvicorn.Server(Config(create_app(), access_log=False, workers=1)).run(sockets=[sock])` (single process, single worker).",
+    "INV-P7: with another socket holding a port, `python -m dogwatch_api` on that port exits 1 with stderr containing the port number and `DOGWATCH_API_PORT` and no retry on another port; EADDRNOTAVAIL/gaierror for DOGWATCH_API_HOST exits 1 with the IC-4 host message.",
+    "A subprocess smoke test starts the process on an ephemeral port and an HTTP GET to /api/v1/health returns the DC-5 body; `make run-api` serves on 127.0.0.1:8000.",
+    "locustfile.py defines a single HttpUser task `GET /api/v1/health`; `make bench-api` run headless against a live `make run-api` writes health_stats.csv whose Aggregated row has `95%` and `99%` columns (p95/p99 tooling for the SC-006 SLO of p95 <= 50 ms and p99 <= 100 ms at 20 concurrent users for 60 s, measured in acceptance).",
+    "`make lint-api test-api` passes (checkpoint CP-2/api)."
   ]
 }
