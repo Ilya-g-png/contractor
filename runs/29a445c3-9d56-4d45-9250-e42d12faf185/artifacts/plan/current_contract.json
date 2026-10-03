@@ -1,20 +1,20 @@
 {
-  "contract_id": "contract-0003",
+  "contract_id": "contract-0004",
   "selected_item_ids": [
-    "scanner-config-validation"
+    "scanner-report-contract"
   ],
   "selected_task_ids": [
-    "scanner-config-validation"
+    "scanner-report-contract"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Only scanner/src/dogwatch/config.py and scanner/tests/test_config.py are created; pyproject.toml, uv.lock and diagnostics.py are unchanged.",
-    "config.py exposes `load_policy(config_arg: str) -> PolicyConfig` and frozen `PackageDecl(name, root)` / `PolicyConfig(path_arg, raw, packages)` exactly per DC-2, raising DogwatchError from diagnostics.py on failure.",
-    "Every DC-1 stderr template has a test asserting the diagnostic id and each named placeholder value (never interpreter message text): V0 missing path; V1 directory-as-config and invalid UTF-8; V2 malformed TOML with correct line number on 3.11 and 3.14; V3 `[[python.rules]]`, `[openapi]`, `python.packages[0].include`, empty file, missing packages, wrong types, dotted name `a.b`; V4 missing directory, file-instead-of-directory, duplicate, split, nested.",
-    "A config with several V4 failures yields one Diagnostic per failure in DC-1 order (V4a per entry, then V4b over pairs i<j); a UTF-8 BOM fails as invalid TOML (utf-8 decode, G-7).",
-    "A package directory with zero .py files and one without __init__.py both return a valid PolicyConfig (AS-2.7).",
-    "INV-S1 (unit): with builtins.open, io.open, os.open, os.scandir and os.listdir monkeypatched to record calls, zero calls touch any path under a declared package directory during load_policy; config.py imports neither importlib nor ast; V4 uses only os.path.lexists/isdir/realpath.",
-    "`make test-scanner` and `make lint-scanner` (mypy strict at python_version 3.11) pass."
+    "Only scanner/src/dogwatch/report.py, scanner/schemas/report-0.1.schema.json, scanner/tests/test_report.py and scanner/tests/test_schema.py are created; config.py and pyproject.toml are unchanged.",
+    "`build_report(cfg: PolicyConfig, version: str) -> dict` sets policy.path to basename(cfg.path_arg), policy.digest.sha256 to sha256(cfg.raw).hexdigest(), findings to []; `serialize_canonical(obj) -> bytes` is exactly the DC-3 expression.",
+    "INV-D2: `Draft202012Validator.check_schema(schema)` passes, the schema `$id` is `urn:dogwatch:schema:report:0.1`, and build_report output validates against it.",
+    "The schema rejects each forbidden provenance field (commit_sha, object_format, dirty, base_sha, evaluation_date, scan_started_at, scan_finished_at, report_id), a non-empty findings array (`items: false`), and an extra key at every object level.",
+    "INV-D3: serialized bytes have no BOM and no `\\r`, end with `}\\n` and not `\\n\\n`, satisfy `serialize_canonical(json.loads(b)) == b`, and order top-level keys findings, policy, scanner, schema_version.",
+    "INV-D5: a config whose raw bytes contain non-ASCII comments yields a digest equal to hashlib.sha256(raw).hexdigest(); serialized bytes are identical across in-process TZ/LC_ALL monkeypatching.",
+    "`make test-scanner` and `make lint-scanner` pass."
   ]
 }

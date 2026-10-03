@@ -81,13 +81,21 @@
         "`make test-scanner` and `make lint-scanner` (mypy strict at python_version 3.11) pass."
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "passed": true,
+        "evidence": [
+          "Accepted. The commit adds only config.py and test_config.py. The V0\u2013V4 logic matches every DC-1 template, the multi-failure ordering and G-7, and the types match DC-2. The tests cover every template, AS-2.7 and the INV-S1 call recorder plus the import/os-call allowlist. ruff check, mypy strict and 45 tests passed on 3.14. Two LOW gaps remain: the verifier skipped `ruff format --check` and did not run Python 3.11. Static inspection shows no problem with either.",
+          "The diff stat (2 files, +554) was confirmed with git_inspect against the bridgit base branch.",
+          "Contract text read from artifacts/design/architecture_contracts.md: DC-1 (lines 363-401), DC-2 (lines 403-411) and G-7 (line 777).",
+          "The Makefile lint-scanner target is `ruff format --check . && ruff check . && mypy`. The runtime verification skipped `ruff format --check`; a static check found no lines over 88 chars.",
+          "Tests ran only on Python 3.14.7. The 3.11 V2 line/msg path was checked by static reasoning (the regex fallback for tomllib's '(at line N, column M)' suffix), not by execution.",
+          "Shell governance blocked running uv/ruff directly, so formatting and the 3.11 run could not be re-executed by the reviewer.",
+          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
+        ],
+        "verified_at": "2026-10-03T13:45:35.339806Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "scanner-config-validation:accept:none",
       "attempts_since_progress": 0
     },
     {
@@ -450,5 +458,5 @@
     }
   ],
   "created_at": "2026-10-03T13:30:04.505951Z",
-  "updated_at": "2026-10-03T13:38:52.972853Z"
+  "updated_at": "2026-10-03T13:45:35.339817Z"
 }
