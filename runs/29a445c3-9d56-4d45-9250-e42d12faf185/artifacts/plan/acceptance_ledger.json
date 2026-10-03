@@ -241,13 +241,20 @@
         "`make lint-api test-api` passes (checkpoint CP-2/api)."
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "passed": true,
+        "evidence": [
+          "Accepted. Commit 54cd274 adds only the three contracted files. __main__.py loads settings, binds its own socket, and runs `uvicorn.Server(Config(create_app(), access_log=False, workers=1)).run(sockets=[sock])`. It also turns port-in-use, unavailable-host and unresolvable-host errors into the IC-4 message with exit 1. The bench output in the worktree has an Aggregated row with 95% and 99% columns and 0 failures. One MEDIUM advisory (SO_REUSEADDR on macOS/BSD) and two LOW notes remain; none blocks.",
+          "Runtime verification ran ruff/mypy/pytest in scanner/ (161 scanner tests), not in api/, so it does not cover CP-2/api. I judged that criterion from the code and from the developer's api/.pytest_cache, which lists all 10 test_main node ids.",
+          "The only lastfailed entry, tests/test_main.py::test_module_serves_health_on_configured_port, does not exist in the committed test_main.py; it is left over from a renamed earlier version.",
+          "api/.bench/health_stats.csv (written 17:16 on 3 Oct, gitignored) shows 0 failures and an Aggregated row with 95% and 99% columns (5 ms and 6 ms). That is direct evidence that bench-api ran against a live run-api.",
+          "The bench-api host URL in the Makefile is redacted in the git_inspect output; the stats file shows requests to /api/v1/health succeeded.",
+          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
+        ],
+        "verified_at": "2026-10-03T14:19:10.345852Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "api-entrypoint-and-bench:accept:M-soreuseaddr-bsd-wildcard;L-other-oserror-traceback;L-stale-lastfailed",
       "attempts_since_progress": 0
     },
     {
@@ -483,5 +490,5 @@
     }
   ],
   "created_at": "2026-10-03T13:30:04.505951Z",
-  "updated_at": "2026-10-03T14:12:02.817723Z"
+  "updated_at": "2026-10-03T14:19:10.345865Z"
 }
