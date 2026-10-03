@@ -1,20 +1,20 @@
 {
-  "contract_id": "contract-0002",
+  "contract_id": "contract-0003",
   "selected_item_ids": [
-    "scanner-project-scaffold"
+    "scanner-config-validation"
   ],
   "selected_task_ids": [
-    "scanner-project-scaffold"
+    "scanner-config-validation"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Files created are exactly the U2 set: scanner/pyproject.toml, scanner/uv.lock, scanner/src/dogwatch/{__init__.py,py.typed,diagnostics.py}, scanner/tests/{__init__.py,conftest.py,test_diagnostics.py,test_isolation.py}; no other src module and no golden test directory is created.",
-    "pyproject.toml declares name `dogwatch`, version `0.1.0`, `requires-python = \">=3.11\"`, `dependencies = []`, classifiers 3.11-3.14, console script `dogwatch = \"dogwatch.cli:main\"`, build backend uv_build, `[tool.uv] required-version` 0.12.x, dev group {pytest, ruff, mypy, jsonschema}, ruff target-version py311, mypy strict with python_version 3.11 covering src and tests, pytest addopts `--strict-markers` with the `golden` marker registered.",
-    "`make install-scanner` and `make lint-scanner` pass in a clean clone that has only uv installed.",
-    "`UV_PYTHON=3.11 make test-scanner` and `UV_PYTHON=3.14 make test-scanner` both pass.",
-    "test_diagnostics asserts that render() of a DogwatchError with two diagnostics yields two lines each matching `^dogwatch:(config-invalid|config-not-found): .+$` followed by a trailing newline; DogwatchError with zero diagnostics raises; EXIT_OK=0, EXIT_GATE_FAILED=1, EXIT_ERROR=2.",
-    "test_isolation (INV-A1) asserts every import under scanner/src resolves to the stdlib or `dogwatch.*`, and that `[project].dependencies == []`.",
-    "uv.lock resolves for the whole supported CPython range; the 3.15 ceiling decision (included only if 3.15 is final and dev tools resolve) is recorded in this task's report."
+    "Only scanner/src/dogwatch/config.py and scanner/tests/test_config.py are created; pyproject.toml, uv.lock and diagnostics.py are unchanged.",
+    "config.py exposes `load_policy(config_arg: str) -> PolicyConfig` and frozen `PackageDecl(name, root)` / `PolicyConfig(path_arg, raw, packages)` exactly per DC-2, raising DogwatchError from diagnostics.py on failure.",
+    "Every DC-1 stderr template has a test asserting the diagnostic id and each named placeholder value (never interpreter message text): V0 missing path; V1 directory-as-config and invalid UTF-8; V2 malformed TOML with correct line number on 3.11 and 3.14; V3 `[[python.rules]]`, `[openapi]`, `python.packages[0].include`, empty file, missing packages, wrong types, dotted name `a.b`; V4 missing directory, file-instead-of-directory, duplicate, split, nested.",
+    "A config with several V4 failures yields one Diagnostic per failure in DC-1 order (V4a per entry, then V4b over pairs i<j); a UTF-8 BOM fails as invalid TOML (utf-8 decode, G-7).",
+    "A package directory with zero .py files and one without __init__.py both return a valid PolicyConfig (AS-2.7).",
+    "INV-S1 (unit): with builtins.open, io.open, os.open, os.scandir and os.listdir monkeypatched to record calls, zero calls touch any path under a declared package directory during load_policy; config.py imports neither importlib nor ast; V4 uses only os.path.lexists/isdir/realpath.",
+    "`make test-scanner` and `make lint-scanner` (mypy strict at python_version 3.11) pass."
   ]
 }

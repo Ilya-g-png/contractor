@@ -1,10 +1,10 @@
 [
   {
-    "runtime_agent_id": "sdk-developer:9ce4a74d-2879-4f7c-9948-10e0b6a80d2f",
+    "runtime_agent_id": "sdk-developer:4fca9f17-22f8-4278-b1f0-0a27419d7039",
     "run_id": "29a445c3-9d56-4d45-9250-e42d12faf185",
     "role": "developer",
     "read_roots": [
-      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/worktrees/runtime/29a445c3-9d56-4d45-9250-e42d12faf185/task/001-scanner-project-scaffold",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/worktrees/runtime/29a445c3-9d56-4d45-9250-e42d12faf185/task/001-scanner-config-validation",
       "/Users/iliaglushkov/Documents/sandbox/contractor",
       "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185",
       "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/artifacts",
@@ -12,14 +12,14 @@
       "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7"
     ],
     "write_roots": [
-      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/worktrees/runtime/29a445c3-9d56-4d45-9250-e42d12faf185/task/001-scanner-project-scaffold"
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/worktrees/runtime/29a445c3-9d56-4d45-9250-e42d12faf185/task/001-scanner-config-validation"
     ],
-    "scope_label": "scanner-project-scaffold",
+    "scope_label": "scanner-config-validation",
     "parent_agent_id": null,
     "active": false
   },
   {
-    "runtime_agent_id": "developer-verify:sdk-developer-9ce4a74d-2879-4f7c-9948-10e0b6a80d2f",
+    "runtime_agent_id": "developer-verify:sdk-developer-4fca9f17-22f8-4278-b1f0-0a27419d7039",
     "run_id": "29a445c3-9d56-4d45-9250-e42d12faf185",
     "role": "reviewer",
     "read_roots": [
@@ -31,7 +31,7 @@
     ],
     "write_roots": [],
     "scope_label": null,
-    "parent_agent_id": "sdk-developer:9ce4a74d-2879-4f7c-9948-10e0b6a80d2f",
+    "parent_agent_id": "sdk-developer:4fca9f17-22f8-4278-b1f0-0a27419d7039",
     "active": false
   }
 ]
