@@ -1,0 +1,5 @@
+[python]
+
+[[python.packages]]
+name = "acme_shop"
+root = "src"

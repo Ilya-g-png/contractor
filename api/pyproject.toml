@@ -1,0 +1,51 @@
+[project]
+name = "dogwatch-api"
+version = "0.1.0"
+description = "Dogwatch report service: a FastAPI app exposing the health endpoint."
+requires-python = "==3.14.*"
+dependencies = [
+    "fastapi>=0.142.2",
+    "uvicorn>=0.54.0",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.14",
+]
+
+[project.scripts]
+dogwatch-api = "dogwatch_api.__main__:main"
+
+[build-system]
+requires = ["uv_build>=0.12.6,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv]
+required-version = ">=0.12.0,<0.13.0"
+default-groups = ["dev"]
+
+[tool.ruff]
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers"
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "mypy>=2.4.0",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]
+bench = [
+    "locust>=2.46.6",
+]
