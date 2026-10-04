@@ -12,7 +12,7 @@
   "run_branch": "bridgit/e598a3d9-e934-4000-8140-2dafa7f8d2d7/29a445c3-9d56-4d45-9250-e42d12faf185",
   "base_branch": "main",
   "base_commit": "9998f986797c99c042b2865ac3afb470fb61c86f",
-  "active_worker_branch": null,
+  "active_worker_branch": "runtime/29a445c3-9d56-4d45-9250-e42d12faf185/task/001-acceptance-integration",
   "origin_jira_key": "CD-5",
   "seed_sources": [],
   "workspace_mode": "full_access",

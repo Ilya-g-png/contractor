@@ -1,0 +1,37 @@
+[
+  {
+    "runtime_agent_id": "sdk-developer:83ddad9c-a1e8-448d-9a06-dac64bb08f7f",
+    "run_id": "164a748c-a04f-4d96-9cbe-3519549fb59f",
+    "role": "developer",
+    "read_roots": [
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/164a748c-a04f-4d96-9cbe-3519549fb59f/worktrees/runtime/164a748c-a04f-4d96-9cbe-3519549fb59f/task/001-acceptance-integration",
+      "/Users/iliaglushkov/Documents/sandbox/contractor",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/164a748c-a04f-4d96-9cbe-3519549fb59f",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/164a748c-a04f-4d96-9cbe-3519549fb59f/artifacts",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/164a748c-a04f-4d96-9cbe-3519549fb59f/logs",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7"
+    ],
+    "write_roots": [
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/164a748c-a04f-4d96-9cbe-3519549fb59f/worktrees/runtime/164a748c-a04f-4d96-9cbe-3519549fb59f/task/001-acceptance-integration"
+    ],
+    "scope_label": "acceptance-integration",
+    "parent_agent_id": null,
+    "active": false
+  },
+  {
+    "runtime_agent_id": "developer-verify:sdk-developer-83ddad9c-a1e8-448d-9a06-dac64bb08f7f",
+    "run_id": "164a748c-a04f-4d96-9cbe-3519549fb59f",
+    "role": "reviewer",
+    "read_roots": [
+      "/Users/iliaglushkov/Documents/sandbox/contractor",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/164a748c-a04f-4d96-9cbe-3519549fb59f",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/164a748c-a04f-4d96-9cbe-3519549fb59f/artifacts",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/164a748c-a04f-4d96-9cbe-3519549fb59f/logs",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7"
+    ],
+    "write_roots": [],
+    "scope_label": null,
+    "parent_agent_id": "sdk-developer:83ddad9c-a1e8-448d-9a06-dac64bb08f7f",
+    "active": false
+  }
+]

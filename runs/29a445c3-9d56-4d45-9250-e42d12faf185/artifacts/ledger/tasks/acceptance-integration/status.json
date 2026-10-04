@@ -1,8 +1,8 @@
 {
   "task_id": "acceptance-integration",
-  "status": "queued",
-  "attempt": 1,
-  "version": 1,
+  "status": "failed",
+  "attempt": 7,
+  "version": 15,
   "claim_run_id": null,
   "claim_expires_at": null,
   "provider": "proxy",
@@ -24,7 +24,7 @@
   "followup_for": null,
   "deliverable_name": "Makefile",
   "summary": null,
-  "error": null,
+  "error": "Developer produced no committed changes.",
   "result_path": null,
   "final_markdown_path": null,
   "git_branch": null,
@@ -34,5 +34,5 @@
   "integration_status": null,
   "hard_block_request": null,
   "verification_disposition": null,
-  "write_scope_enforcement": null
+  "write_scope_enforcement": "preventive"
 }

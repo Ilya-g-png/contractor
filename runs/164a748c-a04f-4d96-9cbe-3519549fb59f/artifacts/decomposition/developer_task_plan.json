@@ -1,13 +1,19 @@
 {
-  "version": 1,
-  "items": [
+  "plan_id": "CD-5-bootstrap-monorepo",
+  "tasks": [
     {
-      "item_id": "root-foundation",
-      "source_task_ids": [
-        "root-foundation"
-      ],
+      "task_id": "root-foundation",
       "title": "Create root .gitignore, .gitattributes, .python-version and the full IC-2 Makefile task contract",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "Makefile",
+      "success_criteria": [
         "Only four root files are created: Makefile, .gitignore, .gitattributes, .python-version; no area directory (scanner/, api/, web/, fixtures/, .github/) is created and `git diff --name-only -- .am/` is empty (INV-A4).",
         "`make -n test`, `make -n lint`, `make -n format`, `make -n install` and `make -n build-web` each exit 0 under GNU make and under /usr/bin/make (BSD) on macOS, printing exactly the AC IC-2 commands in the order scanner, fixtures, api, web.",
         "Makefile defines every IC-2 target (install[-scanner|-api|-web], test[-scanner|-fixtures|-api|-web], lint[-...], format[-...], build-web, run-scanner, run-api, run-web, regen-fixtures, bench-api), all declared .PHONY, every recipe of the form `cd <area> && ...`, no GNU-only functions, UV_PYTHON passed through unchanged; bench-api invokes Locust (not an httpx script).",
@@ -16,31 +22,33 @@
         "`git check-ignore .playwright-mcp/x`, `.venv/`, `node_modules/`, `dist/`, `.env` match; `!.env.example` re-includes example files; `git check-ignore .am/x` does NOT match (no `.am` line).",
         ".python-version is a single line matching `^3\\.14\\.\\d+$`."
       ],
+      "stop_conditions": [
+        "Any change would be required under .am/** (platform-managed, read-only).",
+        "An IC-2 target cannot be expressed portably for both GNU make and BSD make after 3 attempts.",
+        "The task would need to write any file other than the four owned root files."
+      ],
+      "depends_on": [],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accept. Static inspection shows the 4-file root foundation meets every root-foundation criterion. The Makefile matches the IC-2 table in architecture_contracts.md:87-118 target for target, command for command and prerequisite for prerequisite. .gitattributes, .gitignore and .python-version meet their criteria. The diff touches only the four allowed files and nothing under .am/.",
-          "The diff, the commit ccfc113 and the IC-2 table at artifacts/design/architecture_contracts.md:87-118 were all inspected directly.",
-          "The worktree listing shows only .am, .git and the four new root files; there are no area directories.",
-          "I confirmed with grep that all 19 Makefile recipe lines start with a tab and `cd `, and found no GNU-only constructs.",
-          "The read-only role policy blocked running `make -n`, `git check-attr` and `git check-ignore`. Those criteria were checked by reading the files, not by running the commands.",
-          "The developer's verification_disposition was 'inconclusive' because no verification plan was synthesized. Reading the code directly found no defects.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T13:33:32.366473Z"
-      },
-      "last_findings_fingerprint": "root-foundation:none",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-001",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "."
+      ]
     },
     {
-      "item_id": "scanner-project-scaffold",
-      "source_task_ids": [
-        "scanner-project-scaffold"
-      ],
+      "task_id": "scanner-project-scaffold",
       "title": "Scaffold the scanner uv project, toolchain config, diagnostics catalogue and test scaffolding",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "scanner/pyproject.toml",
+      "success_criteria": [
         "Files created are exactly the U2 set: scanner/pyproject.toml, scanner/uv.lock, scanner/src/dogwatch/{__init__.py,py.typed,diagnostics.py}, scanner/tests/{__init__.py,conftest.py,test_diagnostics.py,test_isolation.py}; no other src module and no golden test directory is created.",
         "pyproject.toml declares name `dogwatch`, version `0.1.0`, `requires-python = \">=3.11\"`, `dependencies = []`, classifiers 3.11-3.14, console script `dogwatch = \"dogwatch.cli:main\"`, build backend uv_build, `[tool.uv] required-version` 0.12.x, dev group {pytest, ruff, mypy, jsonschema}, ruff target-version py311, mypy strict with python_version 3.11 covering src and tests, pytest addopts `--strict-markers` with the `golden` marker registered.",
         "`make install-scanner` and `make lint-scanner` pass in a clean clone that has only uv installed.",
@@ -49,29 +57,35 @@
         "test_isolation (INV-A1) asserts every import under scanner/src resolves to the stdlib or `dogwatch.*`, and that `[project].dependencies == []`.",
         "uv.lock resolves for the whole supported CPython range; the 3.15 ceiling decision (included only if 3.15 is final and dev tools resolve) is recorded in this task's report."
       ],
+      "stop_conditions": [
+        "uv 0.12.x or a CPython 3.11 interpreter cannot be obtained locally to resolve and test the lock.",
+        "Dev tools (pytest/ruff/mypy/jsonschema) fail to resolve on 3.11 or 3.14 after 3 attempts.",
+        "A change to the root Makefile appears necessary (owned by root-foundation; escalate instead)."
+      ],
+      "depends_on": [
+        "root-foundation"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accepted. The commit adds exactly the 9 U2 files. pyproject.toml matches every declared field, diagnostics.py and its tests meet the render/raise/exit-code criteria, and test_isolation enforces INV-A1. The task report records clean `make install-scanner`, `make lint-scanner` and `make test-scanner` runs on 3.11 and 3.14, and gives the reasoning for keeping 3.15 out of the supported range.",
-          "The runtime marked verification 'inconclusive', but its verification attempt passed: ruff check, mypy and pytest all exited 0. The runtime did not run `ruff format --check` (part of make lint-scanner); the developer's task_response.md says it ran clean, and I found no formatting problems reading the files.",
-          "The 3.15 ceiling decision is recorded in artifacts/ledger/tasks/scanner-project-scaffold/task_response.md, not in the structured developer output.",
-          "uv.lock was truncated in the supplied diff; I checked its header (requires-python, resolution-markers) and the dogwatch/dev-group entries that were visible.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T13:38:52.972838Z"
-      },
-      "last_findings_fingerprint": "scanner-project-scaffold:accept:none",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-002",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "scanner"
+      ]
     },
     {
-      "item_id": "scanner-config-validation",
-      "source_task_ids": [
-        "scanner-config-validation"
-      ],
+      "task_id": "scanner-config-validation",
       "title": "Implement staged V0-V4 policy-file validation producing PolicyConfig",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "scanner/src/dogwatch/config.py",
+      "success_criteria": [
         "Only scanner/src/dogwatch/config.py and scanner/tests/test_config.py are created; pyproject.toml, uv.lock and diagnostics.py are unchanged.",
         "config.py exposes `load_policy(config_arg: str) -> PolicyConfig` and frozen `PackageDecl(name, root)` / `PolicyConfig(path_arg, raw, packages)` exactly per DC-2, raising DogwatchError from diagnostics.py on failure.",
         "Every DC-1 stderr template has a test asserting the diagnostic id and each named placeholder value (never interpreter message text): V0 missing path; V1 directory-as-config and invalid UTF-8; V2 malformed TOML with correct line number on 3.11 and 3.14; V3 `[[python.rules]]`, `[openapi]`, `python.packages[0].include`, empty file, missing packages, wrong types, dotted name `a.b`; V4 missing directory, file-instead-of-directory, duplicate, split, nested.",
@@ -80,31 +94,36 @@
         "INV-S1 (unit): with builtins.open, io.open, os.open, os.scandir and os.listdir monkeypatched to record calls, zero calls touch any path under a declared package directory during load_policy; config.py imports neither importlib nor ast; V4 uses only os.path.lexists/isdir/realpath.",
         "`make test-scanner` and `make lint-scanner` (mypy strict at python_version 3.11) pass."
       ],
+      "stop_conditions": [
+        "A new dependency or pyproject.toml change is needed (escalate to scanner-project-scaffold owner).",
+        "The DC-1/DC-2 contract is ambiguous for a case not covered by an AC default.",
+        "tomllib line-number extraction cannot be made consistent across 3.11 and 3.14 after 3 attempts."
+      ],
+      "depends_on": [
+        "scanner-project-scaffold"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accepted. The commit adds only config.py and test_config.py. The V0\u2013V4 logic matches every DC-1 template, the multi-failure ordering and G-7, and the types match DC-2. The tests cover every template, AS-2.7 and the INV-S1 call recorder plus the import/os-call allowlist. ruff check, mypy strict and 45 tests passed on 3.14. Two LOW gaps remain: the verifier skipped `ruff format --check` and did not run Python 3.11. Static inspection shows no problem with either.",
-          "The diff stat (2 files, +554) was confirmed with git_inspect against the bridgit base branch.",
-          "Contract text read from artifacts/design/architecture_contracts.md: DC-1 (lines 363-401), DC-2 (lines 403-411) and G-7 (line 777).",
-          "The Makefile lint-scanner target is `ruff format --check . && ruff check . && mypy`. The runtime verification skipped `ruff format --check`; a static check found no lines over 88 chars.",
-          "Tests ran only on Python 3.14.7. The 3.11 V2 line/msg path was checked by static reasoning (the regex fallback for tomllib's '(at line N, column M)' suffix), not by execution.",
-          "Shell governance blocked running uv/ruff directly, so formatting and the 3.11 run could not be re-executed by the reviewer.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T13:45:35.339806Z"
-      },
-      "last_findings_fingerprint": "scanner-config-validation:accept:none",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-002",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "scanner/src/dogwatch",
+        "scanner/tests"
+      ]
     },
     {
-      "item_id": "scanner-report-contract",
-      "source_task_ids": [
-        "scanner-report-contract"
-      ],
+      "task_id": "scanner-report-contract",
       "title": "Implement report envelope builder, canonical serializer and JSON Schema 0.1",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "scanner/schemas/report-0.1.schema.json",
+      "success_criteria": [
         "Only scanner/src/dogwatch/report.py, scanner/schemas/report-0.1.schema.json, scanner/tests/test_report.py and scanner/tests/test_schema.py are created; config.py and pyproject.toml are unchanged.",
         "`build_report(cfg: PolicyConfig, version: str) -> dict` sets policy.path to basename(cfg.path_arg), policy.digest.sha256 to sha256(cfg.raw).hexdigest(), findings to []; `serialize_canonical(obj) -> bytes` is exactly the DC-3 expression.",
         "INV-D2: `Draft202012Validator.check_schema(schema)` passes, the schema `$id` is `urn:dogwatch:schema:report:0.1`, and build_report output validates against it.",
@@ -113,30 +132,38 @@
         "INV-D5: a config whose raw bytes contain non-ASCII comments yields a digest equal to hashlib.sha256(raw).hexdigest(); serialized bytes are identical across in-process TZ/LC_ALL monkeypatching.",
         "`make test-scanner` and `make lint-scanner` pass."
       ],
+      "stop_conditions": [
+        "The PolicyConfig/PackageDecl types in config.py diverge from the DC-2 signature (escalate to scanner-config-validation owner rather than editing config.py).",
+        "The DC-3 normative schema cannot be transcribed verbatim and still pass check_schema.",
+        "A dependency change in pyproject.toml would be required."
+      ],
+      "depends_on": [
+        "scanner-project-scaffold",
+        "scanner-config-validation"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accepted. The branch adds exactly the four allowed files, in one atomic commit with a clear message. report.py matches the contract: path is basename(path_arg), digest is sha256 of the raw bytes, findings is empty, and the serializer is exactly the DC-3 json.dumps expression. The schema and tests cover INV-D2, INV-D3, INV-D5, the forbidden fields and extra keys at every level. Ruff check, mypy and pytest (84 passed) all passed. No security issues were found.",
-          "verification_disposition was 'inconclusive', so I judged it directly. Ruff check, mypy and pytest all passed (84 tests, including 11 in test_report.py and 28 in test_schema.py).",
-          "`ruff format --check` (part of make lint-scanner) was not run by the runtime. I checked formatting by reading the files: line lengths are at most 88 and the wrapping looks like ruff's.",
-          "Confirmed the PolicyConfig fields (path_arg, raw, packages) in the branch's config.py, and that jsonschema is already a dev dependency in pyproject.toml.",
-          "Confirmed the four-file scope with `git diff --stat` against the base branch.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T13:48:47.906639Z"
-      },
-      "last_findings_fingerprint": "scanner-report-contract:none",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-002",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "scanner/src/dogwatch",
+        "scanner/schemas",
+        "scanner/tests"
+      ]
     },
     {
-      "item_id": "scanner-cli-and-output",
-      "source_task_ids": [
-        "scanner-cli-and-output"
-      ],
+      "task_id": "scanner-cli-and-output",
       "title": "Build the dogwatch CLI, atomic writer, exit-code mapping and end-to-end trust-boundary tests",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "scanner/src/dogwatch/cli.py",
+      "success_criteria": [
         "Only cli.py, output.py, __main__.py under scanner/src/dogwatch and test_cli.py, test_output.py, test_trust_boundary.py, test_resources.py under scanner/tests are created; config.py, report.py, diagnostics.py and pyproject.toml are unchanged.",
         "IC-1 response matrix: every row has a test asserting exit code, stdout, stderr and filesystem effect, including `dogwatch --version` -> `dogwatch 0.1.0\\n`, no subcommand -> exit 2, and `python -m dogwatch` behaving identically to the console script; processing order is parse -> V0-V4 -> output-target check -> build -> write -> exit.",
         "INV-S3: for each exit-2 case (four SC-013 seeds, V0, V2, V3, missing output directory, read-only directory, output == config including a symlink alias) a previously absent target remains absent, a pre-existing target keeps its bytes and mtime, and no `.*.tmp` file remains.",
@@ -147,30 +174,37 @@
         "Two consecutive `--output -` runs on the same tmp_path config give byte-identical stdout; tests build fixture-like trees under tmp_path and do not read the repository fixtures directory.",
         "`UV_PYTHON=<v> make test-scanner` passes for every supported CPython version and `make lint-scanner` passes (checkpoint CP-2/scanner)."
       ],
+      "stop_conditions": [
+        "A defect is found in config.py, report.py or diagnostics.py (escalate to the owning task; do not edit).",
+        "Peak RSS exceeds 200 MB and cannot be reduced without changing upstream modules.",
+        "Any required behaviour contradicts AC IC-1 and no AC default resolves it."
+      ],
+      "depends_on": [
+        "scanner-config-validation",
+        "scanner-report-contract"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accepted. Commit aaa73fe only adds the seven owned files. cli.py and output.py follow the C1/IC-1 contract and the IC-1.W atomic-write semantics, and the tests cover every response-matrix row, INV-S1/S2/S3/S4/S5/S7, entry-point equivalence and determinism. The runtime confirmed ruff check, mypy and pytest (161 passed); the developer reports `UV_PYTHON` runs on 3.11\u20133.14 plus `make lint-scanner` (including the format check). There are no blocking or medium findings.",
-          "Inspected commit aaa73fe with git_inspect: the file stat, the pre-existing pyproject.toml, Makefile, diagnostics.py, config.py and report.py, so the interface contracts (render format, EXIT_ERROR=2, load_policy diagnostics) line up with cli.py.",
-          "Read the U5 section of decomposition.md and the C1 matrix plus R-2 decision in implementation_plan.md \u00a77. R-2 explicitly allows the argparse `usage:` line on usage errors, which resolves the apparent conflict with the INV-S5 line regex.",
-          "verification_disposition=inconclusive: the runtime ran `uv run ruff check`, `uv run mypy` and `uv run pytest` on a single interpreter, all passing (161 tests). Multi-version `make test-scanner` and `ruff format --check` come from the developer's ledger task_response.md (3.11\u20133.14, 161 passed each), not from runtime confirmation.",
-          "Review was read-only. I did not run the tests myself.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T13:58:24.719662Z"
-      },
-      "last_findings_fingerprint": "scanner-cli-and-output:PASS:none-outstanding",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-002",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "scanner/src/dogwatch",
+        "scanner/tests"
+      ]
     },
     {
-      "item_id": "api-project-scaffold",
-      "source_task_ids": [
-        "api-project-scaffold"
-      ],
+      "task_id": "api-project-scaffold",
       "title": "Scaffold the API uv project, settings module and .env.example",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "api/pyproject.toml",
+      "success_criteria": [
         "Files created are exactly api/pyproject.toml, api/uv.lock, api/.env.example, api/src/dogwatch_api/{__init__.py,py.typed,settings.py}, api/tests/{__init__.py,conftest.py,test_settings.py,test_isolation.py}.",
         "pyproject.toml declares name `dogwatch-api`, version `0.1.0`, `requires-python = \"==3.14.*\"`, runtime dependencies exactly fastapi and uvicorn (no [standard] extra), console script `dogwatch-api = \"dogwatch_api.__main__:main\"`, dev group {pytest, httpx, ruff, mypy}, opt-in `bench` group {locust}, `[tool.uv] default-groups = [\"dev\"]`, required-version 0.12.x, ruff target py314, mypy strict.",
         "`make install-api` and `make lint-api` pass in a clean clone that has only uv installed.",
@@ -179,28 +213,35 @@
         "`uv sync --locked` does not install locust; `uv sync --locked --group bench` does.",
         "api/.env.example lists only DOGWATCH_API_HOST and DOGWATCH_API_PORT with non-secret example values (no secrets in config)."
       ],
+      "stop_conditions": [
+        "CPython 3.14 or uv 0.12.x is unavailable locally.",
+        "fastapi/uvicorn/locust fail to resolve on CPython 3.14 after 3 attempts.",
+        "A Makefile change appears necessary (escalate to root-foundation owner)."
+      ],
+      "depends_on": [
+        "root-foundation"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "I'm accepting this. The branch adds exactly the 10 contracted files and nothing else. pyproject.toml matches every declared field. settings.py produces the exact IC-4 messages, and the isolation tests enforce INV-A1 against the real scanner package name, `dogwatch`. One evidence gap: the runtime's verification ran in scanner/, not api/, so I judged the api-side install, lint and test criteria by reading the code instead. I found nothing blocking; two LOW notes are in the findings.",
-          "The runtime's verification attempt ran ruff, mypy and pytest in the scanner/ directory (161 scanner tests, 18 scanner source files), not api/. So none of the api criteria were machine-verified this run. I judged them by reading the branch files, the Makefile (install-api and lint-api recipes, lines 17-18 and 42-43) and architecture_contracts.md IC-4.",
-          "I didn't execute `make install-api`, `make lint-api` or `uv sync` myself, because review mode is read-only. Those criteria rest on inspecting lock/pyproject consistency, formatting and typing.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T14:03:34.587940Z"
-      },
-      "last_findings_fingerprint": "api-project-scaffold:accept:low-int-digit-limit,low-main-module-pending",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-003",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "api"
+      ]
     },
     {
-      "item_id": "api-http-surface",
-      "source_task_ids": [
-        "api-http-surface"
-      ],
+      "task_id": "api-http-surface",
       "title": "Implement the app factory, health route, RFC 9457 problems, RequestContext middleware and JSON logging",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "api/src/dogwatch_api/app.py",
+      "success_criteria": [
         "Only app.py, health.py, problems.py, middleware.py, log.py under api/src/dogwatch_api and test_health.py, test_openapi.py, test_problems.py, test_request_context.py under api/tests are created; pyproject.toml, uv.lock and settings.py are unchanged.",
         "IC-3.1/IC-3.2/INV-P6: `GET /api/v1/health` returns 200 with the DC-5 body exactly; `/api/v1/openapi.json` has `openapi` starting `3.1`, `set(paths) == {\"/api/v1/health\"}` and a HealthStatus component; `/docs`, `/redoc` and `/api/v1/health/` return 404 (redirect_slashes=False).",
         "INV-P2 error taxonomy: every non-2xx response is `application/problem+json` with keys exactly {type,title,status,detail,code}, status equal to the HTTP status and type `urn:dogwatch:problem:<code>`; tested codes are 404 not-found, 405 method-not-allowed (with Allow header), 422 validation-failed (no input echoed), 500 internal-error; reserved constants schema-invalid 400, in-flight 409, payload-too-large 413, idempotency-conflict 422 and rate-limited 429 exist in problems.py with no route using them.",
@@ -210,29 +251,36 @@
         "INV-P4: an inbound X-Request-ID of `\"a\"*128` is echoed; `\"a\"*129`, `x\\ny` and `\u00e9` are replaced by a UUID4 and the raw value appears in no log line. INV-P5: neither query `token=secret` nor an `Authorization: Bearer x` header appears in any log line.",
         "`make lint-api test-api` passes."
       ],
+      "stop_conditions": [
+        "A new dependency (e.g. a logging or middleware library) seems required (escalate to api-project-scaffold owner).",
+        "FastAPI's generated OpenAPI cannot be constrained to the single health path without adding product routes.",
+        "settings.py needs changes (owned by api-project-scaffold)."
+      ],
+      "depends_on": [
+        "api-project-scaffold"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accept. All eight criteria are met: only the 9 contracted files change, the health/OpenAPI surface is correct, every error response uses the problem+json format, RequestContext is pure ASGI and writes one log line per request, and request-id and secret handling are tested. The runtime's own checks ran in scanner/, not api/, so I adjudicated `make lint-api test-api` by reading the code and from api/.pytest_cache, which shows all 48 new tests collected and no failures from the developer's final api run. Only LOW advisories remain.",
-          "The runtime's verification_attempts ran `uv run ruff check`, `uv run mypy` and `uv run pytest` in scanner/, not api/, so the recorded run did not exercise `make lint-api test-api` for this task.",
-          "api/.pytest_cache/v/cache/nodeids (mtime Oct 3 17:08:55) lists every new test node in the diff, and there is no lastfailed file. api/.ruff_cache and api/.mypy_cache are from the same time, consistent with a green local lint-api/test-api run after the final edits.",
-          "Reviewer role governance prevents running commands, so these criteria were judged by reading the diff and the branch files (pyproject.toml, Makefile, __init__.py) through git_inspect.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T14:12:02.817708Z"
-      },
-      "last_findings_fingerprint": "api-http-surface:accept:low[problems.py:57-68-non-404-405-httpexception-becomes-500;problems.py:60-404-detail-reflects-path]",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-003",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "api/src/dogwatch_api",
+        "api/tests"
+      ]
     },
     {
-      "item_id": "api-entrypoint-and-bench",
-      "source_task_ids": [
-        "api-entrypoint-and-bench"
-      ],
+      "task_id": "api-entrypoint-and-bench",
       "title": "Add the self-binding API process entry point and the Locust health load profile",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "api/src/dogwatch_api/__main__.py",
+      "success_criteria": [
         "Only api/src/dogwatch_api/__main__.py, api/scripts/locustfile.py and api/tests/test_main.py are created; app.py and the other api-http-surface files, settings.py and pyproject.toml are unchanged.",
         "main() calls load_settings; SettingsError prints the IC-4 message to stderr and exits 1; it binds the socket itself and runs `uvicorn.Server(Config(create_app(), access_log=False, workers=1)).run(sockets=[sock])` (single process, single worker).",
         "INV-P7: with another socket holding a port, `python -m dogwatch_api` on that port exits 1 with stderr containing the port number and `DOGWATCH_API_PORT` and no retry on another port; EADDRNOTAVAIL/gaierror for DOGWATCH_API_HOST exits 1 with the IC-4 host message.",
@@ -240,30 +288,39 @@
         "locustfile.py defines a single HttpUser task `GET /api/v1/health`; `make bench-api` run headless against a live `make run-api` writes health_stats.csv whose Aggregated row has `95%` and `99%` columns (p95/p99 tooling for the SC-006 SLO of p95 <= 50 ms and p99 <= 100 ms at 20 concurrent users for 60 s, measured in acceptance).",
         "`make lint-api test-api` passes (checkpoint CP-2/api)."
       ],
+      "stop_conditions": [
+        "create_app() or settings behaviour contradicts IC-3/IC-4 (escalate to the owning task).",
+        "The Makefile bench-api/run-api recipes do not match the locustfile location or CSV prefix (escalate to acceptance-integration for drift fix).",
+        "locust is not installable via the bench group."
+      ],
+      "depends_on": [
+        "api-http-surface"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accepted. Commit 54cd274 adds only the three contracted files. __main__.py loads settings, binds its own socket, and runs `uvicorn.Server(Config(create_app(), access_log=False, workers=1)).run(sockets=[sock])`. It also turns port-in-use, unavailable-host and unresolvable-host errors into the IC-4 message with exit 1. The bench output in the worktree has an Aggregated row with 95% and 99% columns and 0 failures. One MEDIUM advisory (SO_REUSEADDR on macOS/BSD) and two LOW notes remain; none blocks.",
-          "Runtime verification ran ruff/mypy/pytest in scanner/ (161 scanner tests), not in api/, so it does not cover CP-2/api. I judged that criterion from the code and from the developer's api/.pytest_cache, which lists all 10 test_main node ids.",
-          "The only lastfailed entry, tests/test_main.py::test_module_serves_health_on_configured_port, does not exist in the committed test_main.py; it is left over from a renamed earlier version.",
-          "api/.bench/health_stats.csv (written 17:16 on 3 Oct, gitignored) shows 0 failures and an Aggregated row with 95% and 99% columns (5 ms and 6 ms). That is direct evidence that bench-api ran against a live run-api.",
-          "The bench-api host URL in the Makefile is redacted in the git_inspect output; the stats file shows requests to /api/v1/health succeeded.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T14:19:10.345852Z"
-      },
-      "last_findings_fingerprint": "api-entrypoint-and-bench:accept:M-soreuseaddr-bsd-wildcard;L-other-oserror-traceback;L-stale-lastfailed",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-003",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "api/src/dogwatch_api",
+        "api/scripts",
+        "api/tests"
+      ]
     },
     {
-      "item_id": "web-toolchain-scaffold",
-      "source_task_ids": [
-        "web-toolchain-scaffold"
-      ],
+      "task_id": "web-toolchain-scaffold",
       "title": "Scaffold the pnpm web project with Vite/Vitest/TS/ESLint/Prettier/stylelint config, index.html and test harness",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md",
+        "artifacts/design/component_contracts.md",
+        "artifacts/design/ui_specification.md"
+      ],
+      "deliverable_name": "web/package.json",
+      "success_criteria": [
         "Files created are exactly the U9 set: web/{package.json,pnpm-lock.yaml,.node-version,.env.example,tsconfig.json[,tsconfig.node.json],vite.config.ts,eslint.config.js,.prettierrc.json,.prettierignore,.stylelintrc.json,index.html}, web/src/vite-env.d.ts, web/src/test/{setup.ts,axe.ts,toolchain.test.ts}; nothing under web/scripts and no main.tsx.",
         "package.json is private, `type: module`, `packageManager: pnpm@11.x.y`, `engines.node: 24.x`, browserslist exactly per ARCH \u00a76.21 (last 2 Chrome/Edge/Firefox/Safari/iOS), scripts named exactly dev/build/preview/test/lint/format with IC-2 commands (`build` ends with `node scripts/check-build.mjs`), dependencies exactly {react, react-dom}, and every dev dependency the web lane needs in CD-5.",
         "Rendering strategy is CSR only: vite.config.ts sets `appType: \"spa\"`, `build.manifest: true` (content-hashed assets), `modulePreload.polyfill: false`, build.target/cssTarget from browserslistToEsbuild() with no literal target array; no SSR entry exists.",
@@ -273,30 +330,39 @@
         "INV-W7 (analytics/consent guard, no offline worker): a throwaway file using `localStorage.setItem`, `document.cookie`, `sessionStorage`, `indexedDB` or `navigator.serviceWorker.register` fails `pnpm exec eslint`; a literal hex colour in a non-token .css file fails `pnpm exec stylelint` (strict-value on color/spacing/font-size/radius, src/styles/tokens.css ignored); seeded files are not committed.",
         "index.html has `lang=\"en\"`, `<title>Dogwatch</title>`, viewport `width=device-width, initial-scale=1` without maximum-scale, exactly one `<script type=\"module\" src=\"/src/main.tsx\">`, no inline script and no `on[a-z]+=` attribute; `pnpm exec prettier --check .` passes."
       ],
+      "stop_conditions": [
+        "Node 24 or pnpm 11 is unavailable locally.",
+        "Vite 8 or a required plugin fails to resolve under pnpm 11 minimumReleaseAge after 3 attempts.",
+        "A dependency needed by a later web task cannot be identified from the component contracts (escalate before freezing the lockfile)."
+      ],
+      "depends_on": [
+        "root-foundation"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accept. All 15 files in commit d7d716f are exactly the U9 set, with no web/scripts and no main.tsx, and each criterion checks out against the code. `pnpm run lint` passed (prettier, eslint, stylelint and tsc). The failing `pnpm run build` is expected: this slice is required to leave out src/main.tsx and scripts/check-build.mjs, and the build needs both.",
-          "The verifier's `pnpm run lint` exited 0, covering prettier --check, eslint, stylelint and tsc --noEmit.",
-          "The `pnpm run build` failure is expected: index.html must reference /src/main.tsx and the build script must call scripts/check-build.mjs, but the contract forbids creating either in this slice.",
-          "The git_inspect output showed the proxy target as [redacted-secret]. Reading the workspace file confirmed it is http://127.0.0.1:8000 (vite.config.ts:7).",
-          "`make test-web` and the INV-W7 seeded-file checks were not machine-run. I judged them by reading toolchain.test.ts, eslint.config.js and .stylelintrc.json; the review role is read-only, so I could not run them.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T14:29:01.395060Z"
-      },
-      "last_findings_fingerprint": "web-toolchain-scaffold:accept:none",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-004",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "web",
+        "web/src",
+        "web/src/test"
+      ]
     },
     {
-      "item_id": "web-core-modules",
-      "source_task_ids": [
-        "web-core-modules"
-      ],
+      "task_id": "web-core-modules",
       "title": "Implement strings, design tokens, config, router resolver and health client",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md",
+        "artifacts/design/component_contracts.md",
+        "artifacts/design/ui_specification.md"
+      ],
+      "deliverable_name": "web/src/api/health.ts",
+      "success_criteria": [
         "Only web/src/{strings.ts,config.ts,router.ts,router.test.ts,strings.test.ts}, web/src/api/{health.ts,health.test.ts} and web/src/styles/tokens.css are created; package.json, lockfile and configs are unchanged.",
         "INV-W9 routing: resolveView(\"/\") === \"home\"; \"/x\", \"/index.html\", \"/a/b\", \"/x/\" and \"\" each resolve to \"not-found\" (history paths, no hash routing).",
         "IC-5.1 API consumption with fetch stubbed: 200 {\"status\":\"ok\"} -> \"available\"; 200 {\"status\":\"degraded\"}, 200 non-JSON, 503, rejected fetch and timeout (AbortSignal.timeout stubbed via vi.spyOn) -> \"unavailable\"; the promise never rejects; the request URL is /api/v1/health with Accept: application/json; baseUrl \"/x//\" becomes \"/x/health\"; the signal combines the caller signal with a 5000 ms timeout.",
@@ -305,29 +371,39 @@
         "tokens.css defines every UI \u00a77.1-\u00a77.4 token plus --layout-max-width: 64rem and --color-focus, sets color-scheme: light, and carries a `/* contrast <fg> on <bg>: <ratio>:1 */` comment per UI \u00a75.4 text pair with every ratio >= 4.5:1 (WCAG 2.2 AA SC 1.4.3).",
         "`pnpm exec stylelint src/styles/tokens.css`, `pnpm exec tsc --noEmit` and `make test-web` pass."
       ],
+      "stop_conditions": [
+        "A token or string required by UI/CC contracts is missing a value and no OQ default applies.",
+        "AbortSignal.any or AbortSignal.timeout is unavailable in the jsdom/Node test environment and cannot be polyfilled without a new dependency.",
+        "package.json or vite.config.ts would need to change (escalate to web-toolchain-scaffold owner)."
+      ],
+      "depends_on": [
+        "web-toolchain-scaffold"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accept. The commit b70401f adds only the 8 allowed files, and each one matches the contract: router, health client, config, the X-1 string catalogue, and tokens.css checked against UI \u00a75.4 and \u00a77.1\u20137.4. The failing `pnpm run build` comes from earlier work: index.html points at src/main.tsx, which the scaffold task was told to leave out and this task may not create. `pnpm run lint` (prettier, eslint, stylelint, tsc over src) passed.",
-          "The verifier ran `pnpm run lint` (passed) and `pnpm run build` (failed), but never ran `make test-web` / vitest. My role cannot run commands, so I checked the tests by reading them line by line instead. The config has unstubGlobals and restoreMocks enabled, and setup.ts does not interfere. The mocks of AbortSignal.timeout and AbortSignal.any are consistent with health.ts.",
-          "The build failure traces to index.html:10 referencing the missing src/main.tsx. That gap already existed after the scaffold task, and its acceptance (9bdbb06) recorded it as expected.",
-          "Spec sources used: artifacts/design/ui_specification.md \u00a75.4 and \u00a77.1-7.4, and artifacts/design/component_contracts.md X-1.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T14:34:07.549305Z"
-      },
-      "last_findings_fingerprint": "web-core-modules:accept:none",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-004",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "web/src",
+        "web/src/api",
+        "web/src/styles"
+      ]
     },
     {
-      "item_id": "web-components-and-views",
-      "source_task_ids": [
-        "web-components-and-views"
-      ],
+      "task_id": "web-components-and-views",
       "title": "Build App, Shell, HomeView, ApiStatus, NotFoundView, ErrorBoundary, ErrorFallback, entry, component CSS and a11y tests",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md",
+        "artifacts/design/component_contracts.md",
+        "artifacts/design/ui_specification.md"
+      ],
+      "deliverable_name": "web/src/App.tsx",
+      "success_criteria": [
         "Only main.tsx, App.tsx, Shell.tsx, ErrorBoundary.tsx, ErrorFallback.tsx, a11y.test.tsx, views/HomeView.tsx, views/NotFoundView.tsx, components/ApiStatus.tsx, styles/app.css and their *.test.tsx files are created; strings.ts, tokens.css, health.ts, router.ts, config.ts, configs and package.json are unchanged.",
         "Every component-contract invariant checked by unit, axe or static passes: APP-1..5, SHL-1..4, HOME-1..5, STS-1..11, NF-1..6, EB-1..5, EF-1..7.",
         "State management: ApiStatus holds view-local state with one health request per mount and no global store or router library; INV-W1/W2/W3 hold: a late `ok` after a terminal state does not change text, unmount aborts the request, and an HTML-bearing response body never reaches the DOM.",
@@ -336,30 +412,38 @@
         "Static checks: no dangerouslySetInnerHTML, `style={`, tabIndex, autoFocus, `.focus(` or CSS transitions in the owned files; app.css is mobile-first using only `@media (min-width: 640px)` and `(min-width: 1024px)` breakpoints, logical properties and token-only values (stylelint passes).",
         "`make lint-web` and `make test-web` pass (checkpoint CP-2/web part)."
       ],
+      "stop_conditions": [
+        "A needed string key or design token is missing from strings.ts/tokens.css (escalate to web-core-modules owner; do not edit).",
+        "A component contract invariant conflicts with another and no CC/UI default resolves it.",
+        "A new npm dependency would be required."
+      ],
+      "depends_on": [
+        "web-core-modules"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accept. The commit only touches the 17 files this task is allowed to create, and the code meets each component contract (APP, SHL, HOME, STS, NF, EB, EF), INV-W1/W2/W3/W4/W8 and the static rules. `pnpm run lint` passed (prettier, eslint, stylelint and tsc). The one failing check, `pnpm run build`, failed only because `web/scripts/check-build.mjs` is missing. That file is called from `package.json`, which this task must not change, so the failure belongs to a different contract item and is not part of this task's lint-web/test-web checkpoint.",
-          "verification_disposition=failed comes only from `pnpm run build`: node could not find web/scripts/check-build.mjs (web/scripts/ does not exist in the worktree). That file belongs to another contract item; this task must leave package.json and configs unchanged.",
-          "`pnpm run lint` (prettier && eslint && stylelint && tsc --noEmit) exited 0, which also confirms the test files type-check.",
-          "`pnpm run test` was not run by the verifier, and the reviewer role cannot run commands. I adjudicated test-web by reading every test against the workspace sources (strings.ts, router.ts, api/health.ts, test/axe.ts, test/setup.ts, vite.config.ts).",
-          "Diff stat confirms no files outside the allowlist were modified.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T14:42:48.791330Z"
-      },
-      "last_findings_fingerprint": "web-components-and-views:accept:none-outstanding",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-004",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "web/src",
+        "web/src/views",
+        "web/src/components",
+        "web/src/styles"
+      ]
     },
     {
-      "item_id": "web-build-gate",
-      "source_task_ids": [
-        "web-build-gate"
-      ],
+      "task_id": "web-build-gate",
       "title": "Implement the post-build JS/CSS budget and CSP gate check-build.mjs",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "web/scripts/check-build.mjs",
+      "success_criteria": [
         "Only web/scripts/check-build.mjs and web/scripts/check-build.test.mjs are created (INV-W6 assertions live in check-build.mjs); package.json, vite.config.ts and src/** are unchanged; only Node built-ins (zlib, fs, path) are used.",
         "check-build.mjs reads dist/.vite/manifest.json, sums gzip level-9 size of the isEntry chunk plus transitive static imports (excluding dynamicImports) against an initial-route JS budget of 100000 bytes, and gzip level-9 of all dist/**/*.css against a 20000-byte CSS budget, printing `js-initial <n>/100000` and `css-total <n>/20000`.",
         "Synthetic temp-dir tests: over-budget JS -> exit 1; over-budget CSS -> exit 1; inline <script> -> exit 1; `onclick=` (regex /\\son[a-z]+\\s*=/i) -> exit 1; missing manifest -> exit 1; a dynamic-import chunk is excluded from the JS sum; a compliant dist -> exit 0 with both lines printed.",
@@ -367,29 +451,36 @@
         "INV-W5 on the real build: `make build-web` exits 0 and prints js-initial <= 100000 and css-total <= 20000.",
         "`make install-web lint-web test-web build-web` passes in a clean clone with only Node and pnpm (checkpoint CP-2/web complete)."
       ],
+      "stop_conditions": [
+        "The real build exceeds the 100 KB JS or 20 KB CSS gzip budget (escalate to web-components-and-views owner; do not modify src).",
+        "Vite 8's manifest shape differs from the IC-6 assumptions in a way the contract does not cover.",
+        "The build script name or command in package.json does not invoke scripts/check-build.mjs."
+      ],
+      "depends_on": [
+        "web-toolchain-scaffold",
+        "web-components-and-views"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accepted. The branch adds only web/scripts/check-build.mjs and its test, and uses only Node built-ins (zlib, fs, path). The script follows the manifest's static-import graph from the isEntry chunk and skips dynamic imports, applies both budgets, and runs the inline-script, on*= and external-origin checks. The tests cover every required synthetic case. Running `pnpm run build` on the real app printed js-initial 68401/100000 and css-total 990/20000, and lint and the 107 tests passed.",
-          "The verification_disposition was 'inconclusive' even though all three commands (lint, build, test) passed. I settled it by reading the diff and the branch's package.json, vite.config.ts and Makefile with git_inspect.",
-          "The developer supplied no acceptance_criteria_check or key_changes. Each criterion was checked directly against the diff.",
-          "The clean-clone `make` criterion rests on the equivalent pnpm commands run in the task worktree; no separate clean-clone run was supplied.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T14:46:11.431627Z"
-      },
-      "last_findings_fingerprint": "web-build-gate:accept:none",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-004",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "web/scripts"
+      ]
     },
     {
-      "item_id": "fixtures-minimal-project",
-      "source_task_ids": [
-        "fixtures-minimal-project"
-      ],
+      "task_id": "fixtures-minimal-project",
       "title": "Add the fixture convention document and the static minimal fixture project",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "fixtures/minimal/dogwatch.toml",
+      "success_criteria": [
         "Files created are exactly the fixtures convention markdown at the fixtures/ top level, fixtures/minimal/dogwatch.toml and fixtures/minimal/src/acme_shop/{__init__.py,orders.py,payments.py}; no expected-report.json is hand-written.",
         "dogwatch.toml follows the ARCH \u00a74.1 example: a [python] table and one [[python.packages]] entry with name = \"acme_shop\" and root = \"src\"; ASCII only with LF endings.",
         "INV-F1: `git check-attr eol -- fixtures/minimal/dogwatch.toml` reports `lf` and `file` shows no CRLF in any fixture file.",
@@ -397,29 +488,34 @@
         "No pyproject.toml, setup.py or requirements*.txt exists under fixtures/ (FR-031).",
         "The fixtures convention markdown documents the DC-12 convention (fixtures/<kebab-name>/ with dogwatch.toml, source tree, expected-report.json; static data never installed/imported/executed; goldens change only via `make regen-fixtures`) and notes the git-history sub-layout as pending OQ-8."
       ],
+      "stop_conditions": [
+        ".gitattributes does not yet enforce LF for fixtures/** (root-foundation incomplete).",
+        "The ARCH \u00a74.1 config example conflicts with DC-1 validation rules."
+      ],
+      "depends_on": [
+        "root-foundation"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accept. Commit 176e16d adds exactly the five files the contract names. dogwatch.toml matches the ARCH \u00a74.1 shape, the modules contain only docstrings and constants, every fixture file is ASCII with LF endings, `.gitattributes` on the branch sets `fixtures/** text eol=lf`, and the README documents DC-12 and marks the git-history layout as pending OQ-8. No blocking findings.",
-          "The verifier's commands (pnpm lint/build/test in web/) do not cover fixtures/, so I checked every criterion against the task worktree directly.",
-          "Read-only governance blocked `git check-attr`. INV-F1 was confirmed from the worktree .gitattributes rule `fixtures/** text eol=lf` and from `file` output showing ASCII text with no CRLF for all five fixture files.",
-          "`file` labels the .py files 'Python script text executable' based on content only. The git diff shows mode 100644 for every file.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T14:48:43.192996Z"
-      },
-      "last_findings_fingerprint": "fixtures-minimal-project:none",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-005",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "fixtures"
+      ]
     },
     {
-      "item_id": "fixtures-golden-harness",
-      "source_task_ids": [
-        "fixtures-golden-harness"
-      ],
+      "task_id": "fixtures-golden-harness",
       "title": "Build the golden discovery/determinism harness, regenerate command and checked-in golden report",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "scanner/tests/golden/test_fixture_goldens.py",
+      "success_criteria": [
         "Only scanner/tests/golden/{__init__.py,harness.py,test_fixture_goldens.py,regenerate.py} and fixtures/minimal/expected-report.json are created; scanner/src, scanner/pyproject.toml, other scanner/tests files and fixture inputs are unchanged.",
         "Discovery is a sorted glob of <repo>/fixtures/*/dogwatch.toml; each run uses argv [sys.executable, \"-m\", \"dogwatch\", \"check\", \"--config\", <abs>, \"--output\", <tmp>/out.json], a fresh temp cwd, and the IC-7 five-variant environment (TZ, LC_*, LANG, PYTHONHASHSEED, HOME stripped; fresh temp HOME; random PYTHONHASHSEED); a missing locale does not fail the harness; every test carries @pytest.mark.golden and asserts shutil.which(\"dogwatch\") resolves.",
         "`make test-scanner` collects zero golden tests and `make test-fixtures` runs only golden tests.",
@@ -429,30 +525,37 @@
         "INV-F2: after `make test-fixtures`, `git status --porcelain fixtures/` is empty; `make regen-fixtures` reproduces identical bytes so `git diff --exit-code fixtures/` is clean; `make run-scanner` stdout is byte-identical to the golden (checkpoint CP-3).",
         "The choice of importing the scanner atomic writer vs a local reimplementation in regenerate.py (D-1) is recorded in the task report."
       ],
+      "stop_conditions": [
+        "The scanner produces non-deterministic output across variants (escalate to scanner-cli-and-output owner; do not edit scanner/src).",
+        "The minimal fixture config is rejected by the scanner (escalate to fixtures-minimal-project owner).",
+        "Makefile test-fixtures/regen-fixtures recipes do not match the harness location (escalate for Makefile drift fix)."
+      ],
+      "depends_on": [
+        "scanner-cli-and-output",
+        "fixtures-minimal-project"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accept. The commit adds only the 5 files the contract names. The harness follows IC-7: sorted discovery, the required argv, a fresh temp cwd and HOME, the 5 environment variants and a random PYTHONHASHSEED. The golden byte-matches the scanner's canonical serializer (268 bytes, sorted keys, trailing newline). The Makefile/pytest marker split routes golden tests correctly. Runtime-only criteria were not machine-run (verification ran only the web toolchain), so they rest on code reading plus on-disk artifacts: the golden test module was compiled under CPython 3.11 and 3.14, and regenerate.py ran just before the golden was written.",
-          "The runtime verification ran only the web/ pnpm lint/build/test commands. No `make test-fixtures`, `test-scanner`, `regen-fixtures` or `run-scanner` output was supplied. The runtime criteria were judged by reading the code (harness.py, regenerate.py, test_fixture_goldens.py, cli.py, output.py, report.py, Makefile, pyproject.toml) plus on-disk artifacts.",
-          "On-disk evidence: tests/golden/__pycache__ has pytest-rewritten pyc files for CPython 3.11 and 3.14, and regenerate pyc files for 3.13 and 3.14. The golden's mtime (17:51) matches regenerate.cpython-314.pyc.",
-          "The golden's byte count (268) matches what I computed by hand from serialize_canonical for this report. dogwatch.toml (62 bytes) is unchanged.",
-          "The git_inspect tool targets the primary repo, which still contains commit 153af60. Its message body records D-1.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T14:54:56.101631Z"
-      },
-      "last_findings_fingerprint": "fixtures-golden-harness:accept:low-only[d1-in-commit-body,leak-substring-fragility,no-scanner-runtime-verification]",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-005",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "scanner/tests/golden",
+        "fixtures/minimal"
+      ]
     },
     {
-      "item_id": "ci-workflow",
-      "source_task_ids": [
-        "ci-workflow"
-      ],
+      "task_id": "ci-workflow",
       "title": "Write the GitHub Actions CI workflow that calls only Makefile targets",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": ".github/workflows/ci.yml",
+      "success_criteria": [
         "Only .github/workflows/ci.yml is created; the Makefile is unchanged.",
         "Triggers are exactly pull_request (branches [main]) and push (branches [main]); no pull_request_target, workflow_run or schedule.",
         "INV-C1: top-level permissions is exactly `contents: read`; `grep 'secrets\\.'` and `grep pull_request_target` return nothing; no artifact upload step exists; every `uses:` matches `@[0-9a-f]{40}\\s+# v\\d+\\.\\d+\\.\\d+` and only actions/checkout, astral-sh/setup-uv, pnpm/action-setup and actions/setup-node are used.",
@@ -462,29 +565,38 @@
         "The matrix expands to exactly the IC-8 status names: `scanner (3.11)`, `scanner (3.12)`, `scanner (3.13)`, `scanner (3.14)`, `api`, `web`, and `fixtures (<os>, <py>)` for ubuntu-24.04/macos-15 x 3.11/3.14 (10 total; 12 only if scanner-project-scaffold recorded 3.15 as included).",
         "`actionlint` (or an equivalent workflow schema check) passes."
       ],
+      "stop_conditions": [
+        "Network or gh access to resolve action commit SHAs is unavailable \u2014 escalate; never fall back to tag pins.",
+        "A required Makefile target is missing or misnamed (escalate to acceptance-integration for drift fix).",
+        "The 3.15 ceiling decision from scanner-project-scaffold is not recorded."
+      ],
+      "depends_on": [
+        "root-foundation",
+        "scanner-project-scaffold",
+        "api-project-scaffold",
+        "web-toolchain-scaffold"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accept: .github/workflows/ci.yml is the only change, and it meets every ci-workflow criterion. Permissions are contents: read only, all actions are SHA-pinned from the allowlist, every run step is a valid IC-2 make target, the 10 job names match IC-8, and the version files and lock files it references exist. actionlint could not be executed by the reviewer role, so the schema was checked by reading the file.",
-          "verification_disposition was 'inconclusive'. The runtime verifier ran only the web lint, build and test (all exit 0) and did not run actionlint, so the reviewer checked every criterion by reading the files.",
-          "actionlint is installed at /opt/homebrew/bin but is not on the reviewer role's allowed command list, so the schema criterion was checked by reading the workflow, not by running the tool.",
-          "Whether the pinned action versions exist upstream (e.g. checkout v7.0.1, setup-uv v10.2.0) could not be checked offline; the SHA and comment format does match the INV-C1 regex.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T14:59:16.338682Z"
-      },
-      "last_findings_fingerprint": "ci-workflow:none",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-006",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        ".github/workflows"
+      ]
     },
     {
-      "item_id": "root-quickstart-readme",
-      "source_task_ids": [
-        "root-quickstart-readme"
-      ],
+      "task_id": "root-quickstart-readme",
       "title": "Write the root quickstart README with provisional-direction block and recovery runbook",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "README.md",
+      "success_criteria": [
         "Only /README.md is created or modified.",
         "INV-C9: `wc -l README.md` <= 80 and every user-facing IC-2 Makefile target name appears (install, test, lint, format, per-area run/test/lint/format, test-fixtures, regen-fixtures, build-web, bench-api).",
         "Prerequisites state make, uv 0.12.x, Node 24.x, pnpm 11.x, macOS/Linux only (Windows unsupported), and a scanner CPython range that matches scanner/pyproject.toml requires-python and classifiers.",
@@ -493,29 +605,38 @@
         "Every deploy-related line contains `provisional`.",
         "A branch-protection recommendation names the AC IC-8 required status names, and a recovery runbook lists clone -> install pinned tools -> `make install` -> `make test`."
       ],
+      "stop_conditions": [
+        "The required content cannot fit in 80 lines without dropping a mandated item.",
+        "The scanner CPython range or default ports in upstream deliverables are inconsistent with each other.",
+        "The task would need to edit any root file other than README.md."
+      ],
+      "depends_on": [
+        "root-foundation",
+        "scanner-project-scaffold",
+        "api-entrypoint-and-bench",
+        "web-toolchain-scaffold"
+      ],
       "review_required": true,
-      "status": "passed",
-      "last_verification": {
-        "passed": true,
-        "evidence": [
-          "Accepted. The branch makes one commit (b45d403) that adds a 75-line /README.md and changes nothing else. I checked every factual claim against the files on the branch (Makefile, scanner/ and api/pyproject.toml, web/package.json, web/.node-version, web/vite.config.ts, api/ and web/.env.example, .gitignore, ci.yml) and all of them match. All 7 criteria pass, with no security issues and no findings outstanding.",
-          "I read the files on the task branch with git_inspect show: Makefile, .github/workflows/ci.yml, scanner/pyproject.toml, api/pyproject.toml, api/.env.example, web/.env.example, web/vite.config.ts, web/.node-version and .gitignore. I read web/package.json with jq.",
-          "I ran `wc -l` on the worktree README.md and got 75.",
-          "The runtime's verification ran only the web lint, build and test commands, all passing. That is irrelevant to a README-only change, which is why the disposition is 'inconclusive'. I judged the criteria from the files directly.",
-          "29a445c3-9d56-4d45-9250-e42d12faf185/reviewer_decision.json"
-        ],
-        "verified_at": "2026-10-03T15:06:56.097830Z"
-      },
-      "last_findings_fingerprint": "root-quickstart-readme:none",
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-006",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "."
+      ]
     },
     {
-      "item_id": "acceptance-integration",
-      "source_task_ids": [
-        "acceptance-integration"
-      ],
+      "task_id": "acceptance-integration",
       "title": "Integrate all lanes, fix Makefile drift and record acceptance measurements",
-      "criteria": [
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [
+        "artifacts/decomposition/decomposition.md",
+        "artifacts/planning/frozen_spec.md",
+        "artifacts/design/architecture.md",
+        "artifacts/design/architecture_contracts.md"
+      ],
+      "deliverable_name": "Makefile",
+      "success_criteria": [
         "The only file edits are Makefile drift fixes; area code defects are filed back to the owning task; seeded-defect branches are never merged; the acceptance record lives in the integration PR description (no CI artifacts uploaded).",
         "CP-4 / INV-C5: on the integration PR all IC-8 statuses from ci.yml are green with summed job time <= 25 runner-minutes and workflow wall-clock <= 10 min per run (Actions timing API), keeping cost at USD 0/month.",
         "SC-001 / INV-C7: from a fresh clone, `make install && make test` exits 0 in <= 10 min with zero credential prompts on ubuntu-24.04 and on one clean macOS machine (disaster-recovery RTO <= 10 min).",
@@ -529,19 +650,27 @@
         "DORA lead time for changes (SC-005): the record documents the post-merge measurement procedure \u2014 median <= 10 min and p95 <= 15 min from push to main until all checks green, over a rolling 30-day window via the GitHub Actions API \u2014 measurement itself out of this run (INV-C6).",
         "INV-A4 / INV-R1: no .am/ changes, no Dockerfile or *.tf files, no background job/queue/rate-limit/database libraries, and API runtime dependencies are exactly {fastapi, uvicorn}."
       ],
+      "stop_conditions": [
+        "A failing check traces to area code rather than Makefile drift (file the defect back to the owning task and stop).",
+        "GitHub repository access or Actions timing API is unavailable to run CP-4 measurements.",
+        "The repository is private, making the fork-PR check impossible (record SC-011 as blocked; continue other criteria).",
+        "Any change under .am/** would be required."
+      ],
+      "depends_on": [
+        "scanner-cli-and-output",
+        "api-entrypoint-and-bench",
+        "web-build-gate",
+        "fixtures-golden-harness",
+        "ci-workflow",
+        "root-quickstart-readme"
+      ],
       "review_required": true,
-      "status": "blocked",
-      "last_verification": {
-        "passed": false,
-        "evidence": [
-          "Developer/reviewer loop made no progress for 6 inner attempts."
-        ],
-        "verified_at": "2026-10-03T15:14:39.482033Z"
-      },
-      "last_findings_fingerprint": null,
-      "attempts_since_progress": 0
+      "work_group_id": "EPIC-006",
+      "execution_profile": "verification",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "."
+      ]
     }
-  ],
-  "created_at": "2026-10-03T13:30:04.505951Z",
-  "updated_at": "2026-10-03T15:14:39.482050Z"
+  ]
 }

@@ -1,0 +1,43 @@
+{
+  "task_id": "acceptance-integration",
+  "status": "completed",
+  "attempt": 1,
+  "version": 17,
+  "claim_run_id": null,
+  "claim_expires_at": null,
+  "provider": "proxy",
+  "task_kind": "software_engineering",
+  "title": "Integrate all lanes, fix Makefile drift and record acceptance measurements",
+  "depends_on": [
+    "scanner-cli-and-output",
+    "api-entrypoint-and-bench",
+    "web-build-gate",
+    "fixtures-golden-harness",
+    "ci-workflow",
+    "root-quickstart-readme"
+  ],
+  "review_required": true,
+  "review_completed": false,
+  "requested_write_scopes": [
+    "."
+  ],
+  "followup_for": null,
+  "deliverable_name": "Makefile",
+  "summary": "I fast-forwarded the task branch onto the accepted lane work (9998f98). Every IC-2 target matched the contract, so no file edits were needed, and I re-ran every local acceptance check from a fresh clone on macOS. Each check passed. Commit bfd0499 is an empty commit whose body is the acceptance record for the integration PR description. Following option B, I accepted local macOS evidence and did not open the integration PR, the seeded PRs or the fork PR, so the GitHub-only criteria were not run.",
+  "error": null,
+  "result_path": "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/164a748c-a04f-4d96-9cbe-3519549fb59f/artifacts/ledger/tasks/acceptance-integration/result.json",
+  "final_markdown_path": "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/164a748c-a04f-4d96-9cbe-3519549fb59f/artifacts/ledger/tasks/acceptance-integration/task_response.md",
+  "git_branch": null,
+  "git_base_branch": null,
+  "git_base_commit": null,
+  "git_head_commit": null,
+  "integration_status": null,
+  "hard_block_request": null,
+  "verification_disposition": "inconclusive",
+  "operator_blocked_criteria": [
+    "CP-4 / INV-C5: on the integration PR all IC-8 statuses from ci.yml are green with summed job time <= 25 runner-minutes and workflow wall-clock <= 10 min per run (Actions timing API), keeping cost at USD 0/month.",
+    "SC-004 / INV-C4 / INV-F3: seeded PRs turn exactly the matching status red: unformatted scanner file -> scanner (3.11); unformatted api file -> api; unformatted web file -> web; golden byte change -> all fixtures (...) statuses; `type X = int` -> scanner (3.11).",
+    "SC-011 / INV-C2: a fork-PR run reports the same green statuses, or is recorded as blocked if the repository is private (OQ-6)."
+  ],
+  "write_scope_enforcement": "preventive"
+}

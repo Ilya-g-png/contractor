@@ -32,7 +32,8 @@
         "verified_at": "2026-10-03T13:33:32.366473Z"
       },
       "last_findings_fingerprint": "root-foundation:none",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "scanner-project-scaffold",
@@ -63,7 +64,8 @@
         "verified_at": "2026-10-03T13:38:52.972838Z"
       },
       "last_findings_fingerprint": "scanner-project-scaffold:accept:none",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "scanner-config-validation",
@@ -96,7 +98,8 @@
         "verified_at": "2026-10-03T13:45:35.339806Z"
       },
       "last_findings_fingerprint": "scanner-config-validation:accept:none",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "scanner-report-contract",
@@ -128,7 +131,8 @@
         "verified_at": "2026-10-03T13:48:47.906639Z"
       },
       "last_findings_fingerprint": "scanner-report-contract:none",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "scanner-cli-and-output",
@@ -162,7 +166,8 @@
         "verified_at": "2026-10-03T13:58:24.719662Z"
       },
       "last_findings_fingerprint": "scanner-cli-and-output:PASS:none-outstanding",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "api-project-scaffold",
@@ -192,7 +197,8 @@
         "verified_at": "2026-10-03T14:03:34.587940Z"
       },
       "last_findings_fingerprint": "api-project-scaffold:accept:low-int-digit-limit,low-main-module-pending",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "api-http-surface",
@@ -224,7 +230,8 @@
         "verified_at": "2026-10-03T14:12:02.817708Z"
       },
       "last_findings_fingerprint": "api-http-surface:accept:low[problems.py:57-68-non-404-405-httpexception-becomes-500;problems.py:60-404-detail-reflects-path]",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "api-entrypoint-and-bench",
@@ -255,7 +262,8 @@
         "verified_at": "2026-10-03T14:19:10.345852Z"
       },
       "last_findings_fingerprint": "api-entrypoint-and-bench:accept:M-soreuseaddr-bsd-wildcard;L-other-oserror-traceback;L-stale-lastfailed",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "web-toolchain-scaffold",
@@ -288,7 +296,8 @@
         "verified_at": "2026-10-03T14:29:01.395060Z"
       },
       "last_findings_fingerprint": "web-toolchain-scaffold:accept:none",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "web-core-modules",
@@ -319,7 +328,8 @@
         "verified_at": "2026-10-03T14:34:07.549305Z"
       },
       "last_findings_fingerprint": "web-core-modules:accept:none",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "web-components-and-views",
@@ -351,7 +361,8 @@
         "verified_at": "2026-10-03T14:42:48.791330Z"
       },
       "last_findings_fingerprint": "web-components-and-views:accept:none-outstanding",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "web-build-gate",
@@ -381,7 +392,8 @@
         "verified_at": "2026-10-03T14:46:11.431627Z"
       },
       "last_findings_fingerprint": "web-build-gate:accept:none",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "fixtures-minimal-project",
@@ -411,7 +423,8 @@
         "verified_at": "2026-10-03T14:48:43.192996Z"
       },
       "last_findings_fingerprint": "fixtures-minimal-project:none",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "fixtures-golden-harness",
@@ -444,7 +457,8 @@
         "verified_at": "2026-10-03T14:54:56.101631Z"
       },
       "last_findings_fingerprint": "fixtures-golden-harness:accept:low-only[d1-in-commit-body,leak-substring-fragility,no-scanner-runtime-verification]",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "ci-workflow",
@@ -476,7 +490,8 @@
         "verified_at": "2026-10-03T14:59:16.338682Z"
       },
       "last_findings_fingerprint": "ci-workflow:none",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "root-quickstart-readme",
@@ -507,7 +522,8 @@
         "verified_at": "2026-10-03T15:06:56.097830Z"
       },
       "last_findings_fingerprint": "root-quickstart-readme:none",
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     },
     {
       "item_id": "acceptance-integration",
@@ -530,7 +546,7 @@
         "INV-A4 / INV-R1: no .am/ changes, no Dockerfile or *.tf files, no background job/queue/rate-limit/database libraries, and API runtime dependencies are exactly {fastapi, uvicorn}."
       ],
       "review_required": true,
-      "status": "blocked",
+      "status": "in_progress",
       "last_verification": {
         "passed": false,
         "evidence": [
@@ -539,9 +555,10 @@
         "verified_at": "2026-10-03T15:14:39.482033Z"
       },
       "last_findings_fingerprint": null,
-      "attempts_since_progress": 0
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
     }
   ],
   "created_at": "2026-10-03T13:30:04.505951Z",
-  "updated_at": "2026-10-03T15:14:39.482050Z"
+  "updated_at": "2026-10-04T07:57:10.862728Z"
 }

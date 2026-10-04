@@ -1,0 +1,32 @@
+{
+  "classified_domains": [
+    "web-backend",
+    "web-frontend",
+    "dev-ops"
+  ],
+  "domain_confidence": {
+    "web-backend": 0.85,
+    "web-frontend": 0.75,
+    "dev-ops": 0.7
+  },
+  "complexity": "standard",
+  "project_mode": "new-project",
+  "bundle_id": "web-development",
+  "bundle_rationale": "Production-grade web system: frontend, backend, and operational\nconcerns (CI/CD, infrastructure-as-code, observability, rollout\nstrategy, secrets management) are all in scope. Use for net-new\nproducts with deploy-on-day-one expectations or for production-\nhardening existing apps. This is the maximal web bundle \u2014 every\nplanning specialist is justified by content from at least one\ncomposed pack.",
+  "preset_id": "production-web-system",
+  "specialist_sequence": [
+    "planner_v1",
+    "architect_v1",
+    "designer_v1",
+    "decomposer_v1",
+    "developer_v1",
+    "reviewer_v1"
+  ],
+  "skipped_specialists": [],
+  "needs_hitl_confirmation": false,
+  "mutations": [],
+  "work_kind": "implementation",
+  "work_kind_confidence": 0.93,
+  "classifier_model": "claude-opus-5-5",
+  "classifier_latency_ms": 5278
+}

@@ -1,0 +1,129 @@
+{
+  "request": {
+    "draft_spec_path": "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/29a445c3-9d56-4d45-9250-e42d12faf185/artifacts/planning/draft_spec.md",
+    "assistant_message": "The CD-5 draft is mostly ready to freeze. Most of its choices are tied to the CD-2, CD-3 and CD-4 papers, and its deferred topics have reasonable defaults. Seven gaps still need an answer before the spec is frozen. The most important ones are: whether the bootstrap report leaves out CD-2's required provenance fields to stay deterministic, the public product names, and what the scanner does when a declared package root is missing. The other questions cover the scanner's Python support range, the envelope field name, the new missing-config diagnostic, and the hosting target. CD-5 doesn't depend on the hosting target, but it decides whether the deploy-related defaults are kept or marked provisional.",
+    "questions": [
+      {
+        "id": "q-report-provenance",
+        "question": "CD-2 §2.3 (.am/reports/9c37b285-…-research-paper.md, lines 90–106) marks `evaluation_date`, `report_id`, scan timestamps and git fields (`commit_sha`, `dirty`, `base_sha`, …) as required. They change on every run, which conflicts with CD-5's byte-identical empty report. Which report shape should CD-5 emit?",
+        "options": [
+          "Pre-1.0 envelope (`schema_version` \"0.1\") that leaves out every volatile provenance field. They are added with the provenance/upload ticket. (Draft default)",
+          "Full CD-2 envelope now, made deterministic with override flags (`--today`, fixed timestamps, fixed `report_id`) and git fields set to null for the fixture",
+          "Full CD-2 envelope now, with the golden test comparing everything except a named list of volatile fields (normalized comparison, not byte-for-byte)"
+        ],
+        "custom_label": null,
+        "rationale": "This sets the report data model and JSON Schema every later ticket binds to, and it decides whether the 'deterministic' acceptance criterion means byte-identical output or normalized equality."
+      },
+      {
+        "id": "q-product-naming",
+        "question": "The draft uses \"Dogwatch\", the `dogwatch` CLI command, the `dogwatch.toml` policy file, the `dogwatch:` diagnostic namespace and the `dogwatch-api` service name, all taken from the research ADRs. The repository is named `contractor`. Which public names should be frozen?",
+        "options": [
+          "Dogwatch / `dogwatch` / `dogwatch.toml` as drafted",
+          "Contractor / `contractor` / `contractor.toml` (match the repository name)",
+          "Use a different name (enter below)"
+        ],
+        "custom_label": "Product name, CLI command and config filename",
+        "rationale": "These names become CLI, config-file, package and diagnostic contracts. Renaming them after the first release is a breaking change for every downstream ticket."
+      },
+      {
+        "id": "q-package-root-validation",
+        "question": "In CD-5, if `dogwatch.toml` is valid but a declared package has no directory at `root/name/`, or it has no `.py` files, or the config breaks CD-3 §2.2 validity rules (duplicate `name`, nested roots), what should the scanner do?",
+        "options": [
+          "Check structure only: a missing `root/name/` directory and the CD-3 §2.2 rules (duplicate name, nested roots) are errors (`config-invalid`, exit 2); an empty package is allowed",
+          "Check structure only, as in option 1, but also treat a package with zero `.py` files as an error",
+          "Don't check: only the TOML shape is validated, and any well-formed minimal config produces an empty report"
+        ],
+        "custom_label": null,
+        "rationale": "FR-013 tries to stop configs the scanner can't evaluate from producing an 'empty = clean' report. A config that points at a missing package hits the same false-clean risk, and the draft doesn't say how CD-5 handles it."
+      },
+      {
+        "id": "q-scanner-python-support",
+        "question": "The scanner runs on customer machines. Which CPython versions must the CD-5 scanner support and test in CI?",
+        "options": [
+          "One pinned version only (the same as the API), and widen the range later",
+          "A supported range of 3.10 through the latest stable release, with a CI test matrix across that range (3.10 matches CD-3's use of `importlib.metadata.packages_distributions()`)",
+          "A supported range of 3.11 through the latest stable release, with a CI test matrix (allows the stdlib `tomllib`)"
+        ],
+        "custom_label": null,
+        "rationale": "This affects the scanner's install contract, its CI cost (FR-095) and how much the determinism check (SC-002) has to cover, and it is hard to narrow after release."
+      },
+      {
+        "id": "q-envelope-version-field",
+        "question": "CD-2 §2.3 names the report's format-version field `schema_version`. CD-4 §2.5 calls it `schema`. Which is canonical for the report envelope?",
+        "options": [
+          "`schema_version` (CD-2 owns the report lifecycle; draft default). CD-4 is updated to match",
+          "`schema`. CD-2 is updated to match"
+        ],
+        "custom_label": null,
+        "rationale": "This is the first field a future ingestion endpoint checks against its allow-list, so the name has to be fixed before any golden report is committed."
+      },
+      {
+        "id": "q-config-not-found-diagnostic",
+        "question": "When the config path doesn't exist, should CD-5 add a new diagnostic or reuse CD-3's existing catalogue?",
+        "options": [
+          "Add `dogwatch:config-not-found` as a new diagnostic and register it in the CD-3 catalogue (draft default)",
+          "Reuse `dogwatch:config-invalid`, with a message naming the missing path, so the CD-3 catalogue stays unchanged"
+        ],
+        "custom_label": null,
+        "rationale": "Diagnostic IDs are a stable machine-readable contract that CI tooling will match on. The draft flags this as new ground outside the CD-3 research."
+      },
+      {
+        "id": "q-hosting-target",
+        "question": "Which hosting target will Dogwatch's API and web app eventually run on? CD-5 deploys nothing, but the answer decides whether the recorded Terraform provider, secret manager and observability backends (FR-062, FR-090, FR-092) are firm or provisional.",
+        "options": [
+          "AWS (Terraform AWS provider, AWS Secrets Manager)",
+          "Google Cloud (Terraform Google provider, GCP Secret Manager)",
+          "Undecided for now: keep the drafted direction recorded as provisional and decide in a later deployment ticket",
+          "Other platform (enter below)"
+        ],
+        "custom_label": "Hosting platform",
+        "rationale": "Choosing now keeps the deferred-direction sections from being rewritten later. Leaving it undecided is fine for CD-5's scope as long as the defaults stay marked provisional."
+      }
+    ]
+  },
+  "answers": [
+    {
+      "question_id": "q-report-provenance",
+      "selected_option": "Pre-1.0 envelope (`schema_version` \"0.1\") that leaves out every volatile provenance field. They are added with the provenance/upload ticket. (Draft default)",
+      "custom_answer": null,
+      "responder": "autonomous_llm"
+    },
+    {
+      "question_id": "q-product-naming",
+      "selected_option": "Dogwatch / `dogwatch` / `dogwatch.toml` as drafted",
+      "custom_answer": null,
+      "responder": "autonomous_llm"
+    },
+    {
+      "question_id": "q-package-root-validation",
+      "selected_option": "Check structure only: a missing `root/name/` directory and the CD-3 §2.2 rules (duplicate name, nested roots) are errors (`config-invalid`, exit 2); an empty package is allowed",
+      "custom_answer": null,
+      "responder": "autonomous_llm"
+    },
+    {
+      "question_id": "q-scanner-python-support",
+      "selected_option": "A supported range of 3.11 through the latest stable release, with a CI test matrix (allows the stdlib `tomllib`)",
+      "custom_answer": null,
+      "responder": "autonomous_llm"
+    },
+    {
+      "question_id": "q-envelope-version-field",
+      "selected_option": "`schema_version` (CD-2 owns the report lifecycle; draft default). CD-4 is updated to match",
+      "custom_answer": null,
+      "responder": "autonomous_llm"
+    },
+    {
+      "question_id": "q-config-not-found-diagnostic",
+      "selected_option": "Add `dogwatch:config-not-found` as a new diagnostic and register it in the CD-3 catalogue (draft default)",
+      "custom_answer": null,
+      "responder": "autonomous_llm"
+    },
+    {
+      "question_id": "q-hosting-target",
+      "selected_option": "Undecided for now: keep the drafted direction recorded as provisional and decide in a later deployment ticket",
+      "custom_answer": null,
+      "responder": "autonomous_llm"
+    }
+  ],
+  "completed_at": "2026-10-03T12:45:00Z"
+}
