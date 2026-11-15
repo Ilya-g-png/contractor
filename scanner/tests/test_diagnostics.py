@@ -4,6 +4,7 @@ import typing
 
 import pytest
 
+from dogwatch.config import DogwatchConfig, PackageDecl
 from dogwatch.diagnostics import (
     CONFIG_INVALID,
     CONFIG_NOT_FOUND,
@@ -18,6 +19,7 @@ from dogwatch.diagnostics import (
     render,
     render_diagnostics,
 )
+from dogwatch.report import build_report, sort_diagnostics
 
 LINE = re.compile(r"^dogwatch:(config-invalid|config-not-found): .+$")
 KEBAB = re.compile(r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$")
@@ -112,3 +114,26 @@ def test_dogwatch_error_requires_at_least_one_diagnostic() -> None:
 
 def test_exit_codes() -> None:
     assert (EXIT_OK, EXIT_GATE_FAILED, EXIT_ERROR) == (0, 1, 2)
+
+
+# --- FR-018: scan-time diagnostics render in report order ------------------
+
+
+def test_scan_time_render_matches_report_diagnostics_order() -> None:
+    diagnostics = [
+        Diagnostic("openapi", "openapi-tool-failed", "error", "oasdiff — exit 3"),
+        _diagnostic(SOURCE_SYNTAX_INVALID, "src/b.py:1: invalid syntax", "warning"),
+        _diagnostic(SOURCE_SYNTAX_INVALID, "src/a.py:9: invalid syntax", "info"),
+    ]
+    cfg = DogwatchConfig("dogwatch.toml", b"", (PackageDecl("a", "src"),), (), (), ())
+    report = build_report(cfg, "0.1.0", (), diagnostics)
+
+    assert render_diagnostics(sort_diagnostics(diagnostics)).splitlines() == [
+        f"dogwatch:{d['id']}: {d['message']}" for d in report["diagnostics"]
+    ]
+
+
+def test_adapter_diagnostic_renders_with_bare_id_and_no_source() -> None:
+    adapter = Diagnostic("openapi", "openapi-tool-timeout", "error", "timed out")
+
+    assert render_diagnostics([adapter]) == "dogwatch:openapi-tool-timeout: timed out\n"
