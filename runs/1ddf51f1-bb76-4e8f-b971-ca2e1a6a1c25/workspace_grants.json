@@ -1,10 +1,10 @@
 [
   {
-    "runtime_agent_id": "sdk-developer:468d0d5d-1c8f-4e10-a8f5-0f6c39fa8265",
+    "runtime_agent_id": "sdk-developer:9044e24a-83fc-4bb1-8d1b-0d6481a542fa",
     "run_id": "1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25",
     "role": "developer",
     "read_roots": [
-      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/worktrees/runtime/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/task/001-seam-foundation",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/worktrees/runtime/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/task/001-exclude-validation",
       "/Users/iliaglushkov/Documents/sandbox/contractor",
       "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25",
       "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/artifacts",
@@ -12,14 +12,14 @@
       "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7"
     ],
     "write_roots": [
-      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/worktrees/runtime/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/task/001-seam-foundation"
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/worktrees/runtime/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/task/001-exclude-validation"
     ],
-    "scope_label": "seam-foundation",
+    "scope_label": "exclude-validation",
     "parent_agent_id": null,
     "active": false
   },
   {
-    "runtime_agent_id": "developer-verify:sdk-developer-468d0d5d-1c8f-4e10-a8f5-0f6c39fa8265",
+    "runtime_agent_id": "developer-verify:sdk-developer-9044e24a-83fc-4bb1-8d1b-0d6481a542fa",
     "run_id": "1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25",
     "role": "reviewer",
     "read_roots": [
@@ -31,7 +31,7 @@
     ],
     "write_roots": [],
     "scope_label": null,
-    "parent_agent_id": "sdk-developer:468d0d5d-1c8f-4e10-a8f5-0f6c39fa8265",
+    "parent_agent_id": "sdk-developer:9044e24a-83fc-4bb1-8d1b-0d6481a542fa",
     "active": false
   }
 ]
