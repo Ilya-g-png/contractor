@@ -5,7 +5,7 @@ from typing import Any
 import pytest
 from jsonschema import Draft202012Validator  # type: ignore[import-untyped]
 
-from dogwatch.config import PackageDecl, PolicyConfig
+from dogwatch.config import DogwatchConfig, PackageDecl
 from dogwatch.report import build_report
 
 SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "report-0.1.schema.json"
@@ -31,10 +31,13 @@ def _validator() -> Draft202012Validator:
 
 
 def _report() -> dict[str, Any]:
-    cfg = PolicyConfig(
+    cfg = DogwatchConfig(
         path_arg="fixtures/minimal/dogwatch.toml",
         raw=b'[[python.packages]]\nname = "acme"\nroot = "src"\n',
         packages=(PackageDecl("acme", "src"),),
+        exclusions=(),
+        rules=(),
+        contracts=(),
     )
     return build_report(cfg, "0.1.0")
 

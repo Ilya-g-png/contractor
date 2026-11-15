@@ -4,7 +4,15 @@ import tomllib
 from dataclasses import dataclass
 from typing import Any, NamedTuple
 
-from dogwatch.diagnostics import Diagnostic, DogwatchError
+from dogwatch.contracts import OpenApiContractDecl
+from dogwatch.diagnostics import (
+    CONFIG_INVALID,
+    CONFIG_NOT_FOUND,
+    Diagnostic,
+    DogwatchError,
+)
+from dogwatch.exclude import ExclusionDecl
+from dogwatch.rules import RuleDecl
 
 _ENTRY_KEYS = ("name", "root")
 _TOML_LINE = re.compile(r"at line (\d+)")
@@ -18,10 +26,13 @@ class PackageDecl:
 
 
 @dataclass(frozen=True)
-class PolicyConfig:
+class DogwatchConfig:
     path_arg: str
     raw: bytes
     packages: tuple[PackageDecl, ...]
+    exclusions: tuple[ExclusionDecl, ...]
+    rules: tuple[RuleDecl, ...]
+    contracts: tuple[OpenApiContractDecl, ...]
 
 
 class _Located(NamedTuple):
@@ -30,10 +41,17 @@ class _Located(NamedTuple):
     package_real: str
 
 
-def load_policy(config_arg: str) -> PolicyConfig:
+def load_policy(config_arg: str) -> DogwatchConfig:
     if not os.path.lexists(config_arg):
         raise DogwatchError(
-            (Diagnostic("config-not-found", f"{config_arg} does not exist"),)
+            (
+                Diagnostic(
+                    source="dogwatch",
+                    id=CONFIG_NOT_FOUND,
+                    severity="error",
+                    message=f"{config_arg} does not exist",
+                ),
+            )
         )
     raw = _read(config_arg)
     try:
@@ -48,11 +66,17 @@ def load_policy(config_arg: str) -> PolicyConfig:
         ) from None
     packages = _validate_shape(config_arg, document)
     _validate_structure(os.path.dirname(config_arg), packages)
-    return PolicyConfig(config_arg, raw, packages)
+    return DogwatchConfig(config_arg, raw, packages, (), (), ())
 
 
 def _invalid(message: str) -> DogwatchError:
-    return DogwatchError((Diagnostic("config-invalid", message),))
+    return DogwatchError((_config_invalid(message),))
+
+
+def _config_invalid(message: str) -> Diagnostic:
+    return Diagnostic(
+        source="dogwatch", id=CONFIG_INVALID, severity="error", message=message
+    )
 
 
 def _read(config_arg: str) -> bytes:
@@ -149,17 +173,13 @@ def _validate_structure(config_dir: str, packages: tuple[PackageDecl, ...]) -> N
         shown = f"'{decl.root}/{decl.name}'"
         if not os.path.lexists(package_dir):
             failures.append(
-                Diagnostic(
-                    "config-invalid",
-                    f"package '{decl.name}': directory {shown} does not exist",
+                _config_invalid(
+                    f"package '{decl.name}': directory {shown} does not exist"
                 )
             )
         elif not os.path.isdir(package_dir):
             failures.append(
-                Diagnostic(
-                    "config-invalid",
-                    f"package '{decl.name}': {shown} is not a directory",
-                )
+                _config_invalid(f"package '{decl.name}': {shown} is not a directory")
             )
         else:
             located.append(
@@ -171,7 +191,7 @@ def _validate_structure(config_dir: str, packages: tuple[PackageDecl, ...]) -> N
         for second in located[i + 1 :]:
             conflict = _conflict(first, second)
             if conflict is not None:
-                failures.append(Diagnostic("config-invalid", conflict))
+                failures.append(_config_invalid(conflict))
     if failures:
         raise DogwatchError(tuple(failures))
 

@@ -9,7 +9,7 @@ from typing import Any
 
 import pytest
 
-from dogwatch.config import PackageDecl, PolicyConfig, load_policy
+from dogwatch.config import DogwatchConfig, PackageDecl, load_policy
 from dogwatch.diagnostics import Diagnostic, DogwatchError
 from tests.conftest import MakeConfig
 
@@ -32,7 +32,9 @@ def _entries(*pairs: tuple[str, str]) -> str:
 def _diagnostics(config_arg: str = "dogwatch.toml") -> tuple[Diagnostic, ...]:
     with pytest.raises(DogwatchError) as excinfo:
         load_policy(config_arg)
-    return excinfo.value.diagnostics
+    diagnostics = excinfo.value.diagnostics
+    assert all(d.source == "dogwatch" and d.severity == "error" for d in diagnostics)
+    return diagnostics
 
 
 def _invalid_message(config_arg: str = "dogwatch.toml") -> str:
@@ -48,10 +50,13 @@ def test_valid_config_returns_frozen_policy_config(make_config: MakeConfig) -> N
 
     policy = load_policy("dogwatch.toml")
 
-    assert policy == PolicyConfig(
+    assert policy == DogwatchConfig(
         path_arg="dogwatch.toml",
         raw=text.encode("utf-8"),
         packages=(PackageDecl("acme", "src"), PackageDecl("beta", "lib")),
+        exclusions=(),
+        rules=(),
+        contracts=(),
     )
     with pytest.raises(dataclasses.FrozenInstanceError):
         policy.packages[0].name = "other"  # type: ignore[misc]
@@ -80,7 +85,9 @@ def test_package_without_py_files_or_init_is_valid(
 
 def test_v0_missing_config() -> None:
     assert _diagnostics("missing.toml") == (
-        Diagnostic("config-not-found", "missing.toml does not exist"),
+        Diagnostic(
+            "dogwatch", "config-not-found", "error", "missing.toml does not exist"
+        ),
     )
 
 
@@ -340,6 +347,13 @@ def test_config_module_restricts_imports_and_os_calls() -> None:
         for node in ast.walk(tree)
         if isinstance(node, ast.ImportFrom) and node.module
     }
+    dogwatch_imports = {
+        node.module
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+        and node.module
+        and node.module.startswith("dogwatch.")
+    }
     os_calls = {
         ast.unparse(node.func)
         for node in ast.walk(tree)
@@ -348,6 +362,13 @@ def test_config_module_restricts_imports_and_os_calls() -> None:
 
     assert not imported & {"importlib", "ast"}
     assert "os" in imported
+    assert dogwatch_imports <= {
+        "dogwatch.diagnostics",
+        "dogwatch._validate",
+        "dogwatch.exclude",
+        "dogwatch.rules",
+        "dogwatch.contracts",
+    }
     assert os_calls <= {
         "os.path.lexists",
         "os.path.isdir",
