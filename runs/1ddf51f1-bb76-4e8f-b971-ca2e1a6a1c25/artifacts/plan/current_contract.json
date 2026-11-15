@@ -1,22 +1,20 @@
 {
-  "contract_id": "contract-0003",
+  "contract_id": "contract-0004",
   "selected_item_ids": [
-    "rules-validation"
+    "contracts-validation"
   ],
   "selected_task_ids": [
-    "rules-validation"
+    "contracts-validation"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Files written are limited to scanner/src/dogwatch/rules.py and scanner/tests/test_rules.py (new); the RuleDecl fields frozen by seam-foundation are unchanged",
-    "parse_rules(value: object) -> tuple[RuleDecl, ...] checks in order: kind, per-kind unknown keys, required fields and types, id grammar, id uniqueness, non-empty reason, selector syntax, structural constraints",
-    "test_rules.py has one test per Edge Case 'Rules' case (missing id/kind/reason through unknown keys inside a rule, including the other kind's keys rejected for each kind and except_sources given without sources) asserting id == 'config-invalid', the exact key path in the message (e.g. python.rules[1].targets[0]) and the IC-ERR-4 template text",
-    "Valid inputs load: forbid with all optional keys; forbid with only targets (sources == ()); layers with exhaustive = true and container; layers without container (exhaustive is False, container is None); fields of the other kind keep DC-C4 empty defaults",
-    "parse_rules(None) and parse_rules([]) both return ()",
-    "A selector naming no existing module is accepted and no filesystem access occurs (open/os.scandir/os.stat instrumented)",
-    "Every failure raises exactly one diagnostic",
-    "rules.py imports only the stdlib, dogwatch._validate and dogwatch.diagnostics",
+    "Files written are limited to scanner/src/dogwatch/contracts.py and scanner/tests/test_contracts.py (new); the OpenApiContractDecl fields frozen by seam-foundation are unchanged; unknown keys inside a contract entry are not checked here",
+    "parse_contracts(value: object) -> tuple[OpenApiContractDecl, ...] checks id presence, type, is_kebab_id and uniqueness; path presence and type; path syntax (relative, '/' separators, no '.', '..' or empty segment, no '\\', extension .yaml/.yml/.json case-sensitive); and textual path uniqueness",
+    "test_contracts.py has one test per case (missing id, missing path, duplicate id, duplicate path, bad extension, absolute path, '..' segment, backslashes, '.' segment) asserting config-invalid, a message containing openapi.contracts[i] (or [j] for duplicates) and the IC-ERR-4 template text",
+    "A contract whose path does not exist loads successfully and the module performs no filesystem access (instrumented open/os.scandir/os.stat)",
+    "parse_contracts(None) and parse_contracts([]) return ()",
+    "contracts.py imports only the stdlib, dogwatch._validate and dogwatch.diagnostics, never dogwatch.rules",
     "make test-scanner, make lint-scanner and make test-fixtures exit 0"
   ]
 }

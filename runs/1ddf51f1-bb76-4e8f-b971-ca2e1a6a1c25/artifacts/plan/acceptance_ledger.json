@@ -88,15 +88,24 @@
         "make test-scanner, make lint-scanner and make test-fixtures exit 0"
       ],
       "review_required": true,
-      "status": "blocked",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
+        "passed": true,
         "evidence": [
-          "Developer reported rules-validation cannot be finished without the operator."
+          "Accept. parse_rules in rules.py runs the checks in the IC-PY stage-2b order, structural checks included (descendant, then prefix, then duplicate, then container). Each failure raises one config-invalid diagnostic, and the messages match the IC-ERR-4 rule templates word for word. test_rules.py covers every case in the frozen-spec 'Rules' edge-case list, plus the valid-load, empty, no-filesystem-access and import-guard criteria. The recorded ruff, mypy and pytest runs passed (354 tests). The one extra file, test_validate.py, is a separate one-line commit (4978c66) that the operator authorized under option A of the validator-guard escalation.",
+          "Worktree at 4978c66 is clean (git status shows no changes); the commits are 8d6761e (rules.py + test_rules.py) and 4978c66 (test_validate.py:204 only).",
+          "The IC-ERR-4 rule rows (architecture_contracts.md:200-216) were compared with the messages in rules.py. They match word for word, including the kebab regex text, 'duplicates python.rules[j].id', 'overlaps \u2026 layers[k]' with j>k, and 'container is required when exhaustive = true'.",
+          "The IC-PY stage-2b row (architecture_contracts.md:107) gives the order kind \u2192 unknown keys \u2192 required/types \u2192 id grammar \u2192 uniqueness \u2192 reason \u2192 selectors \u2192 structural (descendant, prefix, duplicate, container). rules.py _rule/_check_layers follow it, and test_rule_checks_run_in_contract_order pins it with 11 cases that each contain two defects.",
+          "Frozen-spec Edge Cases 'Rules' (frozen_spec.md:156) was checked item by item against the test_rule_edge_case_rejected ids. Every listed case is present, including except_sources without sources (CQ-2 default) and the layer equal to the container.",
+          "_validate.py helpers were read: table_array, require_str, optional_str_list and optional_bool each raise a single-diagnostic DogwatchError through config_invalid, so a failure always produces exactly one diagnostic.",
+          "Operator authorization for 4978c66: events.jsonl records the option (A) escalation decision, which covers exclude-, rules- and contracts-validation and allows each to drop its own module name from the guard parametrize in a separate commit. The accepted precedent is b4da9b2.",
+          "verification_disposition 'inconclusive' was adjudicated by reading the code. The recorded tool_runtime attempt 2 shows ruff check, mypy (29 files) and pytest (354 passed) all exit 0. The developer reports the make targets passing (345 passed, 9 deselected, plus 9 fixture tests); this is consistent with the make target deselecting marked tests.",
+          "Security (OWASP): parse_rules is pure in-memory validation with no I/O, eval or dynamic import; the no-filesystem-access test confirms this. Nothing relevant was found.",
+          "1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/reviewer_decision.json"
         ],
-        "verified_at": "2026-11-15T10:40:54.962132Z"
+        "verified_at": "2026-11-15T10:44:39.466042Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "rules-validation:accept:no-open-findings",
       "attempts_since_progress": 0,
       "blocked_criteria": []
     },
@@ -215,5 +224,5 @@
     }
   ],
   "created_at": "2026-11-15T10:11:26.532515Z",
-  "updated_at": "2026-11-15T10:40:54.962144Z"
+  "updated_at": "2026-11-15T10:44:39.466066Z"
 }

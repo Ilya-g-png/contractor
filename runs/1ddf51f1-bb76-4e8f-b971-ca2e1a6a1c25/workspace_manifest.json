@@ -11,7 +11,7 @@
   "worktree_root": "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/worktrees",
   "run_branch": "bridgit/e598a3d9-e934-4000-8140-2dafa7f8d2d7/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25",
   "base_branch": "main",
-  "base_commit": "fa4e196453d01198c9427fd4da7520380da0901a",
+  "base_commit": "dd6170be2a19a7330bb1e50e351e0e22d67ee50f",
   "active_worker_branch": null,
   "origin_jira_key": "CD-6",
   "seed_sources": [],

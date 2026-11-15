@@ -1,8 +1,8 @@
 {
   "task_id": "contracts-validation",
-  "status": "queued",
+  "status": "completed",
   "attempt": 1,
-  "version": 1,
+  "version": 3,
   "claim_run_id": null,
   "claim_expires_at": null,
   "provider": "proxy",
@@ -19,17 +19,17 @@
   ],
   "followup_for": null,
   "deliverable_name": "scanner/src/dogwatch/contracts.py",
-  "summary": null,
+  "summary": "Commit 4029a25 adds parse_contracts to scanner/src/dogwatch/contracts.py and adds the new scanner/tests/test_contracts.py (28 tests). The checks run in this order: id presence, type, is_kebab_id, uniqueness; then path presence, type, textual syntax, textual uniqueness. Each failure raises one config-invalid error with the IC-ERR-4 template text. Commit bc2eaf8 is the operator-authorized option (A) change to scanner/tests/test_validate.py, and it is the only file outside the allowed list. It removes \"contracts\" from the parametrize; that left the parametrize empty, so the empty guard test is deleted. Its `import sys` had no other use, so it is dropped too, because ruff F401 would otherwise fail.",
   "error": null,
-  "result_path": null,
-  "final_markdown_path": null,
+  "result_path": "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/artifacts/ledger/tasks/contracts-validation/result.json",
+  "final_markdown_path": "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/artifacts/ledger/tasks/contracts-validation/task_response.md",
   "git_branch": null,
   "git_base_branch": null,
   "git_base_commit": null,
   "git_head_commit": null,
   "integration_status": null,
   "hard_block_request": null,
-  "verification_disposition": null,
+  "verification_disposition": "inconclusive",
   "operator_blocked_criteria": [],
-  "write_scope_enforcement": null
+  "write_scope_enforcement": "preventive"
 }
