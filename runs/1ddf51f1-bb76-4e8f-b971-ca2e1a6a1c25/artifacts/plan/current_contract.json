@@ -1,0 +1,23 @@
+{
+  "contract_id": "contract-0001",
+  "selected_item_ids": [
+    "seam-foundation"
+  ],
+  "selected_task_ids": [
+    "seam-foundation"
+  ],
+  "review_required": true,
+  "reason": "Continue implementation of the selected acceptance item until criteria pass.",
+  "criteria": [
+    "Files written are limited to: scanner/src/dogwatch/diagnostics.py, scanner/src/dogwatch/_validate.py (new), scanner/src/dogwatch/exclude.py, rules.py and contracts.py (new, entity dataclasses only), scanner/src/dogwatch/config.py (rename plus new empty-tuple fields only), scanner/tests/test_validate.py (new), test_diagnostics.py, and the construction sites/imports in test_config.py, test_report.py and test_schema.py; report.py, cli.py, output.py, scanner/schemas/**, fixtures/**, scanner/tests/golden/** and conftest.py are unchanged",
+    "Diagnostic has exactly the fields (source, id, severity, message) with id typed str and a Severity literal; diagnostics.py defines Final[str] constants CONFIG_NOT_FOUND, CONFIG_INVALID, EXCLUDE_UNMATCHED and SOURCE_SYNTAX_INVALID; every config-time Diagnostic construction in config.py uses source=\"dogwatch\" and severity=\"error\"",
+    "render_diagnostics([]) == \"\"; render_diagnostics(ds) == \"\".join(f\"dogwatch:{d.id}: {d.message}\\n\" for d in ds); render(err) == render_diagnostics(err.diagnostics)",
+    "EXIT_OK == 0, EXIT_GATE_FAILED == 1 (comment says emitted, not reserved), EXIT_ERROR == 2",
+    "test_validate.py shows is_kebab_id accepts 'a', 'no-db-in-domain' and a 64-character id and rejects a 65-character id, 'A', 'a_b', 'a:b', '-a' and 'a--b'; is_identifier rejects 'class', 'foo-bar' and ''; key-path rendering yields 'python.rules[1].targets[0]'; typed accessors produce the existing '<path> is required' and '<path> must be a string' wording; config_invalid(message) returns a DogwatchError carrying one config-invalid diagnostic",
+    "PolicyConfig is renamed to DogwatchConfig with no alias; load_policy returns a DogwatchConfig whose exclusions, rules and contracts are all (); every pre-existing test_config.py assertion passes with unchanged messages",
+    "ExclusionDecl, RuleDecl (kind-discriminated with DC-C4 defaults) and OpenApiContractDecl exist as frozen dataclasses in exclude.py, rules.py and contracts.py, which import only the stdlib and contain no parse functions; _validate.py imports only dogwatch.diagnostics",
+    "The import allowlist in test_config.py::test_config_module_restricts_imports_and_os_calls admits dogwatch.exclude, dogwatch.rules and dogwatch.contracts and passes",
+    "Zero behaviour change: make test-fixtures passes with byte-identical 0.1 goldens (git diff --exit-code fixtures scanner/schemas is clean)",
+    "make test-scanner, make lint-scanner and make test-fixtures all exit 0 (checkpoint CP0)"
+  ]
+}

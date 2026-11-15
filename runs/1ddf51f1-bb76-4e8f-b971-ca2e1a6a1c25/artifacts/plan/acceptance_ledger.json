@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "item_id": "seam-foundation",
+      "source_task_ids": [
+        "seam-foundation"
+      ],
+      "title": "Freeze shared Diagnostic, exit-code, validation-helper and config entity seams",
+      "criteria": [
+        "Files written are limited to: scanner/src/dogwatch/diagnostics.py, scanner/src/dogwatch/_validate.py (new), scanner/src/dogwatch/exclude.py, rules.py and contracts.py (new, entity dataclasses only), scanner/src/dogwatch/config.py (rename plus new empty-tuple fields only), scanner/tests/test_validate.py (new), test_diagnostics.py, and the construction sites/imports in test_config.py, test_report.py and test_schema.py; report.py, cli.py, output.py, scanner/schemas/**, fixtures/**, scanner/tests/golden/** and conftest.py are unchanged",
+        "Diagnostic has exactly the fields (source, id, severity, message) with id typed str and a Severity literal; diagnostics.py defines Final[str] constants CONFIG_NOT_FOUND, CONFIG_INVALID, EXCLUDE_UNMATCHED and SOURCE_SYNTAX_INVALID; every config-time Diagnostic construction in config.py uses source=\"dogwatch\" and severity=\"error\"",
+        "render_diagnostics([]) == \"\"; render_diagnostics(ds) == \"\".join(f\"dogwatch:{d.id}: {d.message}\\n\" for d in ds); render(err) == render_diagnostics(err.diagnostics)",
+        "EXIT_OK == 0, EXIT_GATE_FAILED == 1 (comment says emitted, not reserved), EXIT_ERROR == 2",
+        "test_validate.py shows is_kebab_id accepts 'a', 'no-db-in-domain' and a 64-character id and rejects a 65-character id, 'A', 'a_b', 'a:b', '-a' and 'a--b'; is_identifier rejects 'class', 'foo-bar' and ''; key-path rendering yields 'python.rules[1].targets[0]'; typed accessors produce the existing '<path> is required' and '<path> must be a string' wording; config_invalid(message) returns a DogwatchError carrying one config-invalid diagnostic",
+        "PolicyConfig is renamed to DogwatchConfig with no alias; load_policy returns a DogwatchConfig whose exclusions, rules and contracts are all (); every pre-existing test_config.py assertion passes with unchanged messages",
+        "ExclusionDecl, RuleDecl (kind-discriminated with DC-C4 defaults) and OpenApiContractDecl exist as frozen dataclasses in exclude.py, rules.py and contracts.py, which import only the stdlib and contain no parse functions; _validate.py imports only dogwatch.diagnostics",
+        "The import allowlist in test_config.py::test_config_module_restricts_imports_and_os_calls admits dogwatch.exclude, dogwatch.rules and dogwatch.contracts and passes",
+        "Zero behaviour change: make test-fixtures passes with byte-identical 0.1 goldens (git diff --exit-code fixtures scanner/schemas is clean)",
+        "make test-scanner, make lint-scanner and make test-fixtures all exit 0 (checkpoint CP0)"
+      ],
+      "review_required": true,
+      "status": "blocked",
+      "last_verification": {
+        "passed": false,
+        "evidence": [
+          "Recovered persisted child attempt f454b33b-eb8a-46da-851f-fffe57f97277."
+        ],
+        "verified_at": "2026-11-15T10:27:06.575339Z"
+      },
+      "last_findings_fingerprint": null,
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
+    },
+    {
+      "item_id": "exclude-validation",
+      "source_task_ids": [
+        "exclude-validation"
+      ],
+      "title": "Implement exclusion glob syntax validation, matcher and package-tree walk",
+      "criteria": [
+        "Files written are limited to scanner/src/dogwatch/exclude.py and scanner/tests/test_exclude.py (new); the ExclusionDecl fields frozen by seam-foundation are unchanged",
+        "parse_exclusions(value: object) -> tuple[ExclusionDecl, ...] raises DogwatchError with exactly one config-invalid diagnostic whose message follows the IC-ERR-4 template and contains python.exclude[i] for each case: exclude not an array, non-string entry, empty pattern, leading '/', a '.', '..' or empty segment, and '?', '[' or '\\' in a pattern",
+        "Matcher tests: 'src/shop/**/*.py' matches 'src/shop/a.py' and 'src/shop/x/y/b.py'; 'src/shop/*.py' does not match 'src/shop/x/b.py'; 'a**b' behaves like 'a*b'; matching is case-sensitive; two overlapping patterns are each satisfied by the same file",
+        "check_matches(config_dir, packages, exclusions) walks with os.scandir using is_file/is_dir(follow_symlinks=False) and normpath'd '<root>/<name>/<rel>' candidates; a pattern matching only a directory, only a file outside <root>/<name>/, or only a symlink (to file or directory) yields exclude-unmatched with message \"python.exclude[i] '<v>' matches no file under a declared package directory\"; several unmatched patterns yield one diagnostic each in config order",
+        "With open and os.scandir instrumented, check_matches never calls open and calls os.scandir only on paths whose realpath lies under some realpath(<config_dir>/<root>/<name>)",
+        "packages is typed against a module-local typing.Protocol with read-only name: str and root: str (no import of dogwatch.config, including under TYPE_CHECKING); exclude.py imports only the stdlib, dogwatch._validate and dogwatch.diagnostics",
+        "make test-scanner, make lint-scanner and make test-fixtures exit 0"
+      ],
+      "review_required": true,
+      "status": "pending",
+      "last_verification": {
+        "passed": false,
+        "evidence": [],
+        "verified_at": null
+      },
+      "last_findings_fingerprint": null,
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
+    },
+    {
+      "item_id": "rules-validation",
+      "source_task_ids": [
+        "rules-validation"
+      ],
+      "title": "Implement named forbid/layers rule validation",
+      "criteria": [
+        "Files written are limited to scanner/src/dogwatch/rules.py and scanner/tests/test_rules.py (new); the RuleDecl fields frozen by seam-foundation are unchanged",
+        "parse_rules(value: object) -> tuple[RuleDecl, ...] checks in order: kind, per-kind unknown keys, required fields and types, id grammar, id uniqueness, non-empty reason, selector syntax, structural constraints",
+        "test_rules.py has one test per Edge Case 'Rules' case (missing id/kind/reason through unknown keys inside a rule, including the other kind's keys rejected for each kind and except_sources given without sources) asserting id == 'config-invalid', the exact key path in the message (e.g. python.rules[1].targets[0]) and the IC-ERR-4 template text",
+        "Valid inputs load: forbid with all optional keys; forbid with only targets (sources == ()); layers with exhaustive = true and container; layers without container (exhaustive is False, container is None); fields of the other kind keep DC-C4 empty defaults",
+        "parse_rules(None) and parse_rules([]) both return ()",
+        "A selector naming no existing module is accepted and no filesystem access occurs (open/os.scandir/os.stat instrumented)",
+        "Every failure raises exactly one diagnostic",
+        "rules.py imports only the stdlib, dogwatch._validate and dogwatch.diagnostics",
+        "make test-scanner, make lint-scanner and make test-fixtures exit 0"
+      ],
+      "review_required": true,
+      "status": "pending",
+      "last_verification": {
+        "passed": false,
+        "evidence": [],
+        "verified_at": null
+      },
+      "last_findings_fingerprint": null,
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
+    },
+    {
+      "item_id": "contracts-validation",
+      "source_task_ids": [
+        "contracts-validation"
+      ],
+      "title": "Implement optional OpenAPI contract declaration validation",
+      "criteria": [
+        "Files written are limited to scanner/src/dogwatch/contracts.py and scanner/tests/test_contracts.py (new); the OpenApiContractDecl fields frozen by seam-foundation are unchanged; unknown keys inside a contract entry are not checked here",
+        "parse_contracts(value: object) -> tuple[OpenApiContractDecl, ...] checks id presence, type, is_kebab_id and uniqueness; path presence and type; path syntax (relative, '/' separators, no '.', '..' or empty segment, no '\\', extension .yaml/.yml/.json case-sensitive); and textual path uniqueness",
+        "test_contracts.py has one test per case (missing id, missing path, duplicate id, duplicate path, bad extension, absolute path, '..' segment, backslashes, '.' segment) asserting config-invalid, a message containing openapi.contracts[i] (or [j] for duplicates) and the IC-ERR-4 template text",
+        "A contract whose path does not exist loads successfully and the module performs no filesystem access (instrumented open/os.scandir/os.stat)",
+        "parse_contracts(None) and parse_contracts([]) return ()",
+        "contracts.py imports only the stdlib, dogwatch._validate and dogwatch.diagnostics, never dogwatch.rules",
+        "make test-scanner, make lint-scanner and make test-fixtures exit 0"
+      ],
+      "review_required": true,
+      "status": "pending",
+      "last_verification": {
+        "passed": false,
+        "evidence": [],
+        "verified_at": null
+      },
+      "last_findings_fingerprint": null,
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
+    },
+    {
+      "item_id": "config-orchestration",
+      "source_task_ids": [
+        "config-orchestration"
+      ],
+      "title": "Wire staged load_policy validation over the full accepted config surface",
+      "criteria": [
+        "Files written are limited to scanner/src/dogwatch/config.py, scanner/tests/conftest.py and scanner/tests/test_config.py; diagnostics.py, _validate.py, exclude.py, rules.py, contracts.py, report.py, cli.py, scanner/schemas/**, fixtures/** and scanner/tests/golden/** are unchanged",
+        "load_policy implements stage 2a (unknown keys across top level, [python], [openapi], package entries and contract entries, collected and sorted, first reported), stage 2b in fixed order (python type, packages with keyword names rejected, parse_exclusions, parse_rules, openapi type, parse_contracts), stage 3 aggregated package filesystem checks prefixed 'python.packages[i]: ', and stage 4 check_matches only when exclude is non-empty",
+        "load_policy succeeds on a full-surface config built in tmp_path (packages, exclude, one forbid rule, one layers rule, one contract) and on variants without contracts, without rules, without exclude, and packages-only",
+        "Each of python.type_checking, python.clock, python.max_waiver_days, python.waivers, a baseline key, openapi.severity, an unknown top-level key, an unknown package-entry key and an unknown contract-entry key is rejected as '<key path> is not supported in this version'; with several unknown keys the reported one is sorted(K)[0]",
+        "Every Edge Case 'Config file' and 'Packages' case produces the IC-ERR-4 message; preserved CD-5 texts are verbatim and stage-3 messages carry the 'python.packages[i]: ' prefix; a keyword package name such as 'class' is rejected",
+        "Fail-fast staging: unknown key plus missing package directory yields exactly one (unknown-key) diagnostic; a stage-3 defect plus an unmatched exclusion yields only stage-3 diagnostics; every document-stage failure yields exactly one diagnostic",
+        "Every raised diagnostic has source 'dogwatch' and severity 'error'; every returned DogwatchConfig satisfies the DC-C1 to DC-C5 predicates",
+        "Trust tests: open is called only on config_arg; os.scandir is called only under package directories and zero times when exclude is absent or empty; the config.py import and os-call restriction test is updated and passes",
+        "Through the existing CLI entry point, a config with an unmatched exclusion exits 2, writes no report, and prints a matching 'dogwatch:exclude-unmatched: ...' stderr line",
+        "make test-scanner, make lint-scanner and make test-fixtures exit 0 with the fixtures/minimal golden unchanged (checkpoint CP1)"
+      ],
+      "review_required": true,
+      "status": "pending",
+      "last_verification": {
+        "passed": false,
+        "evidence": [],
+        "verified_at": null
+      },
+      "last_findings_fingerprint": null,
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
+    },
+    {
+      "item_id": "report-cli-contract",
+      "source_task_ids": [
+        "report-cli-contract"
+      ],
+      "title": "Implement report model 0.2, schema pin, status-derived CLI exit codes and minimal golden",
+      "criteria": [
+        "Files written are limited to scanner/src/dogwatch/report.py, scanner/src/dogwatch/cli.py, scanner/schemas/report-0.2.schema.json (new), deletion of scanner/schemas/report-0.1.schema.json, scanner/tests/test_report.py, test_schema.py, test_cli.py, appended render tests in test_diagnostics.py, scanner/tests/golden/test_fixture_goldens.py and fixtures/minimal/expected-report.json (only via make regen-fixtures); diagnostics.py, config.py, _validate.py, exclude.py, rules.py, contracts.py, conftest.py, output.py, golden/harness.py, golden/regenerate.py, fixtures/minimal/dogwatch.toml, fixtures/minimal/src/**, fixtures/README.md and test_trust_boundary.py are unchanged",
+        "build_report returns exactly the keys {schema_version: '0.2', status, scanner, policy, findings, diagnostics}; FORBIDDEN_FIELDS keys are absent; provenance fields are present",
+        "derive_status: an error diagnostic gives 'inconclusive'; otherwise an error finding gives 'fail'; error finding plus error diagnostic gives 'inconclusive'; warning/info entries alone give 'pass'; exit_code_for_status maps pass/fail/inconclusive to 0/1/2",
+        "Finding keys are exactly the DC-R3 set with waiver always null; locator contains no null values; Diagnostic keys are exactly the DC-R5 set",
+        "Serialization is canonical with a trailing newline and literal non-ASCII; any permutation of findings and diagnostics serializes to identical bytes; repeated serialization is byte-identical",
+        "report-0.2.schema.json has $id 'urn:dogwatch:schema:report:0.2' and validates constructed pass, fail, both inconclusive kinds, non-ASCII, warning/info and all-optional-locator reports; it rejects a forbidden field, a non-null waiver, a Finding with an 'id' key and a Diagnostic with a 'check_id' key; rg 'report-0\\.1' scanner finds no matches",
+        "test_cli.py produces and asserts the (report present, status, exit) tuple for: policy violation via monkeypatched dogwatch.cli.scan returning an error finding -> (True, fail, 1); invalid source syntax via an error source-syntax-invalid diagnostic -> (True, inconclusive, 2); adapter failure via an error diagnostic with source 'openapi' -> (True, inconclusive, 2); malformed config via missing or invalid-TOML file end to end -> (False, none, 2); the four tuples are pairwise distinct and each written report validates against schema 0.2",
+        "stderr lines equal 'dogwatch:<id>: <message>' for each report diagnostic in report order, rendered after a successful write, and stderr is empty when there are none",
+        "On report write failure no diagnostic lines appear, the last stderr line starts with 'dogwatch: error: cannot write report to ', exit is 2 and no temp file remains; with the same-file guard triggered scan is called zero times and the config file is unchanged; --version, stdout '-' mode and usage errors behave as before",
+        "dogwatch.cli.scan is module-level, looked up at call time, takes one parameter and scan(cfg) == ((), ())",
+        "test_fixture_goldens.py pins SCHEMA_PATH to report-0.2.schema.json and asserts each golden has status 'pass' and diagnostics == []; make regen-fixtures rewrites only fixtures/minimal/expected-report.json to the 0.2 shape",
+        "make test-scanner, make lint-scanner and make test-fixtures all exit 0, including repeated-run and TZ/LC_ALL/HOME/PYTHONHASHSEED golden variants (checkpoint CP2, no red window)"
+      ],
+      "review_required": true,
+      "status": "pending",
+      "last_verification": {
+        "passed": false,
+        "evidence": [],
+        "verified_at": null
+      },
+      "last_findings_fingerprint": null,
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
+    },
+    {
+      "item_id": "full-surface-fixture",
+      "source_task_ids": [
+        "full-surface-fixture"
+      ],
+      "title": "Add full-surface golden fixture, trust-boundary and module-structure tests, and run the final gate",
+      "criteria": [
+        "Files written are limited to fixtures/full-surface/** (new, static, LF endings, never imported), fixtures/README.md, scanner/tests/test_trust_boundary.py and scanner/tests/test_module_structure.py (new); scanner/src/**, scanner/schemas/**, scanner/tests/golden/**, conftest.py, test_config.py, test_cli.py and fixtures/minimal/** are unchanged",
+        "fixtures/full-surface/dogwatch.toml declares at least one package, at least one exclude pattern matching at least one real regular file under <root>/<name>/, at least one forbid rule, at least one layers rule and exactly one [[openapi.contracts]] whose checked-in spec file exists; load_policy on it succeeds",
+        "make regen-fixtures creates fixtures/full-surface/expected-report.json with schema_version '0.2', status 'pass', findings [] and diagnostics []; afterwards git diff --exit-code fixtures/minimal is clean",
+        "make test-fixtures passes for both fixtures: byte-exact goldens, identical repeated runs, TZ/LC_ALL/HOME/PYTHONHASHSEED variants with no environment leakage, and schema 0.2 validation of every golden",
+        "test_trust_boundary.py: on fixtures/minimal, os.scandir, os.listdir and open are never used on package directories; on fixtures/full-surface, os.scandir is used only under package directories and no file there is opened; in both, no module named after a fixture package appears in sys.modules and a fixture source file that raises on import does not change the outcome; the network-disabled run still passes",
+        "fixtures/README.md documents the full-surface fixture and its regeneration rule",
+        "test_module_structure.py (AST-based) asserts: diagnostics imports no dogwatch.* module; _validate imports only diagnostics; exclude, rules and contracts import only _validate and diagnostics and never each other; config does not import report or cli; report does not import cli, exclude, rules or contracts; the import graph is acyclic; test_isolation.py stays green",
+        "Final gate: make test-scanner && make lint-scanner && make test-fixtures pass in one run, and make run-scanner exits 0 with empty stderr (checkpoint CP3)"
+      ],
+      "review_required": true,
+      "status": "pending",
+      "last_verification": {
+        "passed": false,
+        "evidence": [],
+        "verified_at": null
+      },
+      "last_findings_fingerprint": null,
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
+    }
+  ],
+  "created_at": "2026-11-15T10:11:26.532515Z",
+  "updated_at": "2026-11-15T10:27:06.575350Z"
+}

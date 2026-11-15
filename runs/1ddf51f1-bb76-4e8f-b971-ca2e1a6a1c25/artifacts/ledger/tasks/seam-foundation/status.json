@@ -1,0 +1,33 @@
+{
+  "task_id": "seam-foundation",
+  "status": "completed",
+  "attempt": 2,
+  "version": 6,
+  "claim_run_id": null,
+  "claim_expires_at": null,
+  "provider": "proxy",
+  "task_kind": "software_engineering",
+  "title": "Freeze shared Diagnostic, exit-code, validation-helper and config entity seams",
+  "depends_on": [],
+  "review_required": true,
+  "review_completed": false,
+  "requested_write_scopes": [
+    "scanner/src/dogwatch",
+    "scanner/tests"
+  ],
+  "followup_for": null,
+  "deliverable_name": "scanner/src/dogwatch/_validate.py",
+  "summary": "Following the operator's choice, I renamed PolicyConfig to DogwatchConfig with no alias in commit c1fefa8. report.py changes by exactly two lines (the line 6 import and the line 12 annotation). config.py and the construction sites and imports in test_config.py, test_report.py and test_schema.py are updated to match. This adds to the earlier commits e0fa8d7 (four-field Diagnostic, id constants, render_diagnostics, exit-code comment) and 138c0b2 (_validate helpers, entity dataclasses, the new empty-tuple config fields, the import allowlist). CP0 passes on HEAD c1fefa8, and the 0.1 goldens and schemas are byte-identical.",
+  "error": null,
+  "result_path": "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/artifacts/ledger/tasks/seam-foundation/result.json",
+  "final_markdown_path": "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/artifacts/ledger/tasks/seam-foundation/task_response.md",
+  "git_branch": null,
+  "git_base_branch": null,
+  "git_base_commit": null,
+  "git_head_commit": null,
+  "integration_status": null,
+  "hard_block_request": null,
+  "verification_disposition": "inconclusive",
+  "operator_blocked_criteria": [],
+  "write_scope_enforcement": "preventive"
+}

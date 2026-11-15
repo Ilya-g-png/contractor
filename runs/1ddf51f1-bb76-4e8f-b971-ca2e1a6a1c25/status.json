@@ -1,0 +1,158 @@
+{
+  "runtimeMetadata": {
+    "objectiveContext": {
+      "raw_user_goal": "CD-6: Implement validated Dogwatch configuration and common report contracts\n\nImplement the configuration parser/validator selected by the policy ADR and the shared report models used by every adapter. A report must distinguish a policy violation from scanner or adapter infrastructure failure.\n\nh2. Acceptance criteria\n\n* Invalid configuration fails before scanning with a precise configuration diagnostic.\n* A valid config declares explicit scanned Python packages, exclusions, named rules, and optional OpenAPI contract paths.\n* The common report model includes scan status, provenance, normalized findings, and diagnostics with stable JSON serialization.\n* A policy violation, malformed config, invalid source syntax, and adapter failure are distinguishable in the report and CLI exit behavior.",
+      "clarification_goal": "CD-6: Implement validated Dogwatch configuration and common report contracts\n\nImplement the configuration parser/validator selected by the policy ADR and the shared report models used by every adapter. A report must distinguish a policy violation from scanner or adapter infrastructure failure.\n\nh2. Acceptance criteria\n\n* Invalid configuration fails before scanning with a precise configuration diagnostic.\n* A valid config declares explicit scanned Python packages, exclusions, named rules, and optional OpenAPI contract paths.\n* The common report model includes scan status, provenance, normalized findings, and diagnostics with stable JSON serialization.\n* A policy violation, malformed config, invalid source syntax, and adapter failure are distinguishable in the report and CLI exit behavior.",
+      "run_objective": "CD-6: Implement validated Dogwatch configuration and common report contracts\n\nImplement the configuration parser/validator selected by the policy ADR and the shared report models used by every adapter. A report must distinguish a policy violation from scanner or adapter infrastructure failure.\n\nh2. Acceptance criteria\n\n* Invalid configuration fails before scanning with a precise configuration diagnostic.\n* A valid config declares explicit scanned Python packages, exclusions, named rules, and optional OpenAPI contract paths.\n* The common report model includes scan status, provenance, normalized findings, and diagnostics with stable JSON serialization.\n* A policy violation, malformed config, invalid source syntax, and adapter failure are distinguishable in the report and CLI exit behavior.",
+      "planner_objective": "CD-6: Implement validated Dogwatch configuration and common report contracts\n\nImplement the configuration parser/validator selected by the policy ADR and the shared report models used by every adapter. A report must distinguish a policy violation from scanner or adapter infrastructure failure.\n\nh2. Acceptance criteria\n\n* Invalid configuration fails before scanning with a precise configuration diagnostic.\n* A valid config declares explicit scanned Python packages, exclusions, named rules, and optional OpenAPI contract paths.\n* The common report model includes scan status, provenance, normalized findings, and diagnostics with stable JSON serialization.\n* A policy violation, malformed config, invalid source syntax, and adapter failure are distinguishable in the report and CLI exit behavior.",
+      "architecture_objective": "",
+      "ui_ux_objective": "",
+      "supervisor_summary": "Execute the approved run objective without reinterpreting the original request.",
+      "clarification_history": [],
+      "previous_attempt": null,
+      "bundle_id": "web-backend-only",
+      "origin_jira_key": "CD-6",
+      "prior_work": [
+        {
+          "run_id": "7ee72c98-20e3-41ff-9321-386775b7a72e",
+          "origin_jira_key": "CD-3",
+          "source": "jira_link",
+          "relation": "blocks",
+          "title": "Research configurable Python import-boundary policy semantics",
+          "run_status": "completed",
+          "exit_reason": "normal_completion",
+          "completed_at": "2026-10-03T12:21:53.902298Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "b1cdceb4-580f-4169-bf8c-203d36d500a0",
+          "origin_jira_key": "CD-3",
+          "source": "jira_link",
+          "relation": "blocks",
+          "title": "Research configurable Python import-boundary policy semantics",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:48.327911Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "702ddebf-34a8-46c6-8d7a-912a2e407a5d",
+          "origin_jira_key": "CD-3",
+          "source": "jira_link",
+          "relation": "blocks",
+          "title": "Research configurable Python import-boundary policy semantics",
+          "run_status": "completed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:37:32.147595Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "5b28548a-4c88-4600-b7cc-a6df1df95c7b",
+          "origin_jira_key": "CD-4",
+          "source": "jira_link",
+          "relation": "blocks",
+          "title": "Research the safe OpenAPI compatibility adapter contract",
+          "run_status": "completed",
+          "exit_reason": "normal_completion",
+          "completed_at": "2026-10-03T12:20:00.829750Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "c3aa5af8-9962-4689-879f-ddf43b9ea152",
+          "origin_jira_key": "CD-4",
+          "source": "jira_link",
+          "relation": "blocks",
+          "title": "Research the safe OpenAPI compatibility adapter contract",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:58.157931Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "1f039cf8-8868-4202-a892-fed38d80cfb8",
+          "origin_jira_key": "CD-4",
+          "source": "jira_link",
+          "relation": "blocks",
+          "title": "Research the safe OpenAPI compatibility adapter contract",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:37:12.390578Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "164a748c-a04f-4d96-9cbe-3519549fb59f",
+          "origin_jira_key": "CD-5",
+          "source": "jira_link",
+          "relation": "blocks",
+          "title": "Bootstrap the monorepo, scanner CLI, API, web app, and deterministic fixture project",
+          "run_status": "completed",
+          "exit_reason": "normal_completion",
+          "completed_at": "2026-10-04T08:04:23.314642Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "29a445c3-9d56-4d45-9250-e42d12faf185",
+          "origin_jira_key": "CD-5",
+          "source": "jira_link",
+          "relation": "blocks",
+          "title": "Bootstrap the monorepo, scanner CLI, API, web app, and deterministic fixture project",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-04T06:36:59.847823Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "9c37b285-b35d-4dc2-be1c-2347272422e0",
+          "origin_jira_key": "CD-2",
+          "source": "epic",
+          "relation": null,
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "completed",
+          "exit_reason": "normal_completion",
+          "completed_at": "2026-10-03T12:16:11.195128Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "a4dd5320-b083-43c1-9806-1cceb0a6ed19",
+          "origin_jira_key": "CD-2",
+          "source": "epic",
+          "relation": null,
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:22.023434Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "15559cfe-b43b-48d2-b7b1-94b9c6fdbb68",
+          "origin_jira_key": "CD-2",
+          "source": "epic",
+          "relation": null,
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:34:52.045292Z",
+          "ticket_updated_after_run": true
+        }
+      ],
+      "ticket": {
+        "key": "CD-6",
+        "issue_type": "story",
+        "labels": [
+          "contract-dogwatch",
+          "contracts",
+          "python",
+          "seed-cdw-5"
+        ],
+        "title": "Implement validated Dogwatch configuration and common report contracts",
+        "description": "Implement the configuration parser/validator selected by the policy ADR and the shared report models used by every adapter. A report must distinguish a policy violation from scanner or adapter infrastructure failure.\n\nh2. Acceptance criteria\n\n* Invalid configuration fails before scanning with a precise configuration diagnostic.\n* A valid config declares explicit scanned Python packages, exclusions, named rules, and optional OpenAPI contract paths.\n* The common report model includes scan status, provenance, normalized findings, and diagnostics with stable JSON serialization.\n* A policy violation, malformed config, invalid source syntax, and adapter failure are distinguishable in the report and CLI exit behavior.",
+        "acceptance_criteria": [
+          "Invalid configuration fails before scanning with a precise configuration diagnostic.",
+          "A valid config declares explicit scanned Python packages, exclusions, named rules, and optional OpenAPI contract paths.",
+          "The common report model includes scan status, provenance, normalized findings, and diagnostics with stable JSON serialization.",
+          "A policy violation, malformed config, invalid source syntax, and adapter failure are distinguishable in the report and CLI exit behavior."
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "task_id": "full-surface-fixture",
+  "status": "queued",
+  "attempt": 1,
+  "version": 1,
+  "claim_run_id": null,
+  "claim_expires_at": null,
+  "provider": "proxy",
+  "task_kind": "software_engineering",
+  "title": "Add full-surface golden fixture, trust-boundary and module-structure tests, and run the final gate",
+  "depends_on": [
+    "seam-foundation",
+    "exclude-validation",
+    "rules-validation",
+    "contracts-validation",
+    "config-orchestration",
+    "report-cli-contract"
+  ],
+  "review_required": true,
+  "review_completed": false,
+  "requested_write_scopes": [
+    "fixtures",
+    "scanner/tests"
+  ],
+  "followup_for": null,
+  "deliverable_name": "fixtures/full-surface/dogwatch.toml",
+  "summary": null,
+  "error": null,
+  "result_path": null,
+  "final_markdown_path": null,
+  "git_branch": null,
+  "git_base_branch": null,
+  "git_base_commit": null,
+  "git_head_commit": null,
+  "integration_status": null,
+  "hard_block_request": null,
+  "verification_disposition": null,
+  "operator_blocked_criteria": [],
+  "write_scope_enforcement": null
+}

@@ -546,19 +546,29 @@
         "INV-A4 / INV-R1: no .am/ changes, no Dockerfile or *.tf files, no background job/queue/rate-limit/database libraries, and API runtime dependencies are exactly {fastapi, uvicorn}."
       ],
       "review_required": true,
-      "status": "in_progress",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
+        "passed": true,
         "evidence": [
-          "Developer/reviewer loop made no progress for 6 inner attempts."
+          "Accept. The branch fast-forwards the accepted lane commits and adds one empty commit, bfd0499, whose body is the acceptance record. The Makefile was last changed in the accepted root-foundation commit, so there are no drift edits. The diff has no .am/ changes and no Dockerfile or *.tf files, and the dependency sets match INV-A4/INV-R1. Every criterion the operator did not block is backed by recorded local macOS evidence. The ubuntu and CI-matrix portions are openly marked as deferred under operator option B.",
+          "bfd0499 is an empty commit; its message body is the acceptance record (checked with git show --stat).",
+          "Makefile history ends at bf66b48 (root-foundation), so no drift edits were made in this task.",
+          "The diff from the base branch to the task branch, filtered to .am, Dockerfile and *.tf, is empty.",
+          "Machine verification ran only the web toolchain (lint/build/test passed); the scanner, api, bench, Lighthouse and Playwright claims rest on the developer's recorded local evidence, accepted under operator option B.",
+          "CP-4, SC-004 and SC-011 are in blocked_acceptance_criteria and were not evaluated against the task.",
+          "164a748c-a04f-4d96-9cbe-3519549fb59f/reviewer_decision.json"
         ],
-        "verified_at": "2026-10-03T15:14:39.482033Z"
+        "verified_at": "2026-10-04T08:04:23.108133Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "acceptance-integration:accept:M1-ubuntu-ci-portions-deferred-optionB;L1-node26-local",
       "attempts_since_progress": 0,
-      "blocked_criteria": []
+      "blocked_criteria": [
+        "CP-4 / INV-C5: on the integration PR all IC-8 statuses from ci.yml are green with summed job time <= 25 runner-minutes and workflow wall-clock <= 10 min per run (Actions timing API), keeping cost at USD 0/month.",
+        "SC-004 / INV-C4 / INV-F3: seeded PRs turn exactly the matching status red: unformatted scanner file -> scanner (3.11); unformatted api file -> api; unformatted web file -> web; golden byte change -> all fixtures (...) statuses; `type X = int` -> scanner (3.11).",
+        "SC-011 / INV-C2: a fork-PR run reports the same green statuses, or is recorded as blocked if the repository is private (OQ-6)."
+      ]
     }
   ],
   "created_at": "2026-10-03T13:30:04.505951Z",
-  "updated_at": "2026-10-04T07:57:10.862728Z"
+  "updated_at": "2026-10-04T08:04:23.108161Z"
 }

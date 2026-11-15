@@ -1,0 +1,80 @@
+{
+  "summary": "CD-6 delivers the two contracts every later Dogwatch component binds to: the validated dogwatch.toml configuration model (explicit scanned packages, exclusion globs, named forbid/layers rules, optional OpenAPI contract paths, with every invalid config rejected before scanning by a diagnostic naming the offending TOML key path) and the common 0.2 report model (scan status, provenance, normalized findings, diagnostics, stable canonical JSON, versioned schema pin) with CLI exit codes as a pure function of run outcome, so a policy violation is never mistaken for infrastructure failure. Work extends the CD-5 scanner modules in place and follows the approved plan's waves as four epics: a serial shared-model seam, two parallel epics with disjoint write scopes (config validation surface; report model, schema and CLI), and a finalizing fixtures-and-trust-boundary epic that regenerates goldens and closes the full gate. No scan step, engine, adapter, or waiver logic is added; those arrive with their consuming tickets.",
+  "epics": [
+    {
+      "epic_id": "EPIC-001",
+      "title": "Shared model seam foundation",
+      "description": "Serial foundation (plan wave F0) that freezes the cross-area module contracts before any parallel work starts. Owns scanner/src/dogwatch/diagnostics.py (Diagnostic gains source and severity fields, render_diagnostics extracted with render delegating to it, EXIT_GATE_FAILED mapped from reserved to emitted) and the PolicyConfig to DogwatchConfig rename in scanner/src/dogwatch/config.py with new empty-tuple fields (exclusions, rules, contracts), plus the Diagnostic construction sites in tests/test_diagnostics.py, tests/test_config.py, tests/test_report.py, and tests/test_schema.py. Deliverable: the frozen module seams of the plan's section 7.4 exist with zero behavior change - the 0.1 report envelope, packages-only validation, and existing goldens are untouched.",
+      "acceptance_criteria": [
+        "make test-scanner passes: Diagnostic is (source, id, severity, message) with config-failure constructors using source='dogwatch' and severity='error', and the stderr render keeps the exact 'dogwatch:<id>: <message>' line format",
+        "make test-scanner passes: dogwatch.config.DogwatchConfig (renamed from PolicyConfig) exposes path_arg, raw, packages, exclusions, rules, contracts with the three new fields populated as empty tuples, and load_policy returns it",
+        "make test-scanner passes: dogwatch.diagnostics exposes EXIT_OK=0, EXIT_GATE_FAILED=1, EXIT_ERROR=2",
+        "make lint-scanner passes (ruff format --check, ruff check, mypy --strict over src and tests)",
+        "make test-fixtures passes with byte-identical goldens, proving zero behavior change at this checkpoint (0.1 envelope, packages-only validation, no new diagnostics)"
+      ],
+      "dependencies": []
+    },
+    {
+      "epic_id": "EPIC-002",
+      "title": "Validated Dogwatch config surface",
+      "description": "Plan wave F1, executed in parallel with EPIC-003 against EPIC-001's frozen seams. Owns the configuration validation surface: scanner/src/dogwatch/config.py (orchestration, extended unknown-key surface, package-name keyword tightening), the new modules exclude.py (ExclusionDecl, glob syntax validation, glob matcher, package-tree match walk), rules.py (RuleDecl, selector syntax validation, forbid/layers constraints), and contracts.py (OpenApiContractDecl, contract path validation), plus tests/conftest.py, tests/test_config.py, and the new tests/test_exclude.py, tests/test_rules.py, tests/test_contracts.py including the narrowed load_policy trust invariant. Deliverable: FR-001 to FR-009 - every invalid config fails in load_policy before scanning with a precise diagnostic naming the offending TOML key path, and the full AC-2 surface validates.",
+      "acceptance_criteria": [
+        "make test-scanner passes: every invalid-config case (missing path, directory/unreadable/non-UTF-8/invalid TOML, unknown keys, invalid package/exclusion/rule/contract values) raises DogwatchError from load_policy before any scan, with a diagnostic naming the offending TOML key path (e.g. python.rules[1].targets[0], openapi.contracts[0].path) and the violated constraint",
+        "make test-scanner passes: a valid config declaring [[python.packages]], [python] exclude globs, [[python.rules]] of both forbid and layers kinds, and [[openapi.contracts]] loads into DogwatchConfig; zero exclusions, zero rules, and zero contracts are also valid",
+        "make test-scanner passes: each exclusion pattern is syntax-validated (only '*' as wildcard, '/'-separated, anchored at the config directory, absolute/'.'/'..' segments rejected) and must match at least one regular file under a declared package directory or fail with 'exclude-unmatched'; the match walk lists directory names only, never reads file contents, never follows symlinks, and runs only when exclude is non-empty",
+        "make test-scanner passes: rule ids are kebab-case, at most 64 chars, unique; forbid rules require non-empty targets with optional non-empty sources/except_sources/except_targets under strict-descendant constraints; layers rules require ordered, unique, unambiguous layers with container required when exhaustive=true; selectors are dot-separated Python identifiers excluding keywords, and a selector matching no module is not a config error",
+        "make test-scanner passes: OpenAPI contract paths are unique, relative, '/'-separated with .yaml/.yml/.json extension and no '.'/'..'/backslash/absolute segments; file existence is not checked at validation time",
+        "make test-scanner passes: every key outside the accepted surface - including [python] type_checking, clock, max_waiver_days, [[python.waivers]], the baseline file, and [openapi] settings/severity/waiver keys - is rejected as config-invalid naming the key",
+        "make test-scanner passes: load_policy never imports or executes scanned code (narrowed trust invariant, os.scandir whitelisted for the exclusion walk)",
+        "make lint-scanner passes and make test-fixtures still passes at this checkpoint (CLI output remains 0.1-shaped)"
+      ],
+      "dependencies": [
+        "EPIC-001"
+      ]
+    },
+    {
+      "epic_id": "EPIC-003",
+      "title": "Report model, schema, and CLI",
+      "description": "Plan wave F2, executed in parallel with EPIC-002 against EPIC-001's frozen seams. Owns scanner/src/dogwatch/report.py (0.2 envelope with status and diagnostics, Finding, Locator, Status, derive_status, exit_code_for_status; serialize_canonical unchanged), scanner/schemas/report-0.2.schema.json (added; report-0.1.schema.json removed), scanner/src/dogwatch/cli.py (scan seam returning ((), ()), status-to-exit mapping, scan-time diagnostic stderr wiring), and tests/test_report.py, tests/test_schema.py, tests/test_diagnostics.py, tests/test_cli.py. Deliverable: FR-010 to FR-018 - the common report model with stable canonical JSON serialization, the versioned schema pin, and CLI exit behavior distinguishing a policy violation from config failure, invalid source syntax, and adapter failure.",
+      "acceptance_criteria": [
+        "make test-scanner passes: build_report emits schema_version '0.2' with status, scanner, policy, findings, and diagnostics always present; provenance depth is scanner+policy only and the CD-2 workflow fields remain forbidden",
+        "make test-scanner passes: derive_status is a pure function with precedence inconclusive > fail > pass - any error-severity diagnostic yields inconclusive, else any error-severity finding with waiver null yields fail, else pass; warning/info never change status",
+        "make test-scanner passes: Finding carries source, check_id, severity, message, fingerprint, waiver (always null in 0.2), and locator; Locator carries path plus optional line/column (integers >= 1) and source_module/target_module",
+        "make test-scanner passes: every report the CLI writes and every constructed-mode report validates against scanner/schemas/report-0.2.schema.json (Draft 2020-12, additionalProperties false); report-0.1.schema.json is deleted and no file references it",
+        "make test-scanner passes: the four modes are distinguishable as unique (report, exit) pairs - policy violation: error finding in report, status fail, exit 1; malformed config: config diagnostic on stderr, no report, exit 2; invalid source syntax: source-syntax-invalid error diagnostic in report, status inconclusive, exit 2; adapter failure: adapter-sourced error diagnostic in report, status inconclusive, exit 2",
+        "make test-scanner passes: the CLI maps pass to 0, fail to 1, inconclusive to 2; usage errors and report-write failures exit 2; scan-time diagnostics render to stderr after the report write; with empty scan results (all CD-6 runs) stderr stays empty",
+        "make test-scanner passes: preserved CLI behaviors are unchanged - same-file guard, atomic write, stdout '-' mode, --version - and serialize_canonical output is byte-identical across runs",
+        "make lint-scanner passes; make test-fixtures is expected red at this checkpoint (goldens still 0.1-shaped) and must not be hand-edited - regeneration is EPIC-004's exclusive scope"
+      ],
+      "dependencies": [
+        "EPIC-001"
+      ]
+    },
+    {
+      "epic_id": "EPIC-004",
+      "title": "Fixtures, goldens, and trust boundary",
+      "description": "Plan wave F3, after EPIC-002 and EPIC-003. Owns fixtures/full-surface/** (new static fixture declaring all four AC-2 surfaces: at least one package, at least one exclusion pattern matching a real file, at least one forbid and one layers rule, one OpenAPI contract with a checked-in spec file), fixtures/README.md, the regenerated fixtures/minimal golden, tests/golden/test_fixture_goldens.py (0.2 schema path, status and diagnostics assertions), and tests/test_trust_boundary.py (narrowed invariant plus an exclusions-present variant). Deliverable: FR-019 and the final green gate - goldens regenerated exclusively via make regen-fixtures, closing the red test-fixtures window left by EPIC-003.",
+      "acceptance_criteria": [
+        "fixtures/full-surface/ exists with a dogwatch.toml declaring at least one package, at least one exclusion pattern matching at least one real file under the package directory, at least one forbid rule and one layers rule, and one OpenAPI contract with a checked-in static spec file; fixtures/README.md documents it",
+        "make regen-fixtures followed by make test-fixtures passes: byte-exact goldens for both minimal (regenerated to the 0.2 shape) and full-surface, including repeated-runs-identical assertions and TZ/LC_ALL/HOME/PYTHONHASHSEED variant runs with no environment leakage",
+        "make test-fixtures passes: golden tests validate every report against report-0.2.schema.json and assert status 'pass' and empty diagnostics",
+        "make test-scanner passes: test_trust_boundary covers the CLI run with and without exclusions and asserts scanned code is never imported or executed",
+        "Final gate: make test-scanner && make lint-scanner && make test-fixtures all pass in one run"
+      ],
+      "dependencies": [
+        "EPIC-002",
+        "EPIC-003"
+      ]
+    }
+  ],
+  "risk_notes": [
+    "Between EPIC-003 landing and EPIC-004 completing, make test-fixtures is red by design (goldens still 0.1-shaped while CLI output is 0.2); it must be resolved only by EPIC-004's make regen-fixtures, never by hand-editing goldens.",
+    "EPIC-002 and EPIC-003 run in parallel with disjoint write scopes; both must code against EPIC-001's frozen module contracts (load_policy/DogwatchConfig, Diagnostic, build_report, exit constants) rather than each other's internals, or merges will conflict.",
+    "Three recorded defaults are non-gating but operator-flippable: the exclusion match domain is the package directory <root>/<name>/ (not the root-field subtree), selector segments reject Python keywords just like package names, and contract paths reject '.' segments; each flip changes one localized implementation point plus its tests.",
+    "Only the malformed-config mode of AC-4 is triggerable end-to-end through the real CLI in CD-6; the other three modes are verified at contract level via the cli.scan seam, per the spec's A-5 - the engine ticket later makes them real.",
+    "Finding.fingerprint is model and schema only in CD-6; its derivation algorithm arrives with the engine/adapter tickets, so tests may only assert a non-empty string.",
+    "Write-scope exclusivity must hold: diagnostics.py is EPIC-001-only, fixtures/** and tests/golden/** are EPIC-004-only; violations break golden discipline and merge determinism."
+  ],
+  "verification_strategy": "Verification runs entirely in this workspace through the root Makefile contract. Every epic lands green on make test-scanner and make lint-scanner (pytest -m 'not golden'; ruff format --check, ruff check, mypy --strict), except that make test-fixtures is expected red between EPIC-003 and EPIC-004. EPIC-004 closes the run: make regen-fixtures regenerates the minimal and new full-surface goldens, then the final gate make test-scanner && make lint-scanner && make test-fixtures must pass in one run, with the golden suite proving byte-identical reports across repeated runs and TZ/LC_ALL/HOME/PYTHONHASHSEED variants with no environment leakage. AC-4's four modes are verified by test_cli.py asserting full (report, stderr, exit) pairs at the scan seam plus the malformed-config end-to-end path, and make run-scanner smoke-runs the CLI over fixtures/minimal.",
+  "missing_info_requests": []
+}

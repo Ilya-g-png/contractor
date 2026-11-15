@@ -1,0 +1,93 @@
+{
+  "request": {
+    "draft_spec_path": "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/aa60f75a-3337-4c39-af44-14e12a9a027a/artifacts/planning/draft_spec.md",
+    "assistant_message": "The draft is tightly grounded in the CD-2/CD-3/CD-4 ADR papers and the existing CD-5 contracts (verified against scanner/src/dogwatch, the report-0.1 schema consumers, and the Makefile gates). Five decisions materially shape the frozen spec: three the draft itself flagged — the accepted config surface, provenance depth, and how AC-4's modes are verified — plus two it leaves silent: whether rule selectors must resolve to real modules (exclusion globs are already held to that standard), and whether AC-2 requires at least one exclusion and one rule to be present. Each question lists the draft's applied default first; confirming it freezes the spec as written.",
+    "questions": [
+      {
+        "id": "q-config-surface",
+        "question": "Which config keys must the CD-6 validator accept? The CD-3/CD-4 ADRs define keys beyond AC-2's four declarations — [python] type_checking, clock, max_waiver_days, [[python.waivers]], the baseline file, and the [openapi] settings/severity/waivers keys — whose semantics only take effect once the policy engine and adapters exist.",
+        "options": [
+          "Accept exactly the AC-2 surface — packages, exclude, rules, openapi.contracts and their structural sub-keys — and reject every other key per FR-009 (draft default A-2)",
+          "Accept and structurally validate the full ADR surface now, so ADR-complete configs are valid before the engine and adapters exist"
+        ],
+        "custom_label": "Additional ADR keys to accept beyond the AC-2 surface",
+        "rationale": "This decides whether configs using later-ticket ADR keys are rejected today, and how much structural validation CD-6 must implement."
+      },
+      {
+        "id": "q-ac4-triggerability",
+        "question": "How should AC-4's four distinguishable modes be satisfied in CD-6, given the policy engine and adapters are later tickets and only 'malformed config' is triggerable end-to-end through the CLI today?",
+        "options": [
+          "Contract-level satisfaction — the report model and exit mapping represent all four modes; tests construct each mode and assert its (report, exit-code) pair (draft default A-5)",
+          "Add a minimal scan step — parse every declared, non-excluded Python source so 'invalid source syntax' is triggerable end-to-end (source-syntax-invalid error diagnostic, status inconclusive, exit 2), preserving the never-execute-user-code guarantee"
+        ],
+        "custom_label": null,
+        "rationale": "This decides whether CD-6 ships a real source-parsing step (reading file contents, narrowing the trust-boundary invariant) or satisfies AC-4 through constructed-mode tests only."
+      },
+      {
+        "id": "q-provenance-depth",
+        "question": "What must the report's provenance block contain in schema version 0.2? AC-3 requires 'provenance' without naming fields; the CD-2 ADR's full block adds repository identity, commit/ref/dirty, base_sha, evaluation_date, scan timestamps, and a UUID report_id — fields that are git-derived or non-deterministic and conflict with the byte-identical golden contract.",
+        "options": [
+          "Scanner + policy only — name, version, policy path, sha256 digest (draft default A-4); the CD-2 workflow fields arrive with their consuming tickets, each bumping schema_version",
+          "The full CD-2 provenance block now, with the golden harness pinning or normalizing volatile fields (fixed report_id, pinned evaluation_date, no wall-clock)",
+          "Scanner + policy plus a pinned, deterministic evaluation_date only; defer the git-derived and upload fields"
+        ],
+        "custom_label": null,
+        "rationale": "The choice freezes the schema-0.2 report shape every consumer and golden fixture depends on, and determines whether the golden harness must pin volatile fields."
+      },
+      {
+        "id": "q-selector-resolution",
+        "question": "Must rule selectors resolve to real modules at config-validation time? The draft validates selector syntax (FR-006/FR-007) but is silent on resolution, while a non-matching exclusion glob is a hard pre-scan error (exclude-unmatched) — so a typo'd targets/sources/container/layers selector would silently match nothing until the engine lands.",
+        "options": [
+          "Defer resolution to the engine ticket — CD-6 validates selector syntax only; a selector matching no module under the declared packages is not a config error",
+          "Mirror exclude-unmatched — every targets/sources/container/layers selector must match at least one module under the declared packages at validation time, else a pre-scan config diagnostic (no report, exit 2)",
+          "Validate resolution only for layers rules (layers entries and container, where dangling entries break exhaustive assignment); defer forbid-rule selectors to the engine ticket"
+        ],
+        "custom_label": null,
+        "rationale": "This decides validation scope and whether typo'd rule selectors fail loudly (the ADR's exclude-unmatched philosophy) or silently no-op."
+      },
+      {
+        "id": "q-declaration-cardinalities",
+        "question": "Must a valid config declare at least one exclusion and at least one rule? AC-2 lists 'explicit scanned Python packages, exclusions, named rules, and optional OpenAPI contract paths', which can be read either as a presence requirement or as the declarable surface.",
+        "options": [
+          "At least one package required; zero exclusions, zero rules, and zero OpenAPI contracts are all valid (draft default A-3 — keeps the existing packages-only fixture valid)",
+          "Strict presence — at least one package, at least one exclusion, and at least one rule are all required; only OpenAPI contracts are optional (the existing packages-only fixture must be updated)"
+        ],
+        "custom_label": null,
+        "rationale": "The reading decides whether the existing packages-only fixture stays valid and what the validator rejects as incomplete."
+      }
+    ]
+  },
+  "answers": [
+    {
+      "question_id": "q-config-surface",
+      "selected_option": "Accept exactly the AC-2 surface — packages, exclude, rules, openapi.contracts and their structural sub-keys — and reject every other key per FR-009 (draft default A-2)",
+      "custom_answer": null,
+      "responder": "autonomous_llm"
+    },
+    {
+      "question_id": "q-ac4-triggerability",
+      "selected_option": "Contract-level satisfaction — the report model and exit mapping represent all four modes; tests construct each mode and assert its (report, exit-code) pair (draft default A-5)",
+      "custom_answer": null,
+      "responder": "autonomous_llm"
+    },
+    {
+      "question_id": "q-provenance-depth",
+      "selected_option": "Scanner + policy only — name, version, policy path, sha256 digest (draft default A-4); the CD-2 workflow fields arrive with their consuming tickets, each bumping schema_version",
+      "custom_answer": null,
+      "responder": "autonomous_llm"
+    },
+    {
+      "question_id": "q-selector-resolution",
+      "selected_option": "Defer resolution to the engine ticket — CD-6 validates selector syntax only; a selector matching no module under the declared packages is not a config error",
+      "custom_answer": null,
+      "responder": "autonomous_llm"
+    },
+    {
+      "question_id": "q-declaration-cardinalities",
+      "selected_option": "At least one package required; zero exclusions, zero rules, and zero OpenAPI contracts are all valid (draft default A-3 — keeps the existing packages-only fixture valid)",
+      "custom_answer": null,
+      "responder": "autonomous_llm"
+    }
+  ],
+  "completed_at": "2026-10-03T14:12:47Z"
+}

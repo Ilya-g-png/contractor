@@ -1,0 +1,11 @@
+{
+  "status": "failed",
+  "goal": "CD-6: Implement validated Dogwatch configuration and common report contracts\n\nImplement the configuration parser/validator selected by the policy ADR and the shared report models used by every adapter. A report must distinguish a policy violation from scanner or adapter infrastructure failure.\n\nh2. Acceptance criteria\n\n* Invalid configuration fails before scanning with a precise configuration diagnostic.\n* A valid config declares explicit scanned Python packages, exclusions, named rules, and optional OpenAPI contract paths.\n* The common report model includes scan status, provenance, normalized findings, and diagnostics with stable JSON serialization.\n* A policy violation, malformed config, invalid source syntax, and adapter failure are distinguishable in the report and CLI exit behavior.",
+  "active_step": null,
+  "step_started_at": null,
+  "step_timeout_seconds": null,
+  "research_calls_used": 0,
+  "context_scout_calls_used": 0,
+  "last_error": "You reached your Pro 5-hour limit. Max is $100/month for $300 of usage, with no 5-hour or weekly caps: https://ollama.com/settings/billing (ref: a782c015-4f53-4897-9f69-68e47fd1ea91) (status code: 429)",
+  "summary": "CD-6 delivers the two contracts every later Dogwatch component binds to: the validated dogwatch.toml configuration model (explicit scanned packages, exclusion globs, named forbid/layers rules, optional OpenAPI contract paths, with every invalid config rejected before scanning by a diagnostic naming the offending TOML key path) and the common 0.2 report model (scan status, provenance, normalized findings, diagnostics, stable canonical JSON, versioned schema pin) with CLI exit codes as a pure function of run outcome, so a policy violation is never mistaken for infrastructure failure. Work extends the CD-5 scanner modules in place and follows the approved plan's waves as four epics: a serial shared-model seam, two parallel epics with disjoint write scopes (config validation surface; report model, schema and CLI), and a finalizing fixtures-and-trust-boundary epic that regenerates goldens and closes the full gate. No scan step, engine, adapter, or waiver logic is added; those arrive with their consuming tickets."
+}

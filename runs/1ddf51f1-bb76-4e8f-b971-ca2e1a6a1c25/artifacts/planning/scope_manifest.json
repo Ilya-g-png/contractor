@@ -1,0 +1,63 @@
+{
+  "classified_domains": [
+    "web-backend"
+  ],
+  "domain_confidence": {
+    "web-backend": 0.6
+  },
+  "complexity": "standard",
+  "project_mode": "existing-project",
+  "bundle_id": "web-backend-only",
+  "bundle_rationale": "Backend service in isolation: no UI, no frontend assets, no operational\nconcerns are in scope for this work. Use when the user is iterating on\nan API or service that frontend / mobile / third-party consumers will\nintegrate against later. Designer specialist is skipped under this\nbundle because there is no UI to design; DevOps concerns are out of\nscope until the user opts in by escalating scope mid-run.",
+  "preset_id": "existing-backend-heavy",
+  "specialist_sequence": [
+    "planner_v1",
+    "architect_v1",
+    "decomposer_v1",
+    "developer_v1",
+    "reviewer_v1"
+  ],
+  "skipped_specialists": [
+    "researcher_v1",
+    "designer_v1"
+  ],
+  "needs_hitl_confirmation": false,
+  "mutations": [],
+  "work_kind": "implementation",
+  "work_kind_confidence": 0.95,
+  "needs": [
+    {
+      "profile": "planner_v1",
+      "evidence": "implementation story with acceptance criteria but no frozen specification for this contract work exists yet"
+    },
+    {
+      "profile": "architect_v1",
+      "evidence": "the common report model and config contract define how every adapter, scanner and the CLI communicate, changing how separate parts talk to each other"
+    },
+    {
+      "profile": "decomposer_v1",
+      "evidence": "always runs before the developer to produce the task breakdown for this multi-part contract work"
+    },
+    {
+      "profile": "developer_v1",
+      "evidence": "the objective asks to implement the configuration parser/validator and shared report models, changing the software"
+    },
+    {
+      "profile": "reviewer_v1",
+      "evidence": "always runs after the developer to verify the acceptance criteria, e.g. distinguishable failure modes and CLI exit behavior"
+    }
+  ],
+  "roster_decided": true,
+  "dropped": [
+    {
+      "profile": "researcher_v1",
+      "evidence": "The research CD-6 implements is already written: CD-3's paper at /Users/iliaglushkov/Documents/sandbox/contractor/.am/reports/7ee72c98-20e3-41ff-9321-386775b7a72e-research-paper.md selected the policy parser/validator semantics, CD-4's 5b28548a-4c88-4600-b7cc-a6df1df95c7b paper the adapter contract, and CD-2's 9c37b285-b35d-4dc2-be1c-2347272422e0 paper the report lifecycle; the ticket asks to implement these, leaving no open research question."
+    },
+    {
+      "profile": "designer_v1",
+      "evidence": "No acceptance criterion (AC-1..AC-4) asks for a screen, flow or visual behaviour \u2014 they cover config validation, report models, diagnostics and CLI exit codes only \u2014 and the classifier bundle is web-backend-only."
+    }
+  ],
+  "classifier_model": "glm-5.3",
+  "classifier_latency_ms": 30685
+}
