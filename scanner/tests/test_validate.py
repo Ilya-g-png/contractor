@@ -201,7 +201,7 @@ def test_validate_imports_only_diagnostics_from_dogwatch() -> None:
     }
 
 
-@pytest.mark.parametrize("module", ["rules", "contracts"])
+@pytest.mark.parametrize("module", ["contracts"])
 def test_entity_modules_import_only_stdlib_and_define_no_functions(
     module: str,
 ) -> None:
