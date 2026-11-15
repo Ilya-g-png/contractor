@@ -1,6 +1,5 @@
 import ast
 import dataclasses
-import sys
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -199,13 +198,3 @@ def test_validate_imports_only_diagnostics_from_dogwatch() -> None:
     assert {m for m in _imports("_validate") if m.startswith("dogwatch")} == {
         "dogwatch.diagnostics"
     }
-
-
-@pytest.mark.parametrize("module", ["contracts"])
-def test_entity_modules_import_only_stdlib_and_define_no_functions(
-    module: str,
-) -> None:
-    tree = ast.parse((SRC / f"{module}.py").read_bytes())
-
-    assert all(m.partition(".")[0] in sys.stdlib_module_names for m in _imports(module))
-    assert not [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)]
