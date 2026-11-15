@@ -3,13 +3,13 @@ import json
 import os
 from typing import Any
 
-from dogwatch.config import PolicyConfig
+from dogwatch.config import DogwatchConfig
 
 SCHEMA_VERSION = "0.1"
 SCANNER_NAME = "dogwatch"
 
 
-def build_report(cfg: PolicyConfig, version: str) -> dict[str, Any]:
+def build_report(cfg: DogwatchConfig, version: str) -> dict[str, Any]:
     return {
         "schema_version": SCHEMA_VERSION,
         "scanner": {"name": SCANNER_NAME, "version": version},

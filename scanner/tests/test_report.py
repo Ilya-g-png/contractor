@@ -4,7 +4,7 @@ import time
 
 import pytest
 
-from dogwatch.config import PackageDecl, PolicyConfig
+from dogwatch.config import DogwatchConfig, PackageDecl
 from dogwatch.report import build_report, serialize_canonical
 
 RAW = b'[[python.packages]]\nname = "acme"\nroot = "src"\n'
@@ -14,8 +14,8 @@ NON_ASCII_RAW = (
 ).encode()
 
 
-def _cfg(raw: bytes = RAW, path_arg: str = "dogwatch.toml") -> PolicyConfig:
-    return PolicyConfig(path_arg, raw, (PackageDecl("acme", "src"),))
+def _cfg(raw: bytes = RAW, path_arg: str = "dogwatch.toml") -> DogwatchConfig:
+    return DogwatchConfig(path_arg, raw, (PackageDecl("acme", "src"),), (), (), ())
 
 
 def test_build_report_sets_envelope_fields() -> None:
