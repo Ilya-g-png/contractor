@@ -1,25 +1,21 @@
 {
-  "contract_id": "contract-0006",
+  "contract_id": "contract-0007",
   "selected_item_ids": [
-    "report-cli-contract"
+    "full-surface-fixture"
   ],
   "selected_task_ids": [
-    "report-cli-contract"
+    "full-surface-fixture"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Files written are limited to scanner/src/dogwatch/report.py, scanner/src/dogwatch/cli.py, scanner/schemas/report-0.2.schema.json (new), deletion of scanner/schemas/report-0.1.schema.json, scanner/tests/test_report.py, test_schema.py, test_cli.py, appended render tests in test_diagnostics.py, scanner/tests/golden/test_fixture_goldens.py and fixtures/minimal/expected-report.json (only via make regen-fixtures); diagnostics.py, config.py, _validate.py, exclude.py, rules.py, contracts.py, conftest.py, output.py, golden/harness.py, golden/regenerate.py, fixtures/minimal/dogwatch.toml, fixtures/minimal/src/**, fixtures/README.md and test_trust_boundary.py are unchanged",
-    "build_report returns exactly the keys {schema_version: '0.2', status, scanner, policy, findings, diagnostics}; FORBIDDEN_FIELDS keys are absent; provenance fields are present",
-    "derive_status: an error diagnostic gives 'inconclusive'; otherwise an error finding gives 'fail'; error finding plus error diagnostic gives 'inconclusive'; warning/info entries alone give 'pass'; exit_code_for_status maps pass/fail/inconclusive to 0/1/2",
-    "Finding keys are exactly the DC-R3 set with waiver always null; locator contains no null values; Diagnostic keys are exactly the DC-R5 set",
-    "Serialization is canonical with a trailing newline and literal non-ASCII; any permutation of findings and diagnostics serializes to identical bytes; repeated serialization is byte-identical",
-    "report-0.2.schema.json has $id 'urn:dogwatch:schema:report:0.2' and validates constructed pass, fail, both inconclusive kinds, non-ASCII, warning/info and all-optional-locator reports; it rejects a forbidden field, a non-null waiver, a Finding with an 'id' key and a Diagnostic with a 'check_id' key; rg 'report-0\\.1' scanner finds no matches",
-    "test_cli.py produces and asserts the (report present, status, exit) tuple for: policy violation via monkeypatched dogwatch.cli.scan returning an error finding -> (True, fail, 1); invalid source syntax via an error source-syntax-invalid diagnostic -> (True, inconclusive, 2); adapter failure via an error diagnostic with source 'openapi' -> (True, inconclusive, 2); malformed config via missing or invalid-TOML file end to end -> (False, none, 2); the four tuples are pairwise distinct and each written report validates against schema 0.2",
-    "stderr lines equal 'dogwatch:<id>: <message>' for each report diagnostic in report order, rendered after a successful write, and stderr is empty when there are none",
-    "On report write failure no diagnostic lines appear, the last stderr line starts with 'dogwatch: error: cannot write report to ', exit is 2 and no temp file remains; with the same-file guard triggered scan is called zero times and the config file is unchanged; --version, stdout '-' mode and usage errors behave as before",
-    "dogwatch.cli.scan is module-level, looked up at call time, takes one parameter and scan(cfg) == ((), ())",
-    "test_fixture_goldens.py pins SCHEMA_PATH to report-0.2.schema.json and asserts each golden has status 'pass' and diagnostics == []; make regen-fixtures rewrites only fixtures/minimal/expected-report.json to the 0.2 shape",
-    "make test-scanner, make lint-scanner and make test-fixtures all exit 0, including repeated-run and TZ/LC_ALL/HOME/PYTHONHASHSEED golden variants (checkpoint CP2, no red window)"
+    "Files written are limited to fixtures/full-surface/** (new, static, LF endings, never imported), fixtures/README.md, scanner/tests/test_trust_boundary.py and scanner/tests/test_module_structure.py (new); scanner/src/**, scanner/schemas/**, scanner/tests/golden/**, conftest.py, test_config.py, test_cli.py and fixtures/minimal/** are unchanged",
+    "fixtures/full-surface/dogwatch.toml declares at least one package, at least one exclude pattern matching at least one real regular file under <root>/<name>/, at least one forbid rule, at least one layers rule and exactly one [[openapi.contracts]] whose checked-in spec file exists; load_policy on it succeeds",
+    "make regen-fixtures creates fixtures/full-surface/expected-report.json with schema_version '0.2', status 'pass', findings [] and diagnostics []; afterwards git diff --exit-code fixtures/minimal is clean",
+    "make test-fixtures passes for both fixtures: byte-exact goldens, identical repeated runs, TZ/LC_ALL/HOME/PYTHONHASHSEED variants with no environment leakage, and schema 0.2 validation of every golden",
+    "test_trust_boundary.py: on fixtures/minimal, os.scandir, os.listdir and open are never used on package directories; on fixtures/full-surface, os.scandir is used only under package directories and no file there is opened; in both, no module named after a fixture package appears in sys.modules and a fixture source file that raises on import does not change the outcome; the network-disabled run still passes",
+    "fixtures/README.md documents the full-surface fixture and its regeneration rule",
+    "test_module_structure.py (AST-based) asserts: diagnostics imports no dogwatch.* module; _validate imports only diagnostics; exclude, rules and contracts import only _validate and diagnostics and never each other; config does not import report or cli; report does not import cli, exclude, rules or contracts; the import graph is acyclic; test_isolation.py stays green",
+    "Final gate: make test-scanner && make lint-scanner && make test-fixtures pass in one run, and make run-scanner exits 0 with empty stderr (checkpoint CP3)"
   ]
 }

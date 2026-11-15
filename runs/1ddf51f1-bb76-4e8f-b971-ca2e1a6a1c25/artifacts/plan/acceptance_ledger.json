@@ -200,13 +200,20 @@
         "make test-scanner, make lint-scanner and make test-fixtures all exit 0, including repeated-run and TZ/LC_ALL/HOME/PYTHONHASHSEED golden variants (checkpoint CP2, no red window)"
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "passed": true,
+        "evidence": [
+          "Accept. Report model 0.2, the 0.2 schema, the cli.scan seam and status-derived exit codes all meet the contract. I read report.py, cli.py and the schema on the branch. The stat between the branch and its base shows only the allowed files changed, with diagnostics.py, config.py and the other protected files untouched. Runtime checks passed: ruff check, mypy, and pytest with 493 passed, golden tests included. The one advisory is LOW: the canonical sort keys leave some ties, so input order can leak through for entries that differ only outside the key. The fixtures/minimal area, named as unchecked, was judged by reading: the regenerated golden matches what serialize_canonical produces for an empty pass report.",
+          "Read the branch versions of scanner/src/dogwatch/report.py, cli.py and diagnostics.py with git_inspect show; the protected diagnostics.py is unchanged and already provides Diagnostic, render_diagnostics and the EXIT_* constants.",
+          "The stat between the base and the branch shows only the 10 allowed paths.",
+          "Runtime verification passed: ruff check, mypy (30 files) and pytest (493 passed). The ruff format and make test-fixtures env-variant results are from the developer's report and were not re-run by the runtime.",
+          "verification_disposition is 'inconclusive'. I adjudicated by reading the code: the implementation is present and correct.",
+          "1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/reviewer_decision.json"
+        ],
+        "verified_at": "2026-11-15T11:10:58.319429Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "report-cli-contract:LOW:sort-key-ties",
       "attempts_since_progress": 0,
       "blocked_criteria": []
     },
@@ -239,5 +246,5 @@
     }
   ],
   "created_at": "2026-11-15T10:11:26.532515Z",
-  "updated_at": "2026-11-15T11:03:58.073897Z"
+  "updated_at": "2026-11-15T11:10:58.319446Z"
 }
