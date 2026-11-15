@@ -125,13 +125,21 @@
         "make test-scanner, make lint-scanner and make test-fixtures exit 0"
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "passed": true,
+        "evidence": [
+          "Accept. parse_contracts in contracts.py runs the IC-PY checks in order: id presence, type, kebab grammar and uniqueness, then path presence, type, textual syntax and textual uniqueness. Every message matches the IC-ERR-4 contract rows (architecture_contracts.md:217-220) word for word. test_contracts.py has one exact-message test for each listed edge case, plus tests for None/[], no filesystem access and the import guard. The recorded ruff, mypy and pytest runs passed (381 tests). The one extra file, test_validate.py, is a separate commit (bc2eaf8) that applies the operator-authorized option A guard amendment.",
+          "I read _validate.py on the branch to confirm the helper messages: 'is required', 'must be a string' and 'must be an array of tables'.",
+          "I compared the messages against the IC-ERR-4 rows in artifacts/design/architecture_contracts.md:200-220.",
+          "The verification_disposition was 'inconclusive', but the recorded verification attempt shows ruff, mypy and pytest all at returncode 0 (381 passed).",
+          "The make targets themselves were not re-run by the reviewer. Their exit 0 is the developer's report and is consistent with the recorded uv test counts (372 + 9 = 381).",
+          "The test_validate.py exception relies on operator option A authorization. It is recorded in the commit body and matches the accepted prior commit fa4e196.",
+          "1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/reviewer_decision.json"
+        ],
+        "verified_at": "2026-11-15T10:48:22.193724Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "contracts-validation:PASS:none",
       "attempts_since_progress": 0,
       "blocked_criteria": []
     },
@@ -154,11 +162,13 @@
         "make test-scanner, make lint-scanner and make test-fixtures exit 0 with the fixtures/minimal golden unchanged (checkpoint CP1)"
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "blocked",
       "last_verification": {
         "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "evidence": [
+          "Recovered persisted child attempt 331b2a86-362e-4367-aeaa-c19f287c324c."
+        ],
+        "verified_at": "2026-11-15T11:00:55.743867Z"
       },
       "last_findings_fingerprint": null,
       "attempts_since_progress": 0,
@@ -224,5 +234,5 @@
     }
   ],
   "created_at": "2026-11-15T10:11:26.532515Z",
-  "updated_at": "2026-11-15T10:44:39.466066Z"
+  "updated_at": "2026-11-15T11:00:55.743875Z"
 }

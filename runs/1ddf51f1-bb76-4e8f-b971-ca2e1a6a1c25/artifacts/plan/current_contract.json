@@ -1,20 +1,23 @@
 {
-  "contract_id": "contract-0004",
+  "contract_id": "contract-0005",
   "selected_item_ids": [
-    "contracts-validation"
+    "config-orchestration"
   ],
   "selected_task_ids": [
-    "contracts-validation"
+    "config-orchestration"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Files written are limited to scanner/src/dogwatch/contracts.py and scanner/tests/test_contracts.py (new); the OpenApiContractDecl fields frozen by seam-foundation are unchanged; unknown keys inside a contract entry are not checked here",
-    "parse_contracts(value: object) -> tuple[OpenApiContractDecl, ...] checks id presence, type, is_kebab_id and uniqueness; path presence and type; path syntax (relative, '/' separators, no '.', '..' or empty segment, no '\\', extension .yaml/.yml/.json case-sensitive); and textual path uniqueness",
-    "test_contracts.py has one test per case (missing id, missing path, duplicate id, duplicate path, bad extension, absolute path, '..' segment, backslashes, '.' segment) asserting config-invalid, a message containing openapi.contracts[i] (or [j] for duplicates) and the IC-ERR-4 template text",
-    "A contract whose path does not exist loads successfully and the module performs no filesystem access (instrumented open/os.scandir/os.stat)",
-    "parse_contracts(None) and parse_contracts([]) return ()",
-    "contracts.py imports only the stdlib, dogwatch._validate and dogwatch.diagnostics, never dogwatch.rules",
-    "make test-scanner, make lint-scanner and make test-fixtures exit 0"
+    "Files written are limited to scanner/src/dogwatch/config.py, scanner/tests/conftest.py and scanner/tests/test_config.py; diagnostics.py, _validate.py, exclude.py, rules.py, contracts.py, report.py, cli.py, scanner/schemas/**, fixtures/** and scanner/tests/golden/** are unchanged",
+    "load_policy implements stage 2a (unknown keys across top level, [python], [openapi], package entries and contract entries, collected and sorted, first reported), stage 2b in fixed order (python type, packages with keyword names rejected, parse_exclusions, parse_rules, openapi type, parse_contracts), stage 3 aggregated package filesystem checks prefixed 'python.packages[i]: ', and stage 4 check_matches only when exclude is non-empty",
+    "load_policy succeeds on a full-surface config built in tmp_path (packages, exclude, one forbid rule, one layers rule, one contract) and on variants without contracts, without rules, without exclude, and packages-only",
+    "Each of python.type_checking, python.clock, python.max_waiver_days, python.waivers, a baseline key, openapi.severity, an unknown top-level key, an unknown package-entry key and an unknown contract-entry key is rejected as '<key path> is not supported in this version'; with several unknown keys the reported one is sorted(K)[0]",
+    "Every Edge Case 'Config file' and 'Packages' case produces the IC-ERR-4 message; preserved CD-5 texts are verbatim and stage-3 messages carry the 'python.packages[i]: ' prefix; a keyword package name such as 'class' is rejected",
+    "Fail-fast staging: unknown key plus missing package directory yields exactly one (unknown-key) diagnostic; a stage-3 defect plus an unmatched exclusion yields only stage-3 diagnostics; every document-stage failure yields exactly one diagnostic",
+    "Every raised diagnostic has source 'dogwatch' and severity 'error'; every returned DogwatchConfig satisfies the DC-C1 to DC-C5 predicates",
+    "Trust tests: open is called only on config_arg; os.scandir is called only under package directories and zero times when exclude is absent or empty; the config.py import and os-call restriction test is updated and passes",
+    "Through the existing CLI entry point, a config with an unmatched exclusion exits 2, writes no report, and prints a matching 'dogwatch:exclude-unmatched: ...' stderr line",
+    "make test-scanner, make lint-scanner and make test-fixtures exit 0 with the fixtures/minimal golden unchanged (checkpoint CP1)"
   ]
 }
