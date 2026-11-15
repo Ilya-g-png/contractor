@@ -162,15 +162,20 @@
         "make test-scanner, make lint-scanner and make test-fixtures exit 0 with the fixtures/minimal golden unchanged (checkpoint CP1)"
       ],
       "review_required": true,
-      "status": "blocked",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
+        "passed": true,
         "evidence": [
-          "Recovered persisted child attempt 331b2a86-362e-4367-aeaa-c19f287c324c."
+          "Accept. load_policy in config.py now runs the contract stages in the required order. Stage 2a reports the sorted first unknown key. Stage 2b validates python, then packages (keyword names rejected through is_identifier), then exclusions, rules, the openapi type and contracts. Stage 3 runs the aggregated package checks with the 'python.packages[i]: ' prefix, and stage 4 runs check_matches only when exclusions are non-empty. test_config.py covers every criterion with exact messages, and the recorded ruff, mypy and pytest runs passed (414 tests). The one file outside scope, test_cli.py, is a separate commit (d067de7) that matches the human operator's option A ruling line for line.",
+          "Read the diff for 6b3492e and d067de7 and inspected _validate.py and exclude.py on the branch. This confirmed the helper semantics: key_path, config_invalid, is_identifier, require_str, and check_matches/_walk, which uses os.scandir only under package directories.",
+          "The operator's Option A ruling for test_cli.py was confirmed in the run checkpoint's resolutionJson (source: human), not taken from the developer's claim.",
+          "verification_disposition was 'inconclusive', but the attached verification attempt 2 shows ruff check, mypy and pytest (414 passed) exiting 0. The developer also reports make test-scanner 405 passed, make lint-scanner clean and make test-fixtures 9 passed.",
+          "Ticket ACs moved by this slice: AC-1 (invalid config fails before scanning with precise diagnostics), AC-2 (packages, exclusions, named rules and OpenAPI contract paths declared and validated), and AC-4 in part (exclude-unmatched and config-invalid are distinguishable through CLI exit 2 and stderr ids).",
+          "1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/reviewer_decision.json"
         ],
-        "verified_at": "2026-11-15T11:00:55.743867Z"
+        "verified_at": "2026-11-15T11:03:58.073871Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "config-orchestration:accept:low-a-array-wording",
       "attempts_since_progress": 0,
       "blocked_criteria": []
     },
@@ -234,5 +239,5 @@
     }
   ],
   "created_at": "2026-11-15T10:11:26.532515Z",
-  "updated_at": "2026-11-15T11:00:55.743875Z"
+  "updated_at": "2026-11-15T11:03:58.073897Z"
 }
