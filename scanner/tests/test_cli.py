@@ -201,8 +201,9 @@ def test_v0_missing_config(run: Callable[..., Run], tmp_path: Path) -> None:
     ("toml_text", "expected_err"),
     [
         (
-            MINIMAL + "[openapi]\n",
-            b"dogwatch:config-invalid: openapi is not supported in this version\n",
+            MINIMAL + '[openapi]\nseverity = "error"\n',
+            b"dogwatch:config-invalid: openapi.severity is not supported "
+            b"in this version\n",
         ),
         (
             "",
@@ -268,10 +269,10 @@ def test_v4_failures_emit_one_line_each_in_order(
     assert result == Run(
         2,
         b"",
-        b"dogwatch:config-invalid: package 'ghost': directory 'src/ghost' "
-        b"does not exist\n"
-        b"dogwatch:config-invalid: package 'acme_shop' split across roots "
-        b"'src', 'lib'\n",
+        b"dogwatch:config-invalid: python.packages[1]: package 'ghost': "
+        b"directory 'src/ghost' does not exist\n"
+        b"dogwatch:config-invalid: python.packages[2]: package 'acme_shop' "
+        b"split across roots 'src', 'lib'\n",
     )
     assert _listing(tmp_path) == before
 
@@ -427,7 +428,7 @@ def test_processing_order_is_validate_check_build_write(
 def test_config_validation_precedes_output_target_check(
     run: Callable[..., Run], tmp_path: Path
 ) -> None:
-    minimal_project(tmp_path, MINIMAL + "[openapi]\n")
+    minimal_project(tmp_path, MINIMAL + '[openapi]\nseverity = "error"\n')
 
     result = run("check", "--config", "dogwatch.toml", "--output", "dogwatch.toml")
 
