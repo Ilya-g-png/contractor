@@ -1,20 +1,22 @@
 {
-  "contract_id": "contract-0002",
+  "contract_id": "contract-0003",
   "selected_item_ids": [
-    "exclude-validation"
+    "rules-validation"
   ],
   "selected_task_ids": [
-    "exclude-validation"
+    "rules-validation"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Files written are limited to scanner/src/dogwatch/exclude.py and scanner/tests/test_exclude.py (new); the ExclusionDecl fields frozen by seam-foundation are unchanged",
-    "parse_exclusions(value: object) -> tuple[ExclusionDecl, ...] raises DogwatchError with exactly one config-invalid diagnostic whose message follows the IC-ERR-4 template and contains python.exclude[i] for each case: exclude not an array, non-string entry, empty pattern, leading '/', a '.', '..' or empty segment, and '?', '[' or '\\' in a pattern",
-    "Matcher tests: 'src/shop/**/*.py' matches 'src/shop/a.py' and 'src/shop/x/y/b.py'; 'src/shop/*.py' does not match 'src/shop/x/b.py'; 'a**b' behaves like 'a*b'; matching is case-sensitive; two overlapping patterns are each satisfied by the same file",
-    "check_matches(config_dir, packages, exclusions) walks with os.scandir using is_file/is_dir(follow_symlinks=False) and normpath'd '<root>/<name>/<rel>' candidates; a pattern matching only a directory, only a file outside <root>/<name>/, or only a symlink (to file or directory) yields exclude-unmatched with message \"python.exclude[i] '<v>' matches no file under a declared package directory\"; several unmatched patterns yield one diagnostic each in config order",
-    "With open and os.scandir instrumented, check_matches never calls open and calls os.scandir only on paths whose realpath lies under some realpath(<config_dir>/<root>/<name>)",
-    "packages is typed against a module-local typing.Protocol with read-only name: str and root: str (no import of dogwatch.config, including under TYPE_CHECKING); exclude.py imports only the stdlib, dogwatch._validate and dogwatch.diagnostics",
+    "Files written are limited to scanner/src/dogwatch/rules.py and scanner/tests/test_rules.py (new); the RuleDecl fields frozen by seam-foundation are unchanged",
+    "parse_rules(value: object) -> tuple[RuleDecl, ...] checks in order: kind, per-kind unknown keys, required fields and types, id grammar, id uniqueness, non-empty reason, selector syntax, structural constraints",
+    "test_rules.py has one test per Edge Case 'Rules' case (missing id/kind/reason through unknown keys inside a rule, including the other kind's keys rejected for each kind and except_sources given without sources) asserting id == 'config-invalid', the exact key path in the message (e.g. python.rules[1].targets[0]) and the IC-ERR-4 template text",
+    "Valid inputs load: forbid with all optional keys; forbid with only targets (sources == ()); layers with exhaustive = true and container; layers without container (exhaustive is False, container is None); fields of the other kind keep DC-C4 empty defaults",
+    "parse_rules(None) and parse_rules([]) both return ()",
+    "A selector naming no existing module is accepted and no filesystem access occurs (open/os.scandir/os.stat instrumented)",
+    "Every failure raises exactly one diagnostic",
+    "rules.py imports only the stdlib, dogwatch._validate and dogwatch.diagnostics",
     "make test-scanner, make lint-scanner and make test-fixtures exit 0"
   ]
 }

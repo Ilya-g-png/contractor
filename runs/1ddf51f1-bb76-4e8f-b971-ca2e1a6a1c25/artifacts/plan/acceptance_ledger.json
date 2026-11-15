@@ -53,15 +53,20 @@
         "make test-scanner, make lint-scanner and make test-fixtures exit 0"
       ],
       "review_required": true,
-      "status": "in_progress",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
+        "passed": true,
         "evidence": [
-          "Developer reported exclude-validation cannot be finished without the operator."
+          "Accept. exclude.py adds parse_exclusions, which raises a single config-invalid error per bad entry, plus a case-sensitive glob matcher and check_matches. check_matches walks only the declared package directories without following symlinks, uses normalized candidate paths, and reports one exclude-unmatched diagnostic per unmatched pattern in config order. Tests in test_exclude.py cover every listed case, including instrumented open/os.scandir checks and the import and Protocol guards. The recorded ruff, mypy and pytest runs (286 passed) are green. The one file outside the allowed list is a separate one-line commit to test_validate.py. The contract made it unavoidable, because the old guard forbade exclude.py from defining functions. No command checks the case where a package directory is missing.",
+          "Read the branch head b4da9b2 in the task worktree. git status is clean, and _validate.config_invalid/key_path and diagnostics.EXCLUDE_UNMATCHED are as cited.",
+          "verification_disposition is 'inconclusive', but verification attempt 2 records ruff, mypy and pytest (286 passed) all exiting 0.",
+          "The test_validate.py edit falls outside criterion 1's file list. It is accepted because the contract required it (the old guard forbade functions in exclude.py) and the run log shows an operator escalation that matches the stated authorization.",
+          "Ticket mapping: this slice moves AC-1 (exclusion config is validated with precise diagnostics) and AC-2 (explicit exclusions in a valid config).",
+          "1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/reviewer_decision.json"
         ],
-        "verified_at": "2026-11-15T10:32:47.407318Z"
+        "verified_at": "2026-11-15T10:36:12.406259Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "exclude-validation:accept:note-test_validate-guard-edit;low-missing-package-dir-scandir",
       "attempts_since_progress": 0,
       "blocked_criteria": []
     },
@@ -83,11 +88,13 @@
         "make test-scanner, make lint-scanner and make test-fixtures exit 0"
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "blocked",
       "last_verification": {
         "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "evidence": [
+          "Developer reported rules-validation cannot be finished without the operator."
+        ],
+        "verified_at": "2026-11-15T10:40:54.962132Z"
       },
       "last_findings_fingerprint": null,
       "attempts_since_progress": 0,
@@ -208,5 +215,5 @@
     }
   ],
   "created_at": "2026-11-15T10:11:26.532515Z",
-  "updated_at": "2026-11-15T10:34:30.751395Z"
+  "updated_at": "2026-11-15T10:40:54.962144Z"
 }
