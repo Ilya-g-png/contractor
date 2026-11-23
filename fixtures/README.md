@@ -14,6 +14,21 @@ matches `^[a-z0-9]+(-[a-z0-9]+)*$`. It contains:
 `fixtures/minimal/` declares the package `acme_shop` with root `src` and
 holds `src/acme_shop/{__init__,orders,payments}.py`.
 
+`fixtures/full-surface/` exercises every accepted config surface (AC-2). It
+declares the package `bookshop` with root `src`, the exclusion
+`src/bookshop/legacy/**` (matching the files under `src/bookshop/legacy/`),
+the `forbid` rule `no-legacy`, the `layers` rule `ui-above-domain` and one
+OpenAPI contract `bookshop-api` whose static spec is checked in at
+`api/bookshop-api.yaml`. Nothing parses the spec in this version, and the
+rule selectors are not resolved against the tree. Its golden reports
+`status: "pass"` with no findings and no diagnostics.
+
+Every exclusion pattern must keep matching at least one regular file under a
+declared package directory, or the config fails with `exclude-unmatched`.
+After changing a fixture's config or tree, run `make regen-fixtures` and
+commit the regenerated `expected-report.json`; regeneration must leave the
+goldens of untouched fixtures byte-identical (`git diff --exit-code`).
+
 ## Rules
 
 - Fixtures are static data. They are never installed, imported or executed,
