@@ -1,0 +1,16 @@
+{
+  "diagnostics": [],
+  "findings": [],
+  "policy": {
+    "digest": {
+      "sha256": "428f2e9bb655eb781e7895f5bdefb387d8255edec68e5d34295f139f077d33ea"
+    },
+    "path": "dogwatch.toml"
+  },
+  "scanner": {
+    "name": "dogwatch",
+    "version": "0.1.0"
+  },
+  "schema_version": "0.2",
+  "status": "pass"
+}

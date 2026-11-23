@@ -1,11 +1,13 @@
 import errno
 import hashlib
+import inspect
+import itertools
 import json
 import os
 import re
 import subprocess
 import sys
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterator, Sequence
 from pathlib import Path
 from typing import Any, NamedTuple
 
@@ -14,8 +16,11 @@ from jsonschema import Draft202012Validator  # type: ignore[import-untyped]
 
 from dogwatch import cli
 from dogwatch.cli import main
+from dogwatch.config import DogwatchConfig, load_policy
+from dogwatch.diagnostics import SOURCE_SYNTAX_INVALID, Diagnostic
+from dogwatch.report import Finding, Locator, derive_status
 
-SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "report-0.1.schema.json"
+SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "report-0.2.schema.json"
 MINIMAL = '[python]\n\n[[python.packages]]\nname = "acme_shop"\nroot = "src"\n'
 PACKAGE_MODULES = ("__init__.py", "orders.py", "payments.py")
 DIAGNOSTIC_LINE = re.compile(
@@ -45,6 +50,7 @@ def expected_report(raw: bytes) -> bytes:
     digest = hashlib.sha256(raw).hexdigest()
     return (
         "{\n"
+        '  "diagnostics": [],\n'
         '  "findings": [],\n'
         '  "policy": {\n'
         '    "digest": {\n'
@@ -56,7 +62,8 @@ def expected_report(raw: bytes) -> bytes:
         '    "name": "dogwatch",\n'
         '    "version": "0.1.0"\n'
         "  },\n"
-        '  "schema_version": "0.1"\n'
+        '  "schema_version": "0.2",\n'
+        '  "status": "pass"\n'
         "}\n"
     ).encode()
 
@@ -201,8 +208,9 @@ def test_v0_missing_config(run: Callable[..., Run], tmp_path: Path) -> None:
     ("toml_text", "expected_err"),
     [
         (
-            MINIMAL + "[openapi]\n",
-            b"dogwatch:config-invalid: openapi is not supported in this version\n",
+            MINIMAL + '[openapi]\nseverity = "error"\n',
+            b"dogwatch:config-invalid: openapi.severity is not supported "
+            b"in this version\n",
         ),
         (
             "",
@@ -268,10 +276,10 @@ def test_v4_failures_emit_one_line_each_in_order(
     assert result == Run(
         2,
         b"",
-        b"dogwatch:config-invalid: package 'ghost': directory 'src/ghost' "
-        b"does not exist\n"
-        b"dogwatch:config-invalid: package 'acme_shop' split across roots "
-        b"'src', 'lib'\n",
+        b"dogwatch:config-invalid: python.packages[1]: package 'ghost': "
+        b"directory 'src/ghost' does not exist\n"
+        b"dogwatch:config-invalid: python.packages[2]: package 'acme_shop' "
+        b"split across roots 'src', 'lib'\n",
     )
     assert _listing(tmp_path) == before
 
@@ -417,17 +425,27 @@ def test_processing_order_is_validate_check_build_write(
 
         monkeypatch.setattr(cli, name, wrapper)
 
-    for name in ("load_policy", "_same_file", "build_report", "write_report"):
+    order = (
+        "load_policy",
+        "_same_file",
+        "scan",
+        "build_report",
+        "serialize_canonical",
+        "write_report",
+        "render_diagnostics",
+        "exit_code_for_status",
+    )
+    for name in order:
         record(name)
 
     assert run("check", "--output", "report.json").code == 0
-    assert calls == ["load_policy", "_same_file", "build_report", "write_report"]
+    assert calls == list(order)
 
 
 def test_config_validation_precedes_output_target_check(
     run: Callable[..., Run], tmp_path: Path
 ) -> None:
-    minimal_project(tmp_path, MINIMAL + "[openapi]\n")
+    minimal_project(tmp_path, MINIMAL + '[openapi]\nseverity = "error"\n')
 
     result = run("check", "--config", "dogwatch.toml", "--output", "dogwatch.toml")
 
@@ -709,3 +727,304 @@ def test_stdout_report_is_independent_of_cwd_and_config_spelling(
     assert from_project.out == expected_report(config.read_bytes())
     assert str(tmp_path).encode() not in from_project.out
     assert os.getcwd().encode() not in from_project.out
+
+
+# --- AC-4 modes, stderr mirror and the scan seam (IC-CLI-1) ---------------
+
+ERROR_FINDING = Finding(
+    "python",
+    "no-db",
+    "error",
+    "acme_shop.orders imports acme_shop.payments",
+    "fp-1",
+    Locator("src/acme_shop/orders.py", 1, 1, "acme_shop.orders", "acme_shop.payments"),
+)
+SYNTAX_DIAGNOSTIC = Diagnostic(
+    "dogwatch", SOURCE_SYNTAX_INVALID, "error", "src/acme_shop/orders.py:1: bad"
+)
+ADAPTER_DIAGNOSTIC = Diagnostic("openapi", "openapi-tool-failed", "error", "exit 3")
+PRE_SCAN_IDS = {"config-not-found", "config-invalid", "exclude-unmatched"}
+
+
+class Mode(NamedTuple):
+    report_present: bool
+    status: str | None
+    exit: int
+    adapter_source: bool | None
+
+
+def stub_scan(
+    monkeypatch: pytest.MonkeyPatch,
+    findings: Sequence[Finding] = (),
+    diagnostics: Sequence[Diagnostic] = (),
+) -> list[DogwatchConfig]:
+    calls: list[DogwatchConfig] = []
+
+    def fake(cfg: DogwatchConfig) -> tuple[tuple[Finding, ...], tuple[Diagnostic, ...]]:
+        calls.append(cfg)
+        return tuple(findings), tuple(diagnostics)
+
+    monkeypatch.setattr(cli, "scan", fake)
+    return calls
+
+
+def validate_report(data: bytes) -> dict[str, Any]:
+    report: dict[str, Any] = json.loads(data)
+    Draft202012Validator(json.loads(SCHEMA_PATH.read_bytes())).validate(report)
+    return report
+
+
+def observe(result: Run, target: Path) -> Mode:
+    if not target.exists():
+        return Mode(False, None, result.code, None)
+    report = validate_report(target.read_bytes())
+    diagnostics = report["diagnostics"]
+    findings = [
+        Finding(
+            **{k: v for k, v in f.items() if k not in ("waiver", "locator")},
+            locator=Locator(**f["locator"]),
+        )
+        for f in report["findings"]
+    ]
+    assert report["status"] == derive_status(
+        findings, [Diagnostic(**d) for d in diagnostics]
+    )
+    assert result.code == {"pass": 0, "fail": 1, "inconclusive": 2}[report["status"]]
+    assert not {d["id"] for d in diagnostics} & PRE_SCAN_IDS
+    assert result.err.decode().splitlines() == [
+        f"dogwatch:{d['id']}: {d['message']}" for d in diagnostics
+    ]
+    return Mode(
+        True,
+        report["status"],
+        result.code,
+        any(d["source"] != "dogwatch" for d in diagnostics),
+    )
+
+
+SCAN_MODES: dict[str, tuple[tuple[Finding, ...], tuple[Diagnostic, ...], Mode]] = {
+    "policy-violation": ((ERROR_FINDING,), (), Mode(True, "fail", 1, False)),
+    "invalid-source-syntax": (
+        (),
+        (SYNTAX_DIAGNOSTIC,),
+        Mode(True, "inconclusive", 2, False),
+    ),
+    "adapter-failure": ((), (ADAPTER_DIAGNOSTIC,), Mode(True, "inconclusive", 2, True)),
+}
+MALFORMED_CONFIGS = {"missing": None, "invalid-toml": "[python\n"}
+
+
+def _scan_mode(
+    run: Callable[..., Run],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    findings: Sequence[Finding],
+    diagnostics: Sequence[Diagnostic],
+) -> Mode:
+    minimal_project(tmp_path)
+    calls = stub_scan(monkeypatch, findings, diagnostics)
+
+    result = run("check", "--config", "dogwatch.toml", "--output", "report.json")
+
+    assert len(calls) == 1
+    assert result.out == b""
+    return observe(result, tmp_path / "report.json")
+
+
+def _malformed_mode(
+    run: Callable[..., Run],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    toml_text: str | None,
+) -> Mode:
+    if toml_text is not None:
+        (tmp_path / "dogwatch.toml").write_text(toml_text, encoding="utf-8")
+    calls = stub_scan(monkeypatch, (ERROR_FINDING,))
+
+    result = run("check", "--config", "dogwatch.toml", "--output", "report.json")
+
+    assert calls == []
+    assert result.out == b""
+    assert re.fullmatch(
+        rb"dogwatch:(config-not-found|config-invalid): .+\n", result.err
+    )
+    return observe(result, tmp_path / "report.json")
+
+
+@pytest.mark.parametrize("mode", SCAN_MODES)
+def test_scan_mode_report_status_and_exit(
+    run: Callable[..., Run],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mode: str,
+) -> None:
+    findings, diagnostics, expected = SCAN_MODES[mode]
+
+    assert _scan_mode(run, tmp_path, monkeypatch, findings, diagnostics) == expected
+
+
+@pytest.mark.parametrize("case", MALFORMED_CONFIGS)
+def test_malformed_config_writes_no_report_and_never_scans(
+    run: Callable[..., Run],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    case: str,
+) -> None:
+    mode = _malformed_mode(run, tmp_path, monkeypatch, MALFORMED_CONFIGS[case])
+
+    assert mode == Mode(False, None, 2, None)
+
+
+def test_four_ac4_modes_are_pairwise_distinct(
+    run: Callable[..., Run],
+    tmp_path_factory: pytest.TempPathFactory,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    modes: dict[str, Mode] = {}
+    for name, (findings, diagnostics, _) in SCAN_MODES.items():
+        root = tmp_path_factory.mktemp(name)
+        monkeypatch.chdir(root)
+        modes[name] = _scan_mode(run, root, monkeypatch, findings, diagnostics)
+    root = tmp_path_factory.mktemp("malformed")
+    monkeypatch.chdir(root)
+    modes["malformed-config"] = _malformed_mode(run, root, monkeypatch, None)
+
+    assert {k: m[:3] for k, m in modes.items()} == {
+        "policy-violation": (True, "fail", 1),
+        "invalid-source-syntax": (True, "inconclusive", 2),
+        "adapter-failure": (True, "inconclusive", 2),
+        "malformed-config": (False, None, 2),
+    }
+    for a, b in itertools.combinations(modes.values(), 2):
+        assert a != b
+
+
+def test_scan_time_diagnostics_are_rendered_in_report_order(
+    run: Callable[..., Run], tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    minimal_project(tmp_path)
+    stub_scan(
+        monkeypatch,
+        diagnostics=(
+            Diagnostic("openapi", "openapi-tool-timeout", "warning", "slow — 日本"),
+            ADAPTER_DIAGNOSTIC,
+            Diagnostic("dogwatch", SOURCE_SYNTAX_INVALID, "info", "b.py: note"),
+            SYNTAX_DIAGNOSTIC,
+        ),
+    )
+
+    result = run("check", "--config", "dogwatch.toml", "--output", "report.json")
+
+    report = validate_report((tmp_path / "report.json").read_bytes())
+    assert result.code == 2
+    assert result.err.decode().splitlines() == [
+        f"dogwatch:{d['id']}: {d['message']}" for d in report["diagnostics"]
+    ]
+    assert result.err.decode().splitlines() == [
+        "dogwatch:source-syntax-invalid: b.py: note",
+        "dogwatch:source-syntax-invalid: src/acme_shop/orders.py:1: bad",
+        "dogwatch:openapi-tool-failed: exit 3",
+        "dogwatch:openapi-tool-timeout: slow — 日本",
+    ]
+
+
+def test_warning_and_info_only_pass_with_mirrored_stderr(
+    run: Callable[..., Run], tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    minimal_project(tmp_path)
+    warning = Finding("python", "no-db", "warning", "w", "fp-1", Locator("a.py"))
+    info = Diagnostic("openapi", "openapi-note", "info", "fyi")
+    stub_scan(monkeypatch, (warning,), (info,))
+
+    result = run("check", "--config", "dogwatch.toml", "--output", "-")
+
+    report = validate_report(result.out)
+    assert (report["status"], result.code) == ("pass", 0)
+    assert result.err == b"dogwatch:openapi-note: fyi\n"
+
+
+def test_stdout_mode_writes_report_to_stdout_and_diagnostics_to_stderr(
+    run: Callable[..., Run], tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    minimal_project(tmp_path)
+    stub_scan(monkeypatch, (ERROR_FINDING,), (ADAPTER_DIAGNOSTIC,))
+
+    result = run("check", "--config", "dogwatch.toml", "--output", "-")
+
+    assert validate_report(result.out)["status"] == "inconclusive"
+    assert result.code == 2
+    assert result.err == b"dogwatch:openapi-tool-failed: exit 3\n"
+
+
+def test_no_scan_diagnostics_means_empty_stderr(
+    run: Callable[..., Run], tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    minimal_project(tmp_path)
+    stub_scan(monkeypatch, (ERROR_FINDING,))
+
+    result = run("check", "--config", "dogwatch.toml", "--output", "report.json")
+
+    assert (result.code, result.err) == (1, b"")
+    assert validate_report((tmp_path / "report.json").read_bytes())["diagnostics"] == []
+
+
+@pytest.mark.parametrize("failure", ["missing-dir", "no-space"])
+def test_write_failure_suppresses_scan_diagnostics(
+    run: Callable[..., Run],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    failure: str,
+) -> None:
+    minimal_project(tmp_path)
+    stub_scan(monkeypatch, (ERROR_FINDING,), (SYNTAX_DIAGNOSTIC, ADAPTER_DIAGNOSTIC))
+    output = "nope/report.json" if failure == "missing-dir" else "report.json"
+    if failure == "no-space":
+
+        def no_space(fd: int) -> None:
+            raise OSError(errno.ENOSPC, os.strerror(errno.ENOSPC))
+
+        monkeypatch.setattr(os, "fsync", no_space)
+
+    result = run("check", "--config", "dogwatch.toml", "--output", output)
+
+    lines = result.err.decode().splitlines()
+    assert result.code == 2
+    assert len(lines) == 1
+    assert lines[-1].startswith(f"dogwatch: error: cannot write report to {output}: ")
+    assert not (tmp_path / output).exists()
+    assert list(tmp_path.rglob(".*.tmp")) == []
+
+
+def test_same_file_guard_never_scans(
+    run: Callable[..., Run], tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config = minimal_project(tmp_path)
+    raw = config.read_bytes()
+    calls = stub_scan(monkeypatch, (ERROR_FINDING,))
+
+    result = run("check", "--config", "dogwatch.toml", "--output", "dogwatch.toml")
+
+    assert result.code == 2
+    assert result.err.startswith(b"dogwatch: error: output path ")
+    assert calls == []
+    assert config.read_bytes() == raw
+
+
+def test_scan_receives_the_validated_config(
+    run: Callable[..., Run], tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config = minimal_project(tmp_path)
+    calls = stub_scan(monkeypatch)
+
+    assert run("check", "--output", "-").code == 0
+    assert calls == [load_policy("./dogwatch.toml")]
+    assert calls[0].raw == config.read_bytes()
+
+
+def test_scan_seam_signature_and_default_result(tmp_path: Path) -> None:
+    minimal_project(tmp_path)
+    cfg = load_policy("dogwatch.toml")
+
+    assert cli.scan.__module__ == "dogwatch.cli"
+    assert list(inspect.signature(cli.scan).parameters) == ["cfg"]
+    assert cli.scan(cfg) == ((), ())

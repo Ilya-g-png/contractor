@@ -5,10 +5,22 @@ from collections.abc import Sequence
 from typing import NoReturn
 
 from dogwatch import __version__
-from dogwatch.config import load_policy
-from dogwatch.diagnostics import EXIT_ERROR, EXIT_OK, DogwatchError, render
+from dogwatch.config import DogwatchConfig, load_policy
+from dogwatch.diagnostics import (
+    EXIT_ERROR,
+    Diagnostic,
+    DogwatchError,
+    render,
+    render_diagnostics,
+)
 from dogwatch.output import STDOUT, write_report
-from dogwatch.report import build_report, serialize_canonical
+from dogwatch.report import (
+    Finding,
+    build_report,
+    exit_code_for_status,
+    serialize_canonical,
+    sort_diagnostics,
+)
 
 DEFAULT_CONFIG = "./dogwatch.toml"
 DEFAULT_OUTPUT = "./dogwatch-report.json"
@@ -46,12 +58,21 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _error(
             f"output path {output_arg} is the same file as config {config_arg}"
         )
-    data = serialize_canonical(build_report(policy, __version__))
+    findings, diagnostics = scan(policy)
+    report = build_report(policy, __version__, findings, diagnostics)
+    data = serialize_canonical(report)
     try:
         write_report(data, output_arg)
     except OSError as exc:
         return _error(f"cannot write report to {output_arg}: {exc.strerror or exc}")
-    return EXIT_OK
+    sys.stderr.write(render_diagnostics(sort_diagnostics(diagnostics)))
+    return exit_code_for_status(report["status"])
+
+
+def scan(
+    cfg: DogwatchConfig,
+) -> tuple[tuple[Finding, ...], tuple[Diagnostic, ...]]:
+    return (), ()
 
 
 def _same_file(output_arg: str, config_arg: str) -> bool:

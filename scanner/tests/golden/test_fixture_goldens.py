@@ -22,7 +22,7 @@ from tests.golden.harness import (
     run_scanner,
 )
 
-SCHEMA_PATH = REPO_ROOT / "scanner" / "schemas" / "report-0.1.schema.json"
+SCHEMA_PATH = REPO_ROOT / "scanner" / "schemas" / "report-0.2.schema.json"
 CONFIGS = discover_configs()
 
 
@@ -100,7 +100,9 @@ def test_golden_satisfies_report_contract(config: Path) -> None:
     schema: dict[str, Any] = json.loads(SCHEMA_PATH.read_bytes())
 
     Draft202012Validator(schema).validate(report)
+    assert report["status"] == "pass"
     assert report["findings"] == []
+    assert report["diagnostics"] == []
     assert report["scanner"]["version"] == __version__
     assert report["policy"]["path"] == "dogwatch.toml"
     assert (

@@ -1,0 +1,26 @@
+[python]
+exclude = ["src/bookshop/legacy/**"]
+
+[[python.packages]]
+name = "bookshop"
+root = "src"
+
+[[python.rules]]
+id = "no-legacy"
+kind = "forbid"
+reason = "The legacy importer is frozen and must not gain new callers"
+targets = ["bookshop.legacy"]
+sources = ["bookshop"]
+except_sources = ["bookshop.legacy"]
+
+[[python.rules]]
+id = "ui-above-domain"
+kind = "layers"
+reason = "The UI depends on the domain, never the reverse"
+layers = ["bookshop.ui", "bookshop.domain"]
+container = "bookshop"
+exhaustive = false
+
+[[openapi.contracts]]
+id = "bookshop-api"
+path = "api/bookshop-api.yaml"
