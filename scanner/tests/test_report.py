@@ -12,7 +12,11 @@ from dogwatch.diagnostics import SOURCE_SYNTAX_INVALID, Diagnostic, Severity
 from dogwatch.report import (
     Finding,
     Locator,
+    OpenApiProvenance,
+    ProvenanceBase,
+    ProvenanceCandidate,
     Status,
+    WaiverResult,
     build_report,
     derive_status,
     exit_code_for_status,
@@ -78,6 +82,28 @@ def _diagnostic(
     return Diagnostic(source, id, severity, message)
 
 
+def _openapi_finding(waiver: WaiverResult | None = None) -> Finding:
+    return Finding(
+        source="openapi",
+        check_id="request-property-became-required",
+        severity="error",
+        message="Request property 'name' became required.",
+        fingerprint="openapi/v1:" + "a" * 64,
+        locator=Locator(
+            "api/openapi.yaml",
+            operation="POST /pets",
+            json_pointer="/paths/~1pets/post",
+        ),
+        waiver=waiver,
+        provenance=OpenApiProvenance(
+            base=ProvenanceBase(
+                "refs/heads/main", "c" * 40, "api/openapi.yaml", "b" * 64
+            ),
+            candidate=ProvenanceCandidate("api/openapi.yaml", "d" * 64),
+        ),
+    )
+
+
 # --- Envelope (DC-R1) ------------------------------------------------------
 
 
@@ -85,7 +111,7 @@ def test_build_report_sets_envelope_fields() -> None:
     report = build_report(_cfg(path_arg="../fixtures/minimal/dogwatch.toml"), "0.1.0")
 
     assert report == {
-        "schema_version": "0.2",
+        "schema_version": "0.3",
         "status": "pass",
         "scanner": {"name": "dogwatch", "version": "0.1.0"},
         "policy": {
@@ -110,7 +136,7 @@ def test_envelope_keys_are_exact_with_findings_and_diagnostics() -> None:
         "findings",
         "diagnostics",
     }
-    assert report["schema_version"] == "0.2"
+    assert report["schema_version"] == "0.3"
     assert not set(FORBIDDEN_FIELDS) & set(report)
 
 
@@ -140,7 +166,7 @@ def test_serialized_report_matches_normative_shape() -> None:
         '    "name": "dogwatch",\n'
         '    "version": "0.1.0"\n'
         "  },\n"
-        '  "schema_version": "0.2",\n'
+        '  "schema_version": "0.3",\n'
         '  "status": "pass"\n'
         "}\n"
     ).encode()
@@ -221,6 +247,45 @@ def test_finding_projection_has_exact_keys_and_null_waiver() -> None:
             "target_module": "acme.db",
         },
     }
+
+
+def test_openapi_finding_projects_provenance_and_waiver() -> None:
+    waiver = WaiverResult("Migration window is approved.", "2027-01-31")
+
+    [projected] = build_report(_cfg(), "0.1.0", [_openapi_finding(waiver)])["findings"]
+
+    assert projected == {
+        "source": "openapi",
+        "check_id": "request-property-became-required",
+        "severity": "error",
+        "message": "Request property 'name' became required.",
+        "fingerprint": "openapi/v1:" + "a" * 64,
+        "waiver": {
+            "matched": True,
+            "reason": "Migration window is approved.",
+            "expires": "2027-01-31",
+        },
+        "locator": {
+            "path": "api/openapi.yaml",
+            "operation": "POST /pets",
+            "json_pointer": "/paths/~1pets/post",
+        },
+        "provenance": {
+            "base": {
+                "ref": "refs/heads/main",
+                "commit": "c" * 40,
+                "path": "api/openapi.yaml",
+                "sha256": "b" * 64,
+            },
+            "candidate": {"path": "api/openapi.yaml", "sha256": "d" * 64},
+        },
+    }
+
+
+def test_waived_openapi_error_does_not_fail_the_report() -> None:
+    waived = _openapi_finding(WaiverResult("Migration window is approved."))
+
+    assert derive_status((waived,), ()) == "pass"
 
 
 def test_locator_omits_none_fields() -> None:

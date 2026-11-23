@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:dogwatch:schema:report:0.3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "scanner", "policy", "findings", "diagnostics"],
+  "properties": {
+    "schema_version": {"const": "0.3"},
+    "status": {"enum": ["pass", "fail", "inconclusive"]},
+    "scanner": {
+      "type": "object", "additionalProperties": false, "required": ["name", "version"],
+      "properties": {
+        "name": {"const": "dogwatch"},
+        "version": {"type": "string", "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false, "required": ["path", "digest"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1, "pattern": "^[^/\\\\\\u0000-\\u001f]+$"},
+        "digest": {
+          "type": "object", "additionalProperties": false, "required": ["sha256"],
+          "properties": {"sha256": {"$ref": "#/$defs/sha256"}}
+        }
+      }
+    },
+    "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+    "diagnostics": {"type": "array", "items": {"$ref": "#/$defs/diagnostic"}}
+  },
+  "$defs": {
+    "severity": {"enum": ["error", "warning", "info"]},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "standardFinding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source", "check_id", "severity", "message", "fingerprint", "waiver", "locator"],
+      "properties": {
+        "source": {"type": "string", "minLength": 1, "not": {"const": "openapi"}},
+        "check_id": {"type": "string", "minLength": 1},
+        "severity": {"$ref": "#/$defs/severity"},
+        "message": {"type": "string"},
+        "fingerprint": {"type": "string", "minLength": 1},
+        "waiver": {"type": "null"},
+        "locator": {"$ref": "#/$defs/standardLocator"}
+      }
+    },
+    "openapiFinding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source", "check_id", "severity", "message", "fingerprint", "waiver", "locator", "provenance"],
+      "properties": {
+        "source": {"const": "openapi"},
+        "check_id": {"type": "string", "minLength": 1},
+        "severity": {"$ref": "#/$defs/severity"},
+        "message": {"type": "string"},
+        "fingerprint": {"type": "string", "pattern": "^openapi/v1:[0-9a-f]{64}$"},
+        "waiver": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/waiver"}]},
+        "locator": {"$ref": "#/$defs/openapiLocator"},
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    },
+    "finding": {"oneOf": [{"$ref": "#/$defs/standardFinding"}, {"$ref": "#/$defs/openapiFinding"}]},
+    "standardLocator": {
+      "type": "object", "additionalProperties": false, "required": ["path"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "line": {"type": "integer", "minimum": 1},
+        "column": {"type": "integer", "minimum": 1},
+        "source_module": {"type": "string", "minLength": 1},
+        "target_module": {"type": "string", "minLength": 1}
+      }
+    },
+    "openapiLocator": {
+      "type": "object", "additionalProperties": false, "required": ["path"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.?(?:/|$)).+$"},
+        "operation": {"type": "string", "pattern": "^(?:document|(?:DELETE|GET|HEAD|OPTIONS|PATCH|POST|PUT|TRACE) /[^\\s]+)$"},
+        "json_pointer": {"type": "string", "pattern": "^(?:/(?:[^~/]|~[01])*)*$"}
+      }
+    },
+    "provenance": {
+      "type": "object", "additionalProperties": false, "required": ["base", "candidate"],
+      "properties": {
+        "base": {"$ref": "#/$defs/baseProvenance"},
+        "candidate": {"$ref": "#/$defs/candidateProvenance"}
+      }
+    },
+    "baseProvenance": {
+      "type": "object", "additionalProperties": false, "required": ["ref", "commit", "path", "sha256"],
+      "properties": {
+        "ref": {"type": "string", "minLength": 1},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}(?:[0-9a-f]{24})?$"},
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "candidateProvenance": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "waiver": {
+      "type": "object", "additionalProperties": false, "required": ["matched", "reason"],
+      "properties": {
+        "matched": {"const": true},
+        "reason": {"type": "string", "minLength": 1},
+        "expires": {"type": "string", "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"}
+      }
+    },
+    "diagnostic": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source", "id", "severity", "message"],
+      "properties": {
+        "source": {"type": "string", "minLength": 1},
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"},
+        "severity": {"$ref": "#/$defs/severity"},
+        "message": {"type": "string"}
+      }
+    }
+  }
+}

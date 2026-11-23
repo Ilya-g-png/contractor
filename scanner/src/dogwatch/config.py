@@ -13,14 +13,31 @@ from dogwatch.diagnostics import (
     DogwatchError,
 )
 from dogwatch.exclude import ExclusionDecl, check_matches, parse_exclusions
+from dogwatch.openapi_policy import (
+    OpenApiSeverityDecl,
+    OpenApiWaiverDecl,
+    parse_openapi_policy,
+)
 from dogwatch.rules import RuleDecl, parse_rules
 
 _PACKAGES = "python.packages"
 _TOP_LEVEL_KEYS = frozenset({"python", "openapi"})
 _PYTHON_KEYS = frozenset({"packages", "exclude", "rules"})
-_OPENAPI_KEYS = frozenset({"contracts"})
+_OPENAPI_KEYS = frozenset({"contracts", "severity", "waivers"})
 _PACKAGE_KEYS = frozenset({"name", "root"})
 _CONTRACT_KEYS = frozenset({"id", "path"})
+_OPENAPI_SEVERITY_KEYS = frozenset({"check_id", "severity", "reason"})
+_OPENAPI_WAIVER_KEYS = frozenset(
+    {
+        "contract_id",
+        "check_id",
+        "operation",
+        "fingerprint",
+        "baseline_sha256",
+        "reason",
+        "expires",
+    }
+)
 _TOML_LINE = re.compile(r"at line (\d+)")
 _TOML_POSITION = re.compile(r" \((?:at line \d+, column \d+|at end of document)\)$")
 
@@ -39,6 +56,8 @@ class DogwatchConfig:
     exclusions: tuple[ExclusionDecl, ...]
     rules: tuple[RuleDecl, ...]
     contracts: tuple[OpenApiContractDecl, ...]
+    openapi_severities: tuple[OpenApiSeverityDecl, ...] = ()
+    openapi_waivers: tuple[OpenApiWaiverDecl, ...] = ()
 
 
 class _Located(NamedTuple):
@@ -79,13 +98,26 @@ def load_policy(config_arg: str) -> DogwatchConfig:
     packages = _packages(config_arg, python)
     exclusions = parse_exclusions(python["exclude"]) if "exclude" in python else ()
     rules = parse_rules(python.get("rules"))
-    contracts = parse_contracts(_openapi_table(document).get("contracts"))
+    openapi = _openapi_table(document)
+    contracts = parse_contracts(openapi.get("contracts"))
+    openapi_severities, openapi_waivers = parse_openapi_policy(
+        openapi.get("severity"), openapi.get("waivers"), contracts
+    )
 
     config_dir = os.path.dirname(config_arg)
     _validate_structure(config_dir, packages)
     if exclusions:
         check_matches(config_dir, packages, exclusions)
-    return DogwatchConfig(config_arg, raw, packages, exclusions, rules, contracts)
+    return DogwatchConfig(
+        config_arg,
+        raw,
+        packages,
+        exclusions,
+        rules,
+        contracts,
+        openapi_severities,
+        openapi_waivers,
+    )
 
 
 def _config_invalid(message: str) -> Diagnostic:
@@ -131,6 +163,12 @@ def _unknown_keys(document: dict[str, Any]) -> list[str]:
         unknown += _unknown(openapi, _OPENAPI_KEYS, "openapi")
         unknown += _unknown_in_entries(
             openapi.get("contracts"), _CONTRACT_KEYS, "openapi.contracts"
+        )
+        unknown += _unknown_in_entries(
+            openapi.get("severity"), _OPENAPI_SEVERITY_KEYS, "openapi.severity"
+        )
+        unknown += _unknown_in_entries(
+            openapi.get("waivers"), _OPENAPI_WAIVER_KEYS, "openapi.waivers"
         )
     return unknown
 

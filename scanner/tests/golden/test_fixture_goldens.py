@@ -22,7 +22,7 @@ from tests.golden.harness import (
     run_scanner,
 )
 
-SCHEMA_PATH = REPO_ROOT / "scanner" / "schemas" / "report-0.2.schema.json"
+SCHEMA_PATH = REPO_ROOT / "scanner" / "schemas" / "report-0.3.schema.json"
 CONFIGS = discover_configs()
 
 

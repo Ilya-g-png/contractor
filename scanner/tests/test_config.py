@@ -15,6 +15,7 @@ from dogwatch.config import DogwatchConfig, PackageDecl, load_policy
 from dogwatch.contracts import OpenApiContractDecl
 from dogwatch.diagnostics import Diagnostic, DogwatchError
 from dogwatch.exclude import ExclusionDecl
+from dogwatch.openapi_policy import OpenApiSeverityDecl, OpenApiWaiverDecl
 from dogwatch.rules import RuleDecl
 from tests.conftest import MakeConfig
 
@@ -31,6 +32,19 @@ LAYERS = (
     'container = "acme"\nexhaustive = true\n'
 )
 CONTRACT = '[[openapi.contracts]]\nid = "public-api"\npath = "api/openapi.yaml"\n'
+SEVERITY = (
+    '[[openapi.severity]]\ncheck_id = "request-property-became-required"\n'
+    'severity = "warning"\nreason = "Compatibility allowance is documented."\n'
+)
+WAIVER = (
+    '[[openapi.waivers]]\ncontract_id = "public-api"\n'
+    'check_id = "request-property-became-required"\noperation = "POST /pets"\n'
+    'fingerprint = "openapi/v1:'
+    + "a" * 64
+    + '"\nbaseline_sha256 = "'
+    + "b" * 64
+    + '"\nreason = "Migration window is approved."\nexpires = "2027-01-31"\n'
+)
 FORBID_DECL = RuleDecl(
     id="no-legacy",
     kind="forbid",
@@ -163,6 +177,82 @@ def test_accepted_surface_loads(
     )
 
 
+def test_openapi_policy_declarations_load(make_config: MakeConfig) -> None:
+    make_config(ACME + CONTRACT + SEVERITY + WAIVER, dirs=["src/acme"])
+
+    policy = _load()
+
+    assert policy.openapi_severities == (
+        OpenApiSeverityDecl(
+            "request-property-became-required",
+            "warning",
+            "Compatibility allowance is documented.",
+        ),
+    )
+    assert policy.openapi_waivers == (
+        OpenApiWaiverDecl(
+            "public-api",
+            "request-property-became-required",
+            "POST /pets",
+            "openapi/v1:" + "a" * 64,
+            "b" * 64,
+            "Migration window is approved.",
+            "2027-01-31",
+        ),
+    )
+
+
+@pytest.mark.parametrize(
+    ("addition", "message"),
+    [
+        (
+            '[[openapi.severity]]\ncheck_id = "x"\nseverity = "fatal"\nreason = "r"\n',
+            "openapi.severity[0].severity 'fatal' must be error, warning or info",
+        ),
+        (
+            SEVERITY + SEVERITY,
+            "openapi.severity[1].check_id 'request-property-became-required' "
+            "duplicates openapi.severity[0].check_id",
+        ),
+        (
+            WAIVER.replace('operation = "POST /pets"', 'operation = "post pets"'),
+            "openapi.waivers[0].operation 'post pets' "
+            "must be a normalized operation locator",
+        ),
+        (
+            WAIVER.replace("openapi/v1:" + "a" * 64, "openapi/v1:" + "A" * 64),
+            "openapi.waivers[0].fingerprint must be an openapi/v1 fingerprint",
+        ),
+        (
+            WAIVER.replace(
+                'baseline_sha256 = "' + "b" * 64 + '"', 'baseline_sha256 = "ABC"'
+            ),
+            "openapi.waivers[0].baseline_sha256 must be a lowercase SHA-256 hash",
+        ),
+        (
+            WAIVER.replace('expires = "2027-01-31"', 'expires = "2027-02-30"'),
+            "openapi.waivers[0].expires must be an ISO-8601 calendar date",
+        ),
+        (WAIVER + WAIVER, "openapi.waivers[1] duplicates openapi.waivers[0]"),
+    ],
+    ids=[
+        "severity",
+        "duplicate-severity",
+        "operation",
+        "fingerprint",
+        "hash",
+        "date",
+        "duplicate-waiver",
+    ],
+)
+def test_invalid_openapi_policy_declarations_are_configuration_errors(
+    make_config: MakeConfig, addition: str, message: str
+) -> None:
+    make_config(ACME + CONTRACT + addition, dirs=["src/acme"])
+
+    assert _invalid_message() == message
+
+
 @pytest.mark.parametrize(
     "text",
     [
@@ -269,7 +359,6 @@ def test_v2_utf8_bom_is_invalid_toml(tmp_path: Path) -> None:
         (ACME + '[[python.waivers]]\nrule = "x"\n', "python.waivers"),
         ('baseline = "dogwatch-baseline.json"\n' + ACME, "baseline"),
         ('[python]\nbaseline = "dogwatch-baseline.json"\n' + ACME, "python.baseline"),
-        (ACME + '[openapi]\nseverity = "error"\n', "openapi.severity"),
         ("zebra = 1\n" + ACME, "zebra"),
         (ACME + 'include = ["*"]\n', "python.packages[0].include"),
         (ACME + CONTRACT + 'title = "x"\n', "openapi.contracts[0].title"),
@@ -285,7 +374,7 @@ def test_v3_reports_first_of_sorted_unsupported_keys(make_config: MakeConfig) ->
     make_config(
         'zebra = 1\n[python]\nclock = "x"\n'
         + ACME
-        + 'extra = 1\n[openapi]\nseverity = "x"\n'
+        + "extra = 1\n"
         + CONTRACT
         + "extra = 1\n"
     )
@@ -293,7 +382,6 @@ def test_v3_reports_first_of_sorted_unsupported_keys(make_config: MakeConfig) ->
         "zebra",
         "python.clock",
         "python.packages[0].extra",
-        "openapi.severity",
         "openapi.contracts[0].extra",
     ]
 
@@ -682,6 +770,7 @@ def test_config_module_restricts_imports_and_os_calls() -> None:
         "dogwatch.exclude",
         "dogwatch.rules",
         "dogwatch.contracts",
+        "dogwatch.openapi_policy",
     }
     assert os_calls <= {
         "os.path.lexists",

@@ -20,7 +20,7 @@ from dogwatch.config import DogwatchConfig, load_policy
 from dogwatch.diagnostics import SOURCE_SYNTAX_INVALID, Diagnostic
 from dogwatch.report import Finding, Locator, derive_status
 
-SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "report-0.2.schema.json"
+SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "report-0.3.schema.json"
 MINIMAL = '[python]\n\n[[python.packages]]\nname = "acme_shop"\nroot = "src"\n'
 PACKAGE_MODULES = ("__init__.py", "orders.py", "payments.py")
 DIAGNOSTIC_LINE = re.compile(
@@ -62,7 +62,7 @@ def expected_report(raw: bytes) -> bytes:
         '    "name": "dogwatch",\n'
         '    "version": "0.1.0"\n'
         "  },\n"
-        '  "schema_version": "0.2",\n'
+        '  "schema_version": "0.3",\n'
         '  "status": "pass"\n'
         "}\n"
     ).encode()
@@ -209,8 +209,7 @@ def test_v0_missing_config(run: Callable[..., Run], tmp_path: Path) -> None:
     [
         (
             MINIMAL + '[openapi]\nseverity = "error"\n',
-            b"dogwatch:config-invalid: openapi.severity is not supported "
-            b"in this version\n",
+            b"dogwatch:config-invalid: openapi.severity must be an array of tables\n",
         ),
         (
             "",

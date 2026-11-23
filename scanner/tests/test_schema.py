@@ -8,9 +8,20 @@ from jsonschema import Draft202012Validator  # type: ignore[import-untyped]
 
 from dogwatch.config import DogwatchConfig, PackageDecl
 from dogwatch.diagnostics import SOURCE_SYNTAX_INVALID, Diagnostic
-from dogwatch.report import Finding, Locator, build_report
+from dogwatch.report import (
+    Finding,
+    Locator,
+    OpenApiProvenance,
+    ProvenanceBase,
+    ProvenanceCandidate,
+    WaiverResult,
+    build_report,
+)
 
-SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "report-0.2.schema.json"
+SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "report-0.3.schema.json"
+LEGACY_SCHEMA_PATH = (
+    Path(__file__).resolve().parents[1] / "schemas" / "report-0.2.schema.json"
+)
 FORBIDDEN_FIELDS = (
     "commit_sha",
     "object_format",
@@ -57,11 +68,33 @@ def _reported() -> dict[str, Any]:
     return _report([ERROR_FINDING], [ADAPTER_DIAGNOSTIC])
 
 
+def _openapi_finding() -> Finding:
+    return Finding(
+        "openapi",
+        "request-property-became-required",
+        "error",
+        "Request property 'name' became required.",
+        "openapi/v1:" + "a" * 64,
+        Locator("api/openapi.yaml", operation="POST /pets"),
+        provenance=OpenApiProvenance(
+            ProvenanceBase("refs/heads/main", "c" * 40, "api/openapi.yaml", "b" * 64),
+            ProvenanceCandidate("api/openapi.yaml", "d" * 64),
+        ),
+    )
+
+
 def test_schema_is_valid_draft_2020_12() -> None:
     schema = _schema()
 
     Draft202012Validator.check_schema(schema)
     assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
+    assert schema["$id"] == "urn:dogwatch:schema:report:0.3"
+
+
+def test_legacy_schema_remains_available_unchanged() -> None:
+    schema: dict[str, Any] = json.loads(LEGACY_SCHEMA_PATH.read_bytes())
+
+    Draft202012Validator.check_schema(schema)
     assert schema["$id"] == "urn:dogwatch:schema:report:0.2"
 
 
@@ -135,6 +168,40 @@ def test_non_null_waiver_is_rejected() -> None:
     report["findings"][0]["waiver"] = {"reason": "accepted"}
 
     assert not _validator().is_valid(report)
+
+
+def test_openapi_finding_requires_contract_fields() -> None:
+    report = _report([_openapi_finding()])
+
+    assert _validator().is_valid(report)
+    for field in (
+        "source",
+        "check_id",
+        "severity",
+        "message",
+        "fingerprint",
+        "locator",
+        "provenance",
+    ):
+        invalid = _report([_openapi_finding()])
+        del invalid["findings"][0][field]
+        assert not _validator().is_valid(invalid)
+
+
+def test_openapi_waiver_is_structured_when_present() -> None:
+    finding = _openapi_finding()
+    finding = Finding(
+        finding.source,
+        finding.check_id,
+        finding.severity,
+        finding.message,
+        finding.fingerprint,
+        finding.locator,
+        WaiverResult("Migration window is approved.", "2027-01-31"),
+        finding.provenance,
+    )
+
+    assert _validator().is_valid(_report([finding]))
 
 
 def test_finding_with_id_key_is_rejected() -> None:
