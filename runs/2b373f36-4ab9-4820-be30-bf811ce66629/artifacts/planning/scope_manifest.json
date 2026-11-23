@@ -1,0 +1,63 @@
+{
+  "classified_domains": [
+    "dev-ops"
+  ],
+  "domain_confidence": {
+    "dev-ops": 0.72
+  },
+  "complexity": "standard",
+  "project_mode": "existing-project",
+  "bundle_id": "dev-ops-only",
+  "bundle_rationale": "Operational work in isolation: CI/CD, infrastructure, observability,\nrollout controls, secrets, and platform hygiene are the deliverable.\nUse when the user is not redesigning product UI or backend contracts,\nbut does need explicit operational architecture and execution planning.",
+  "preset_id": "existing-devops-heavy",
+  "specialist_sequence": [
+    "planner_v1",
+    "architect_v1",
+    "decomposer_v1",
+    "developer_v1",
+    "reviewer_v1"
+  ],
+  "skipped_specialists": [
+    "researcher_v1",
+    "designer_v1"
+  ],
+  "needs_hitl_confirmation": false,
+  "mutations": [],
+  "work_kind": "implementation",
+  "work_kind_confidence": 0.99,
+  "needs": [
+    {
+      "profile": "planner_v1",
+      "evidence": "The objective implements the CD-4 ADR-defined adapter and requires an implementation plan unless that ADR is a frozen specification."
+    },
+    {
+      "profile": "architect_v1",
+      "evidence": "The work adds an OpenAPI adapter that connects Git baseline retrieval, a pinned external tool, diagnostics, and shared Dogwatch finding contracts."
+    },
+    {
+      "profile": "decomposer_v1",
+      "evidence": "The implementation spans validation, safe tool execution, normalization, provenance, and a fixture-matrix test suite."
+    },
+    {
+      "profile": "developer_v1",
+      "evidence": "The objective explicitly requests implementation and deterministic automated coverage in the existing codebase."
+    },
+    {
+      "profile": "reviewer_v1",
+      "evidence": "Developer changes must be checked against the stated safety and acceptance criteria."
+    }
+  ],
+  "roster_decided": true,
+  "dropped": [
+    {
+      "profile": "researcher_v1",
+      "evidence": "CD-4 already completed the relevant safe OpenAPI adapter research/ADR, and CD-9 asks to implement that defined adapter rather than investigate an unresolved question."
+    },
+    {
+      "profile": "designer_v1",
+      "evidence": "The ticket contains no screen, user flow, or visual-behavior criterion; it specifies a backend OpenAPI adapter and automated tests."
+    }
+  ],
+  "classifier_model": "gpt-5.6-terra",
+  "classifier_latency_ms": 16799
+}

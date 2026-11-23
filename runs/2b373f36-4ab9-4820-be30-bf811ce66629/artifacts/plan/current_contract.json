@@ -1,0 +1,18 @@
+{
+  "contract_id": "contract-0001",
+  "selected_item_ids": [
+    "openapi-policy-report-contract"
+  ],
+  "selected_task_ids": [
+    "openapi-policy-report-contract"
+  ],
+  "review_required": true,
+  "reason": "Continue implementation of the selected acceptance item until criteria pass.",
+  "criteria": [
+    "The strict policy loader accepts only declared OpenAPI contract, severity-reclassification, and waiver forms; unknown keys, duplicate targets, invalid locators, hashes, dates, and severities produce configuration diagnostics.",
+    "Report schema 0.3 validates OpenAPI findings only when they include source, effective severity, check ID, locator, message, an `openapi/v1:` fingerprint, base/candidate provenance, and a null or structured waiver; schema 0.2 remains available unchanged.",
+    "Report sorting, canonical serialization, waiver representation, and status precedence remain deterministic, with error diagnostics taking priority over unwaived error findings.",
+    "`cd scanner && uv run --locked pytest tests/test_config.py tests/test_contracts.py tests/test_report.py tests/test_schema.py` and the existing golden suite pass.",
+    "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
+  ]
+}

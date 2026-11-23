@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "item_id": "openapi-policy-report-contract",
+      "source_task_ids": [
+        "openapi-policy-report-contract"
+      ],
+      "title": "Add OpenAPI policy and report contracts",
+      "criteria": [
+        "The strict policy loader accepts only declared OpenAPI contract, severity-reclassification, and waiver forms; unknown keys, duplicate targets, invalid locators, hashes, dates, and severities produce configuration diagnostics.",
+        "Report schema 0.3 validates OpenAPI findings only when they include source, effective severity, check ID, locator, message, an `openapi/v1:` fingerprint, base/candidate provenance, and a null or structured waiver; schema 0.2 remains available unchanged.",
+        "Report sorting, canonical serialization, waiver representation, and status precedence remain deterministic, with error diagnostics taking priority over unwaived error findings.",
+        "`cd scanner && uv run --locked pytest tests/test_config.py tests/test_contracts.py tests/test_report.py tests/test_schema.py` and the existing golden suite pass.",
+        "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
+      ],
+      "review_required": true,
+      "status": "pending",
+      "last_verification": {
+        "passed": false,
+        "evidence": [],
+        "verified_at": null
+      },
+      "last_findings_fingerprint": null,
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
+    },
+    {
+      "item_id": "openapi-input-baseline",
+      "source_task_ids": [
+        "openapi-input-baseline"
+      ],
+      "title": "Implement OpenAPI preflight and Git baseline retrieval",
+      "criteria": [
+        "Candidate and baseline readers accept only regular `.yaml`, `.yml`, or `.json` files at the declaration's byte-identical relative path, independently enforce the 5 MiB raw-byte limit, retain raw SHA-256 values, and return deterministic canonical JSON only after validation.",
+        "Preflight returns error OpenAPI diagnostics and no runner-ready result for missing, non-regular, oversized, malformed, unsupported-version, external-reference, or unresolved-internal-reference inputs.",
+        "Local Git access resolves the supplied baseline ref once to an immutable local commit and reads the exact same relative-path blob with argv-only, read-only plumbing; unavailable refs, missing or invalid baseline entries, and Git/object faults use the contracted diagnostic outcomes without checkout or network side effects.",
+        "The selected YAML dependency is pinned in `pyproject.toml` and `uv.lock`, and isolated tests prove unsafe constructors are not executed and no result is ready until both inputs validate.",
+        "`cd scanner && uv run --locked pytest tests/openapi/test_preflight.py tests/openapi/test_git.py` passes.",
+        "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
+      ],
+      "review_required": true,
+      "status": "pending",
+      "last_verification": {
+        "passed": false,
+        "evidence": [],
+        "verified_at": null
+      },
+      "last_findings_fingerprint": null,
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
+    },
+    {
+      "item_id": "openapi-verified-runner",
+      "source_task_ids": [
+        "openapi-verified-runner"
+      ],
+      "title": "Implement verified oasdiff execution boundary",
+      "criteria": [
+        "The tool provider recognizes only the contracted macOS, Linux amd64, and Linux arm64 oasdiff v1.39.0 archives and exact SHA-256 values; unsupported, absent, checksum-invalid, unsafe, or wrong-version binaries return `openapi-tool-unavailable` without a scan-time download.",
+        "The runner uses an argv sequence containing only the approved `changelog` profile, `--format=json`, `--level=INFO`, exactly one `--allow-external-refs=false`, `--`, and adapter-created paths; it neither invokes a shell nor forwards candidate or Git paths.",
+        "Canonical inputs are created beneath a private temporary directory with read-only permissions, stdin is disconnected, stdout and stderr are collected concurrently with 16 MiB and 1 MiB caps, and timeout is bounded at 60 seconds.",
+        "Timeout, output-cap, startup, non-zero-exit, and malformed-output conditions return their contracted diagnostics and no partial structured records.",
+        "`cd scanner && uv run --locked pytest tests/openapi/test_tool.py tests/openapi/test_runner.py` passes.",
+        "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
+      ],
+      "review_required": true,
+      "status": "pending",
+      "last_verification": {
+        "passed": false,
+        "evidence": [],
+        "verified_at": null
+      },
+      "last_findings_fingerprint": null,
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
+    },
+    {
+      "item_id": "openapi-comparison-integration",
+      "source_task_ids": [
+        "openapi-comparison-integration"
+      ],
+      "title": "Integrate OpenAPI comparisons into the scanner command",
+      "criteria": [
+        "With no OpenAPI declarations, existing command behavior remains compatible; with declarations, omitting `--baseline-ref` emits an OpenAPI report diagnostic and exits 2, while a successful baseline resolution is shared by all comparisons.",
+        "The coordinator composes the completed declaration/report, input/baseline, and runner contracts so that valid no-change results add neither OpenAPI finding nor OpenAPI diagnostic, while any failed input, Git, runner, or normalization stage adds an error diagnostic, zero policy findings for that comparison, and an inconclusive aggregate result.",
+        "Every accepted tool record is normalized deterministically into a source `openapi` finding with required locator and provenance; each fingerprint includes contract ID, check ID, normalized locator, and tool identity but excludes message and effective severity.",
+        "Severity reclassification changes only effective severity, and an exact, unexpired waiver remains visible while matching contract ID, check ID, normalized operation locator, fingerprint, and baseline raw SHA-256.",
+        "`cd scanner && uv run --locked pytest tests/openapi/test_coordinator.py tests/openapi/test_normalize.py tests/openapi/test_policy.py tests/test_cli.py` passes.",
+        "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
+      ],
+      "review_required": true,
+      "status": "pending",
+      "last_verification": {
+        "passed": false,
+        "evidence": [],
+        "verified_at": null
+      },
+      "last_findings_fingerprint": null,
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
+    },
+    {
+      "item_id": "openapi-fixture-matrix",
+      "source_task_ids": [
+        "openapi-fixture-matrix"
+      ],
+      "title": "Add deterministic OpenAPI fixture matrix",
+      "criteria": [
+        "Pinned, named fixture cases cover no change, removed operation, optional-to-required field, enum or constraint break, invalid specification, missing baseline, timeout or tool failure, and ignored or reclassified findings.",
+        "Each case materializes same-path base and candidate trees into a temporary local Git repository, creates an explicit baseline commit, and supplies its ref to the public scanner command.",
+        "Checked-in expected reports validate against report schema 0.3; findings assert all required OpenAPI fields, while error cases assert exact diagnostic IDs, no corresponding policy finding, inconclusive status, and exit 2.",
+        "Execution-path cases use only controlled local substitutes and assert the argv profile, disabled external references, read-only temporary inputs, fixed timeout, and both output limits.",
+        "Every fixture is run twice; both canonical outputs match its checked-in expected bytes, and test execution never rewrites expected artifacts.",
+        "`cd scanner && uv run --locked pytest tests/openapi/test_fixture_matrix.py` and `cd scanner && uv run --locked pytest` pass.",
+        "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
+      ],
+      "review_required": true,
+      "status": "pending",
+      "last_verification": {
+        "passed": false,
+        "evidence": [],
+        "verified_at": null
+      },
+      "last_findings_fingerprint": null,
+      "attempts_since_progress": 0,
+      "blocked_criteria": []
+    }
+  ],
+  "created_at": "2026-11-23T15:40:44.074775Z",
+  "updated_at": "2026-11-23T15:40:44.074777Z"
+}

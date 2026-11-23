@@ -1,0 +1,81 @@
+{
+  "summary": "Deliver the pinned OpenAPI comparison capability in four dependency-ordered epics: establish report/configuration contracts, implement the isolated Git and oasdiff engine, integrate it into the CLI, then add the controlled Git-history fixture lane and operator documentation. The plan preserves the existing Python scanner behavior while upgrading reports to schema 0.3 only where OpenAPI findings require additional fields. EPIC-002 and EPIC-003 have non-overlapping write scopes after the shared-contract checkpoint, allowing the fixture lane to proceed alongside CLI integration once the comparison interface is stable.",
+  "epics": [
+    {
+      "epic_id": "EPIC-001",
+      "title": "Freeze OpenAPI policy and report contracts",
+      "description": "Extend scanner configuration, policy, finding projection, and JSON Schema to define the shared OpenAPI adapter contract before comparison code is wired. Own scanner/src/dogwatch/config.py, contracts.py, openapi_policy.py, report.py, scanner/schemas/report-0.3.schema.json, and their direct tests; retain report-0.2.schema.json for historical validation.",
+      "acceptance_criteria": [
+        "The policy parser accepts the approved [openapi] contracts, severity reclassification, and exact-match waiver grammar; it rejects unknown fields, duplicate policy targets, unsupported or off severities, malformed hashes/dates, and malformed operation locators through configuration diagnostics.",
+        "Schema version 0.3 retains the existing report envelope and validates existing non-OpenAPI findings unchanged, while an OpenAPI finding requires source, severity, check ID, locator, human message, fingerprint, waiver state, and base/candidate provenance.",
+        "[AC-4] Every OpenAPI finding includes severity, check ID, locator, human message, fingerprint, and base/candidate provenance.",
+        "Reclassification changes only effective severity; matched waivers preserve the finding and attached waiver metadata while removing only its gate effect, including expiry behavior under an injected evaluation date.",
+        "Report sorting, canonical serialization, status precedence, and exits continue to make an error diagnostic inconclusive before any unwaived error finding can make the report fail.",
+        "`cd scanner && uv run --locked pytest tests/test_config.py tests/test_contracts.py tests/test_report.py tests/test_schema.py` passes, and `cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
+      ],
+      "dependencies": []
+    },
+    {
+      "epic_id": "EPIC-002",
+      "title": "Build isolated OpenAPI comparison engine",
+      "description": "Implement the local-only comparison boundary beneath the frozen EPIC-001 data contracts. Own openapi.py, openapi_git.py, openapi_validate.py, openapi_tool.py, scanner/scripts/install_oasdiff.py, the YAML runtime dependency and lockfile update, plus scanner/tests/openapi/test_git.py, test_validate.py, test_tool.py, and test_policy.py.",
+      "acceptance_criteria": [
+        "Resolve an explicit baseline ref once to an immutable local commit, then read only the configured repository-relative path as a regular Git blob using argv-only Git calls with prompts, lazy fetch, replacement objects, and optional locks disabled; no checkout, fetch, clone, LFS, Git-revision input to oasdiff, or network access occurs during scanning.",
+        "Preflight candidate and baseline bytes independently: enforce the 5 MiB raw limit and regular-file requirements, safe-parse YAML or JSON, accept declared OpenAPI 3.0.x/3.1.x/3.2.x documents, reject malformed or unsupported documents, and reject unresolved internal or every external $ref form before the tool runs.",
+        "Add and lock a safe YAML parser in scanner/pyproject.toml and scanner/uv.lock; parsing tests demonstrate that no unsafe YAML constructors execute.",
+        "Provide `make install-oasdiff` support through the installer: select only the approved macOS, Linux amd64, or Linux arm64 v1.39.0 archive; verify its stated SHA-256; reject unsafe archive entries; atomically cache the executable in an ignored local location; and require `oasdiff --version` to report 1.39.0. The scanner itself never downloads a tool.",
+        "[AC-2] oasdiff invocation uses an argv list, pinned version, read-only temporary files, timeout/output limits, and disabled external reference loading.",
+        "The runner invokes only the approved changelog argv with stdin disconnected, private working directory and controlled environment; it concurrently caps stdout at 16 MiB and stderr at 1 MiB, terminates on either cap or the 60-second timeout, and maps each specified failure condition to its approved OpenAPI diagnostic ID.",
+        "Accepted tool JSON is normalized only when required finding identity fields are valid; malformed or incomplete tool output yields openapi-tool-failed rather than a fabricated policy finding. Fingerprints follow the approved openapi/v1 canonical-JSON contract and exclude the human message.",
+        "`cd scanner && uv run --locked pytest tests/openapi/test_git.py tests/openapi/test_validate.py tests/openapi/test_tool.py tests/openapi/test_policy.py` passes."
+      ],
+      "dependencies": [
+        "EPIC-001"
+      ]
+    },
+    {
+      "epic_id": "EPIC-003",
+      "title": "Wire comparisons into scanner command",
+      "description": "Integrate the completed comparison engine with dogwatch check without changing API or web areas. Own scanner/src/dogwatch/cli.py and scanner/tests/test_cli.py, with the EPIC-001 report projection and EPIC-002 comparison result interface treated as fixed integration seams.",
+      "acceptance_criteria": [
+        "`dogwatch check` accepts `--baseline-ref REF`; when one or more OpenAPI Contract Declarations are loaded, omission of that argument produces an OpenAPI error diagnostic in the emitted schema-0.3 report and exit 2 rather than an argparse-only or policy-failure result.",
+        "[AC-1] The adapter compares the configured candidate contract with the same path from an explicit baseline Git ref.",
+        "Each configured declaration runs as one independent bounded comparison, using the resolved baseline commit and candidate path/hash in its provenance; normal OpenAPI findings combine deterministically with existing scanner findings and diagnostics.",
+        "[AC-3] No-change contracts yield a successful report with no OpenAPI findings; invalid/missing inputs and tool failures yield diagnostics rather than false policy failures.",
+        "Missing candidate or baseline files, unavailable/invalid refs, validation failures, unavailable tool, timeout, output-limit conditions, non-zero tool exits, and malformed tool output produce only the declared OpenAPI diagnostics; their error severity yields inconclusive and exit 2.",
+        "CLI tests cover baseline argument behavior, schema-0.3 output, stdout/file output, deterministic diagnostic rendering, pass/fail/inconclusive exit mapping, and retain the existing no-OpenAPI command behavior.",
+        "`cd scanner && uv run --locked pytest tests/test_cli.py tests/test_report.py tests/test_schema.py` passes."
+      ],
+      "dependencies": [
+        "EPIC-001",
+        "EPIC-002"
+      ]
+    },
+    {
+      "epic_id": "EPIC-004",
+      "title": "Add deterministic fixture verification lane",
+      "description": "Create the dedicated OpenAPI compatibility fixture harness and pinned artifacts, then expose the supported bootstrap and verification workflow. Own fixtures/openapi/**, scanner/tests/openapi/test_fixtures.py, harness.py, regenerate.py, fake_oasdiff.py, Makefile, README.md, fixtures/README.md, .gitignore, and any necessary scanner golden-harness adjustments; do not change normalization logic or shared schemas.",
+      "acceptance_criteria": [
+        "The harness materializes each `base/` and `candidate/` case into a temporary local Git repository, commits the baseline, supplies an explicit baseline ref, and records only deterministic report bytes, exit code, and controlled invocation evidence.",
+        "[AC-5] The researched fixture matrix is covered by automated tests using pinned expected outputs.",
+        "The named matrix includes no-change, removals, requiredness, enum/constraint breaks, invalid input, missing input, timeout, tool failure, and ignored or reclassified findings; timeout and tool-failure cases use the controlled substitute executable rather than a wall-clock or upstream failure.",
+        "Golden reports validate against report-0.3, assert required provenance and stable fingerprints where findings exist, preserve waived findings, and repeated runs produce byte-identical serialized reports. Fixture tests never regenerate expected outputs implicitly.",
+        "Existing scanner-wide fixtures remain pass fixtures: their harness supplies an explicit local baseline when a fixture declares an OpenAPI contract, and their schema/golden expectations move consistently to 0.3 without embedding environment-specific paths or commits.",
+        "Makefile exposes verified-tool bootstrap and fixture-test wiring; README documents supported macOS/Linux bootstrap, cache behavior, `--baseline-ref` usage, and the fact that scans never download tools. fixtures/README documents the Git-history layout and explicit OpenAPI golden regeneration process.",
+        "After a verified local oasdiff cache is available, `make test-scanner`, `make test-fixtures`, and `make lint-scanner` pass from the repository root."
+      ],
+      "dependencies": [
+        "EPIC-002",
+        "EPIC-003"
+      ]
+    }
+  ],
+  "risk_notes": [
+    "The workspace is already dirty in .am/runtime-pointer.json, .gitignore, and .idea/; implementation must preserve unrelated changes, especially because EPIC-004 legitimately edits .gitignore.",
+    "The real compatibility fixtures require the verified local v1.39.0 cache. `make install-oasdiff` may need access to the fixed upstream release during initial bootstrap, while scanner execution must remain offline.",
+    "The existing full-surface fixture already declares an OpenAPI contract but its current golden harness supplies no baseline ref. EPIC-004 must update that harness deterministically so the existing pass fixture continues to validate the new mandatory-baseline behavior.",
+    "Only macOS and Linux are in scope; installer and fixture coverage must reject or clearly diagnose unsupported platforms rather than implying Windows support."
+  ],
+  "verification_strategy": "Run contract/unit checks at each epic boundary, then execute the end-to-end matrix from the repository root: `make test-scanner`, `make test-fixtures`, and `make lint-scanner`. The fixture lane is the integration proof: it uses temporary committed Git histories, the pinned/verified oasdiff path for normal comparisons, the controlled executable for failure boundaries, schema validation for every pinned report, invocation-safety assertions, and repeated-run byte equality.",
+  "missing_info_requests": []
+}

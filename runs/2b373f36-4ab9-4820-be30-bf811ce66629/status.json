@@ -1,0 +1,211 @@
+{
+  "runtimeMetadata": {
+    "objectiveContext": {
+      "raw_user_goal": "CD-4: Research the safe OpenAPI compatibility adapter contract\n\nDefine the oasdiff-backed OpenAPI adapter rather than creating another API-diff engine. Choose the baseline strategy, exact supported inputs, version pinning, normalized finding shape, and safe execution posture.\n\nThe adapter compares a checked-in YAML/JSON contract from a candidate checkout with the same path at an explicit baseline Git ref. Consumer request/response fixture validation is valuable but is a separately scoped follow-up, not a V1 claim.\n\nh2. Acceptance criteria\n\n* An ADR pins an oasdiff version/image and records the supported OpenAPI versions, command contract, severity/ignore ownership, and baseline Git-ref strategy.\n* The ADR specifies no-shell execution, read-only temporary inputs, timeout/output caps, and disabled external $ref resolution for untrusted inputs.\n* The ADR defines normalized OpenAPI findings with severity, check ID, locator, message, fingerprint, and base/candidate provenance.\n* A fixture matrix covers no change, removed operation, optional-to-required field, enum/constraint break, invalid spec, missing baseline, timeout/tool failure, and ignored/reclassified finding.",
+      "clarification_goal": "CD-9: Implement the pinned, safe oasdiff OpenAPI adapter defined by the completed CD-4 research/ADR. Compare a configured candidate YAML/JSON OpenAPI contract with the same repository path at an explicit baseline Git ref; validate both inputs; invoke the ADR-pinned oasdiff via argv only with read-only temporary files, bounded timeout/output, and external reference loading disabled; translate declared breaking changes into normalized Dogwatch findings containing severity, check ID, locator, message, fingerprint, and baseline/candidate provenance. Return diagnostics\u2014not policy findings\u2014for invalid/missing inputs and tool failures, and add deterministic automated coverage for the agreed fixture matrix including no-change, removals, requiredness, enum/constraint breaks, invalid/missing inputs, timeout/tool failure, and ignored/reclassified findings.",
+      "run_objective": "CD-9: Implement the pinned, safe oasdiff OpenAPI adapter defined by the completed CD-4 research/ADR. Compare a configured candidate YAML/JSON OpenAPI contract with the same repository path at an explicit baseline Git ref; validate both inputs; invoke the ADR-pinned oasdiff via argv only with read-only temporary files, bounded timeout/output, and external reference loading disabled; translate declared breaking changes into normalized Dogwatch findings containing severity, check ID, locator, message, fingerprint, and baseline/candidate provenance. Return diagnostics\u2014not policy findings\u2014for invalid/missing inputs and tool failures, and add deterministic automated coverage for the agreed fixture matrix including no-change, removals, requiredness, enum/constraint breaks, invalid/missing inputs, timeout/tool failure, and ignored/reclassified findings.",
+      "planner_objective": "CD-9: Implement the pinned, safe oasdiff OpenAPI adapter defined by the completed CD-4 research/ADR. Compare a configured candidate YAML/JSON OpenAPI contract with the same repository path at an explicit baseline Git ref; validate both inputs; invoke the ADR-pinned oasdiff via argv only with read-only temporary files, bounded timeout/output, and external reference loading disabled; translate declared breaking changes into normalized Dogwatch findings containing severity, check ID, locator, message, fingerprint, and baseline/candidate provenance. Return diagnostics\u2014not policy findings\u2014for invalid/missing inputs and tool failures, and add deterministic automated coverage for the agreed fixture matrix including no-change, removals, requiredness, enum/constraint breaks, invalid/missing inputs, timeout/tool failure, and ignored/reclassified findings.",
+      "architecture_objective": "",
+      "ui_ux_objective": "",
+      "supervisor_summary": "",
+      "clarification_history": [
+        {
+          "role": "user",
+          "content": "Before start that task, verify it is suitable target to do next"
+        },
+        {
+          "role": "assistant",
+          "content": "I\u2019ll assess CD-9 against the completed configuration-contract work and its stated dependencies before proposing a launch.CD-9 is a suitable next target: CD-4\u2019s adapter contract research and CD-6\u2019s shared configuration/report contracts are complete, and the implementation scope and acceptance criteria are concrete.\n\nProposed base: `main` (the project\u2019s default branch). Nothing has started. Confirm `main` or name another base branch."
+        },
+        {
+          "role": "user",
+          "content": "Please double check regarding branches - i think we have not yet merged to main work, would be great to start after you will merge all to develop and open PR for me to main"
+        },
+        {
+          "role": "assistant",
+          "content": "I\u2019ll verify the branch state and identify which completed work is not yet in `develop` before treating it as CD-9\u2019s base.`develop` does not exist locally or on `origin`. CD-6 has seven commits ready on top of `main`; CD-5 is already in `main`. I\u2019ve asked whether to create `develop` from current `main`, merge CD-6 into it, and open the PR to `main`."
+        },
+        {
+          "role": "user",
+          "content": "Should I create `develop` from current `main`, merge the completed CD-6 branch into it, push it, and open a PR from `develop` to `main`?: Yes \u2014 create develop from main"
+        },
+        {
+          "role": "assistant",
+          "content": "I\u2019ll create `develop` from the current `main`, merge the completed CD-6 commits in an isolated worktree, then push it and open the review PR.The branch was merged and pushed, and PR #2 was created. Its body lost inline code formatting because the shell interpreted backticks; I\u2019m correcting that metadata now.Created `develop`, merged CD-6 into it, and opened [PR #2](https://github.com/Ilya-g-png/contractor/pull/2) from `develop` to `main`.\n\nCD-9 is ready to launch. The runtime proposes `main` by default; I recommend `develop` so it includes CD-6 immediately. Confirm `develop` as CD-9\u2019s base."
+        },
+        {
+          "role": "user",
+          "content": "I merged, pul; changes to be sure they are locally too and kikc off run for CD-9 please"
+        }
+      ],
+      "previous_attempt": null,
+      "bundle_id": "dev-ops-only",
+      "origin_jira_key": "CD-9",
+      "prior_work": [
+        {
+          "run_id": "5b28548a-4c88-4600-b7cc-a6df1df95c7b",
+          "origin_jira_key": "CD-4",
+          "source": "jira_link",
+          "relation": "is blocked by",
+          "title": "Research the safe OpenAPI compatibility adapter contract",
+          "run_status": "completed",
+          "exit_reason": "normal_completion",
+          "completed_at": "2026-10-03T12:20:00.829750Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "c3aa5af8-9962-4689-879f-ddf43b9ea152",
+          "origin_jira_key": "CD-4",
+          "source": "jira_link",
+          "relation": "is blocked by",
+          "title": "Research the safe OpenAPI compatibility adapter contract",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:58.157931Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "1f039cf8-8868-4202-a892-fed38d80cfb8",
+          "origin_jira_key": "CD-4",
+          "source": "jira_link",
+          "relation": "is blocked by",
+          "title": "Research the safe OpenAPI compatibility adapter contract",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:37:12.390578Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25",
+          "origin_jira_key": "CD-6",
+          "source": "jira_link",
+          "relation": "is blocked by",
+          "title": "Implement validated Dogwatch configuration and common report contracts",
+          "run_status": "completed",
+          "exit_reason": "normal_completion",
+          "completed_at": "2026-11-15T11:16:02.457088Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "aa60f75a-3337-4c39-af44-14e12a9a027a",
+          "origin_jira_key": "CD-6",
+          "source": "jira_link",
+          "relation": "is blocked by",
+          "title": "Implement validated Dogwatch configuration and common report contracts",
+          "run_status": "failed",
+          "exit_reason": "internal_error",
+          "completed_at": "2026-10-05T09:20:32.070732Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "9c37b285-b35d-4dc2-be1c-2347272422e0",
+          "origin_jira_key": "CD-2",
+          "source": "epic",
+          "relation": null,
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "completed",
+          "exit_reason": "normal_completion",
+          "completed_at": "2026-10-03T12:16:11.195128Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "a4dd5320-b083-43c1-9806-1cceb0a6ed19",
+          "origin_jira_key": "CD-2",
+          "source": "epic",
+          "relation": null,
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:22.023434Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "15559cfe-b43b-48d2-b7b1-94b9c6fdbb68",
+          "origin_jira_key": "CD-2",
+          "source": "epic",
+          "relation": null,
+          "title": "Research V1 workflow, trust boundary, and report lifecycle",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:34:52.045292Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "7ee72c98-20e3-41ff-9321-386775b7a72e",
+          "origin_jira_key": "CD-3",
+          "source": "epic",
+          "relation": null,
+          "title": "Research configurable Python import-boundary policy semantics",
+          "run_status": "completed",
+          "exit_reason": "normal_completion",
+          "completed_at": "2026-10-03T12:21:53.902298Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "b1cdceb4-580f-4169-bf8c-203d36d500a0",
+          "origin_jira_key": "CD-3",
+          "source": "epic",
+          "relation": null,
+          "title": "Research configurable Python import-boundary policy semantics",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T11:30:48.327911Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "702ddebf-34a8-46c6-8d7a-912a2e407a5d",
+          "origin_jira_key": "CD-3",
+          "source": "epic",
+          "relation": null,
+          "title": "Research configurable Python import-boundary policy semantics",
+          "run_status": "completed",
+          "exit_reason": null,
+          "completed_at": "2026-10-03T09:37:32.147595Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "164a748c-a04f-4d96-9cbe-3519549fb59f",
+          "origin_jira_key": "CD-5",
+          "source": "epic",
+          "relation": null,
+          "title": "Bootstrap the monorepo, scanner CLI, API, web app, and deterministic fixture project",
+          "run_status": "completed",
+          "exit_reason": "normal_completion",
+          "completed_at": "2026-10-04T08:04:23.314642Z",
+          "ticket_updated_after_run": true
+        },
+        {
+          "run_id": "29a445c3-9d56-4d45-9250-e42d12faf185",
+          "origin_jira_key": "CD-5",
+          "source": "epic",
+          "relation": null,
+          "title": "Bootstrap the monorepo, scanner CLI, API, web app, and deterministic fixture project",
+          "run_status": "failed",
+          "exit_reason": null,
+          "completed_at": "2026-10-04T06:36:59.847823Z",
+          "ticket_updated_after_run": true
+        }
+      ],
+      "ticket": {
+        "key": "CD-9",
+        "issue_type": "story",
+        "labels": [
+          "adapter",
+          "contract-dogwatch",
+          "openapi",
+          "seed-cdw-8"
+        ],
+        "title": "Add the pinned, safe oasdiff OpenAPI adapter",
+        "description": "Implement the adapter decided in CDW-3. Validate candidate and baseline contracts, invoke pinned oasdiff without a shell, collect declared breaking changes, and translate them into common Dogwatch findings with provenance.\n\nh2. Acceptance criteria\n\n* The adapter compares the configured candidate contract with the same path from an explicit baseline Git ref.\n* oasdiff invocation uses an argv list, pinned version, read-only temporary files, timeout/output limits, and disabled external reference loading.\n* No-change contracts yield a successful report with no OpenAPI findings; invalid/missing inputs and tool failures yield diagnostics rather than false policy failures.\n* Every OpenAPI finding includes severity, check ID, locator, human message, fingerprint, and base/candidate provenance.\n* The researched fixture matrix is covered by automated tests using pinned expected outputs.",
+        "acceptance_criteria": [
+          "The adapter compares the configured candidate contract with the same path from an explicit baseline Git ref.",
+          "oasdiff invocation uses an argv list, pinned version, read-only temporary files, timeout/output limits, and disabled external reference loading.",
+          "No-change contracts yield a successful report with no OpenAPI findings; invalid/missing inputs and tool failures yield diagnostics rather than false policy failures.",
+          "Every OpenAPI finding includes severity, check ID, locator, human message, fingerprint, and base/candidate provenance.",
+          "The researched fixture matrix is covered by automated tests using pinned expected outputs."
+        ]
+      },
+      "short_name": null
+    }
+  }
+}

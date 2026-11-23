@@ -1,0 +1,160 @@
+{
+  "plan_id": "cd-9-openapi-adapter",
+  "tasks": [
+    {
+      "task_id": "openapi-policy-report-contract",
+      "title": "Add OpenAPI policy and report contracts",
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [],
+      "deliverable_name": "scanner/schemas/report-0.3.schema.json",
+      "success_criteria": [
+        "The strict policy loader accepts only declared OpenAPI contract, severity-reclassification, and waiver forms; unknown keys, duplicate targets, invalid locators, hashes, dates, and severities produce configuration diagnostics.",
+        "Report schema 0.3 validates OpenAPI findings only when they include source, effective severity, check ID, locator, message, an `openapi/v1:` fingerprint, base/candidate provenance, and a null or structured waiver; schema 0.2 remains available unchanged.",
+        "Report sorting, canonical serialization, waiver representation, and status precedence remain deterministic, with error diagnostics taking priority over unwaived error findings.",
+        "`cd scanner && uv run --locked pytest tests/test_config.py tests/test_contracts.py tests/test_report.py tests/test_schema.py` and the existing golden suite pass.",
+        "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
+      ],
+      "stop_conditions": [],
+      "depends_on": [],
+      "review_required": true,
+      "work_group_id": "EPIC-001",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "scanner/src/dogwatch",
+        "scanner/schemas",
+        "scanner/tests",
+        "scanner/tests/golden",
+        "fixtures"
+      ]
+    },
+    {
+      "task_id": "openapi-input-baseline",
+      "title": "Implement OpenAPI preflight and Git baseline retrieval",
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [],
+      "deliverable_name": "scanner/src/dogwatch/openapi/preflight.py",
+      "success_criteria": [
+        "Candidate and baseline readers accept only regular `.yaml`, `.yml`, or `.json` files at the declaration's byte-identical relative path, independently enforce the 5 MiB raw-byte limit, retain raw SHA-256 values, and return deterministic canonical JSON only after validation.",
+        "Preflight returns error OpenAPI diagnostics and no runner-ready result for missing, non-regular, oversized, malformed, unsupported-version, external-reference, or unresolved-internal-reference inputs.",
+        "Local Git access resolves the supplied baseline ref once to an immutable local commit and reads the exact same relative-path blob with argv-only, read-only plumbing; unavailable refs, missing or invalid baseline entries, and Git/object faults use the contracted diagnostic outcomes without checkout or network side effects.",
+        "The selected YAML dependency is pinned in `pyproject.toml` and `uv.lock`, and isolated tests prove unsafe constructors are not executed and no result is ready until both inputs validate.",
+        "`cd scanner && uv run --locked pytest tests/openapi/test_preflight.py tests/openapi/test_git.py` passes.",
+        "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
+      ],
+      "stop_conditions": [
+        "The approved safe YAML parser, exact version, or enforceable duplicate-key, alias-expansion, and nesting controls cannot be established from the available dependency ecosystem.",
+        "Local Git plumbing cannot meet the required read-only, no-network, same-path baseline guarantees on the supported project Git version."
+      ],
+      "depends_on": [],
+      "review_required": true,
+      "work_group_id": "EPIC-002",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "scanner",
+        "scanner/src/dogwatch/openapi",
+        "scanner/tests/openapi"
+      ]
+    },
+    {
+      "task_id": "openapi-verified-runner",
+      "title": "Implement verified oasdiff execution boundary",
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [],
+      "deliverable_name": "scanner/src/dogwatch/openapi/runner.py",
+      "success_criteria": [
+        "The tool provider recognizes only the contracted macOS, Linux amd64, and Linux arm64 oasdiff v1.39.0 archives and exact SHA-256 values; unsupported, absent, checksum-invalid, unsafe, or wrong-version binaries return `openapi-tool-unavailable` without a scan-time download.",
+        "The runner uses an argv sequence containing only the approved `changelog` profile, `--format=json`, `--level=INFO`, exactly one `--allow-external-refs=false`, `--`, and adapter-created paths; it neither invokes a shell nor forwards candidate or Git paths.",
+        "Canonical inputs are created beneath a private temporary directory with read-only permissions, stdin is disconnected, stdout and stderr are collected concurrently with 16 MiB and 1 MiB caps, and timeout is bounded at 60 seconds.",
+        "Timeout, output-cap, startup, non-zero-exit, and malformed-output conditions return their contracted diagnostics and no partial structured records.",
+        "`cd scanner && uv run --locked pytest tests/openapi/test_tool.py tests/openapi/test_runner.py` passes.",
+        "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
+      ],
+      "stop_conditions": [
+        "The supplied v1.39.0 archive checksums or required executable version cannot be verified against the tool-provider contract.",
+        "The available process-control APIs cannot enforce the specified timeout and independent output caps without returning partial records."
+      ],
+      "depends_on": [],
+      "review_required": true,
+      "work_group_id": "EPIC-002",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "scanner/src/dogwatch/openapi",
+        "scanner/tests/openapi"
+      ]
+    },
+    {
+      "task_id": "openapi-comparison-integration",
+      "title": "Integrate OpenAPI comparisons into the scanner command",
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [],
+      "deliverable_name": "scanner/src/dogwatch/openapi/coordinator.py",
+      "success_criteria": [
+        "With no OpenAPI declarations, existing command behavior remains compatible; with declarations, omitting `--baseline-ref` emits an OpenAPI report diagnostic and exits 2, while a successful baseline resolution is shared by all comparisons.",
+        "The coordinator composes the completed declaration/report, input/baseline, and runner contracts so that valid no-change results add neither OpenAPI finding nor OpenAPI diagnostic, while any failed input, Git, runner, or normalization stage adds an error diagnostic, zero policy findings for that comparison, and an inconclusive aggregate result.",
+        "Every accepted tool record is normalized deterministically into a source `openapi` finding with required locator and provenance; each fingerprint includes contract ID, check ID, normalized locator, and tool identity but excludes message and effective severity.",
+        "Severity reclassification changes only effective severity, and an exact, unexpired waiver remains visible while matching contract ID, check ID, normalized operation locator, fingerprint, and baseline raw SHA-256.",
+        "`cd scanner && uv run --locked pytest tests/openapi/test_coordinator.py tests/openapi/test_normalize.py tests/openapi/test_policy.py tests/test_cli.py` passes.",
+        "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
+      ],
+      "stop_conditions": [
+        "A completed dependency does not expose a stable typed result or diagnostic contract needed by the coordinator.",
+        "The required report projection cannot be produced without changing a completed dependency's public contract. "
+      ],
+      "depends_on": [
+        "openapi-policy-report-contract",
+        "openapi-input-baseline",
+        "openapi-verified-runner"
+      ],
+      "review_required": true,
+      "work_group_id": "EPIC-003",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "scanner/src/dogwatch",
+        "scanner/src/dogwatch/openapi",
+        "scanner/tests",
+        "scanner/tests/openapi"
+      ]
+    },
+    {
+      "task_id": "openapi-fixture-matrix",
+      "title": "Add deterministic OpenAPI fixture matrix",
+      "provider": "proxy",
+      "task_kind": "software_engineering",
+      "input_reports": [],
+      "deliverable_name": "scanner/tests/openapi/test_fixture_matrix.py",
+      "success_criteria": [
+        "Pinned, named fixture cases cover no change, removed operation, optional-to-required field, enum or constraint break, invalid specification, missing baseline, timeout or tool failure, and ignored or reclassified findings.",
+        "Each case materializes same-path base and candidate trees into a temporary local Git repository, creates an explicit baseline commit, and supplies its ref to the public scanner command.",
+        "Checked-in expected reports validate against report schema 0.3; findings assert all required OpenAPI fields, while error cases assert exact diagnostic IDs, no corresponding policy finding, inconclusive status, and exit 2.",
+        "Execution-path cases use only controlled local substitutes and assert the argv profile, disabled external references, read-only temporary inputs, fixed timeout, and both output limits.",
+        "Every fixture is run twice; both canonical outputs match its checked-in expected bytes, and test execution never rewrites expected artifacts.",
+        "`cd scanner && uv run --locked pytest tests/openapi/test_fixture_matrix.py` and `cd scanner && uv run --locked pytest` pass.",
+        "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
+      ],
+      "stop_conditions": [
+        "A verified local oasdiff v1.39.0 executable or an approved controlled substitute cannot produce the reviewed, deterministic records needed to pin expected artifacts.",
+        "Completed public scanner or controlled-runner interfaces are incompatible with fixture materialization without changing their established contracts."
+      ],
+      "depends_on": [
+        "openapi-policy-report-contract",
+        "openapi-verified-runner",
+        "openapi-comparison-integration"
+      ],
+      "review_required": true,
+      "work_group_id": "EPIC-004",
+      "execution_profile": "development",
+      "board_task_id": null,
+      "requested_write_scopes": [
+        "scanner/tests/openapi"
+      ]
+    }
+  ]
+}

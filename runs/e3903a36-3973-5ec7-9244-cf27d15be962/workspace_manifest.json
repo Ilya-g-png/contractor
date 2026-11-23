@@ -10,6 +10,7 @@
   "repo_root_path": null,
   "worktree_root": null,
   "run_branch": null,
+  "run_branch_origin": null,
   "base_branch": null,
   "base_commit": null,
   "active_worker_branch": null,
@@ -18,7 +19,7 @@
   "workspace_mode": "full_access",
   "remote_push_policy": "off",
   "remote_url": null,
-  "retention_expires_at": "2026-11-22T10:02:52.648338Z",
+  "retention_expires_at": "2026-11-30T15:04:37.566163Z",
   "cleanup_status": "active",
-  "initialized_at": "2026-11-15T10:02:52.648368Z"
+  "initialized_at": "2026-11-23T15:04:37.566171Z"
 }

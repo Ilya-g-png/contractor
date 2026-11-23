@@ -234,17 +234,23 @@
         "Final gate: make test-scanner && make lint-scanner && make test-fixtures pass in one run, and make run-scanner exits 0 with empty stderr (checkpoint CP3)"
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "passed": true,
+        "evidence": [
+          "Accept. I read all three commits on the branch. The full-surface fixture declares a package, an exclusion that matches real files, a forbid rule, a layers rule and one OpenAPI contract whose spec file is checked in. Its golden is pass with no findings and no diagnostics. The trust-boundary tests now run against both real fixtures, and the AST import-graph test makes non-trivial assertions. The protected areas have no diff against 504a244. The recorded ruff, mypy and pytest runs passed (514 tests). The fixtures area is not checked by any command; I judged it by reading: the files are static, use LF line endings and are never imported.",
+          "Worktree is clean at 8d0cc32. The protected-path diff against 504a244 is empty.",
+          "The fixtures area has no command check (unchecked_areas). I judged it by reading: the files are static, have LF endings and are not imported by the scanner. The golden's byte-exactness rests on the recorded green golden tests; I could not recompute the sha256 digest with the read-only tools.",
+          "verification_disposition is inconclusive, but every recorded command passed (ruff, mypy, pytest with 514 passed), and I checked the code by reading it.",
+          "1ddf51f1-bb76-4e8f-b971-ca2e1a6a1c25/reviewer_decision.json"
+        ],
+        "verified_at": "2026-11-15T11:16:02.344525Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "full-surface-fixture:accept:low-uv-virtualenv-warning",
       "attempts_since_progress": 0,
       "blocked_criteria": []
     }
   ],
   "created_at": "2026-11-15T10:11:26.532515Z",
-  "updated_at": "2026-11-15T11:10:58.319446Z"
+  "updated_at": "2026-11-15T11:16:02.344546Z"
 }

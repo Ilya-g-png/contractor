@@ -1,0 +1,38 @@
+{
+  "task_id": "openapi-fixture-matrix",
+  "status": "queued",
+  "attempt": 1,
+  "version": 1,
+  "claim_run_id": null,
+  "claim_expires_at": null,
+  "provider": "proxy",
+  "task_kind": "software_engineering",
+  "title": "Add deterministic OpenAPI fixture matrix",
+  "depends_on": [
+    "openapi-policy-report-contract",
+    "openapi-verified-runner",
+    "openapi-comparison-integration"
+  ],
+  "review_required": true,
+  "review_completed": false,
+  "requested_write_scopes": [
+    "scanner/tests/openapi"
+  ],
+  "followup_for": null,
+  "deliverable_name": "scanner/tests/openapi/test_fixture_matrix.py",
+  "summary": null,
+  "error": null,
+  "result_path": null,
+  "final_markdown_path": null,
+  "git_branch": null,
+  "git_base_branch": null,
+  "git_base_commit": null,
+  "git_head_commit": null,
+  "integration_status": null,
+  "integrated_head": null,
+  "hard_block_request": null,
+  "verification_disposition": null,
+  "operator_blocked_criteria": [],
+  "write_scope_enforcement": null,
+  "conversation_path": null
+}

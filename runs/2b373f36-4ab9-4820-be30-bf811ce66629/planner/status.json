@@ -1,0 +1,11 @@
+{
+  "status": "completed",
+  "goal": "CD-9: Implement the pinned, safe oasdiff OpenAPI adapter defined by the completed CD-4 research/ADR. Compare a configured candidate YAML/JSON OpenAPI contract with the same repository path at an explicit baseline Git ref; validate both inputs; invoke the ADR-pinned oasdiff via argv only with read-only temporary files, bounded timeout/output, and external reference loading disabled; translate declared breaking changes into normalized Dogwatch findings containing severity, check ID, locator, message, fingerprint, and baseline/candidate provenance. Return diagnostics\u2014not policy findings\u2014for invalid/missing inputs and tool failures, and add deterministic automated coverage for the agreed fixture matrix including no-change, removals, requiredness, enum/constraint breaks, invalid/missing inputs, timeout/tool failure, and ignored/reclassified findings.",
+  "active_step": null,
+  "step_started_at": null,
+  "step_timeout_seconds": null,
+  "research_calls_used": 0,
+  "context_scout_calls_used": 0,
+  "last_error": null,
+  "summary": "Developer task plan: {"
+}

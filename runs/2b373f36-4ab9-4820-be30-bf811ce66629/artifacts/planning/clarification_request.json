@@ -1,0 +1,60 @@
+{
+  "draft_spec_path": "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/2b373f36-4ab9-4820-be30-bf811ce66629/artifacts/planning/draft_spec.md",
+  "assistant_message": "Five material decisions remain after checking the cited CD-4 research paper at `.am/reports/5b28548a-4c88-4600-b7cc-a6df1df95c7b-research-paper.md` and the current configuration, report, and fixture contracts.",
+  "questions": [
+    {
+      "id": "q-oasdiff-artifact-pin",
+      "question": "Which immutable oasdiff v1.39.0 artifact is approved for adapter execution?",
+      "options": [
+        "Official multi-architecture container image digest",
+        "Official per-platform container image digests for the supported platforms",
+        "Official release binaries with pinned archive checksums"
+      ],
+      "custom_label": "Approved immutable reference(s), including digest or checksum",
+      "rationale": "FR-004 requires an immutable, verified distribution reference, but the draft intentionally leaves the exact approved reference unresolved."
+    },
+    {
+      "id": "q-report-schema-evolution",
+      "question": "How should the standard report evolve to carry the required base/candidate provenance and waiver information for every OpenAPI finding?",
+      "options": [
+        "Publish a new versioned report schema with the OpenAPI fields required",
+        "Add optional OpenAPI-only fields to the existing report schema version",
+        "Keep the existing report unchanged and emit a separately versioned OpenAPI result payload"
+      ],
+      "custom_label": null,
+      "rationale": "The current report 0.2 schema rejects additional finding fields, while AC-4 and FR-010 require provenance on every OpenAPI finding."
+    },
+    {
+      "id": "q-openapi-policy-scope",
+      "question": "At what policy scope should configured OpenAPI severity reclassifications and waivers be declared?",
+      "options": [
+        "Repository-wide OpenAPI policy, with waivers explicitly matching a contract ID",
+        "Per-contract declarations within each configured OpenAPI contract",
+        "Repository-wide defaults with optional per-contract overrides"
+      ],
+      "custom_label": null,
+      "rationale": "FR-011 requires configurable reclassification and exact-match waivers, but the current `openapi.contracts` declarations support only ID and path and the draft does not define policy scope."
+    },
+    {
+      "id": "q-history-fixture-layout",
+      "question": "Which repository layout should automated baseline-history fixtures use?",
+      "options": [
+        "`base` and `candidate` inputs materialized into a temporary Git repository by the test harness",
+        "Committed fixture repositories containing their own baseline history"
+      ],
+      "custom_label": null,
+      "rationale": "`fixtures/README.md` records this as pending, and the choice determines how AC-1 and the AC-5 fixture matrix can reproduce explicit baseline refs."
+    },
+    {
+      "id": "q-contract-size-limit",
+      "question": "What maximum raw size should apply independently to each candidate and baseline contract before pre-flight validation?",
+      "options": [
+        "5 MiB",
+        "10 MiB",
+        "No separate input-size limit"
+      ],
+      "custom_label": "Other per-contract limit",
+      "rationale": "The draft treats oversize inputs as an edge case and refers to an established limit, but supplies no value; the cited CD-4 research proposed 5 MiB without benchmarking it."
+    }
+  ]
+}
