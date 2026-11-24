@@ -1,0 +1,27 @@
+{
+  "category": "timeout-or-tool-failure",
+  "description": "The substitute sleeps past the deadline before printing a finding; the harness shortens only the wall-clock wait.",
+  "tool": {
+    "records": [
+      {
+        "id": "api-removed-without-deprecation",
+        "text": "api removed without deprecation",
+        "level": 3,
+        "operation": "DELETE",
+        "operationId": "deletePet",
+        "path": "/pets/{petId}",
+        "section": "paths",
+        "fingerprint": "5c1d2e9a7b40"
+      }
+    ],
+    "sleep_seconds": 30,
+    "deadline_seconds": 2
+  },
+  "expected": {
+    "exit_code": 2,
+    "check_ids": [],
+    "diagnostic_ids": [
+      "openapi-tool-timeout"
+    ]
+  }
+}

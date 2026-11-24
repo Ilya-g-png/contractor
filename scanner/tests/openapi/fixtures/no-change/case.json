@@ -1,0 +1,12 @@
+{
+  "category": "no-change",
+  "description": "Identical base and candidate contracts; the substitute reports an empty changelog.",
+  "tool": {
+    "records": []
+  },
+  "expected": {
+    "exit_code": 0,
+    "check_ids": [],
+    "diagnostic_ids": []
+  }
+}

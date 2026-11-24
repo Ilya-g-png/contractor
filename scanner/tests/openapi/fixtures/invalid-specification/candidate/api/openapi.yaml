@@ -1,0 +1,47 @@
+openapi: 3.0.3
+info:
+  title: Fixture Pets
+  version: 1.0.0
+paths:
+  /pets:
+    post:
+      operationId: createPet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MissingPet"
+      responses:
+        "201":
+          description: Created
+  /pets/{petId}:
+    delete:
+      operationId: deletePet
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+components:
+  schemas:
+    NewPet:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          maxLength: 64
+        species:
+          type: string
+          enum:
+            - cat
+            - dog
+            - bird
+        nickname:
+          type: string

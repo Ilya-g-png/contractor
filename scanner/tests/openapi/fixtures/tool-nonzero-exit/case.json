@@ -1,0 +1,27 @@
+{
+  "category": "timeout-or-tool-failure",
+  "description": "The substitute prints a finding but exits with status 1, so its output is discarded.",
+  "tool": {
+    "records": [
+      {
+        "id": "api-removed-without-deprecation",
+        "text": "api removed without deprecation",
+        "level": 3,
+        "operation": "DELETE",
+        "operationId": "deletePet",
+        "path": "/pets/{petId}",
+        "section": "paths",
+        "fingerprint": "5c1d2e9a7b40"
+      }
+    ],
+    "stderr": "Error: failed to load base spec\n",
+    "exit_status": 1
+  },
+  "expected": {
+    "exit_code": 2,
+    "check_ids": [],
+    "diagnostic_ids": [
+      "openapi-tool-failed"
+    ]
+  }
+}

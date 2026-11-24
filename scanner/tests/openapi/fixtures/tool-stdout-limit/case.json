@@ -1,0 +1,14 @@
+{
+  "category": "timeout-or-tool-failure",
+  "description": "The substitute writes one byte more than the 16 MiB stdout limit.",
+  "tool": {
+    "stdout_bytes": 16777217
+  },
+  "expected": {
+    "exit_code": 2,
+    "check_ids": [],
+    "diagnostic_ids": [
+      "openapi-tool-stdout-limit-exceeded"
+    ]
+  }
+}

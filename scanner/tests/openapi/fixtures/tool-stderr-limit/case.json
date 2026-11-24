@@ -1,0 +1,15 @@
+{
+  "category": "timeout-or-tool-failure",
+  "description": "The substitute writes one byte more than the 1 MiB stderr limit.",
+  "tool": {
+    "records": [],
+    "stderr_bytes": 1048577
+  },
+  "expected": {
+    "exit_code": 2,
+    "check_ids": [],
+    "diagnostic_ids": [
+      "openapi-tool-stderr-limit-exceeded"
+    ]
+  }
+}

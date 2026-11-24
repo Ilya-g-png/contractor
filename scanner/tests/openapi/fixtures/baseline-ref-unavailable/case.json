@@ -1,0 +1,13 @@
+{
+  "category": "missing-baseline",
+  "description": "The supplied baseline ref does not exist in the local repository.",
+  "baseline_ref": "release-0.9",
+  "tool": null,
+  "expected": {
+    "exit_code": 2,
+    "check_ids": [],
+    "diagnostic_ids": [
+      "openapi-baseline-ref-unavailable"
+    ]
+  }
+}

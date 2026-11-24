@@ -1,0 +1,17 @@
+[python]
+
+[[python.packages]]
+name = "fixture_api"
+root = "src"
+
+[[openapi.contracts]]
+id = "pets-api"
+path = "api/openapi.yaml"
+
+[[openapi.waivers]]
+contract_id = "pets-api"
+check_id = "api-removed-without-deprecation"
+operation = "DELETE /pets/{petId}"
+fingerprint = "openapi/v1:52dde17de0819562a891ae25482b970c4a1f4f965c3abbc1c7694fe49f6d9ae9"
+baseline_sha256 = "718e7cc38e111c3643b3ff74c9dcaf0e60f46c590cc7ad3cfcce5175ab9e4b5d"
+reason = "Deletion removed with consumer sign-off"
