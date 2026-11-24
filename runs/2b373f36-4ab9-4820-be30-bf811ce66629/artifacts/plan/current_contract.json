@@ -1,18 +1,19 @@
 {
-  "contract_id": "contract-0001",
+  "contract_id": "contract-0002",
   "selected_item_ids": [
-    "openapi-policy-report-contract"
+    "openapi-input-baseline"
   ],
   "selected_task_ids": [
-    "openapi-policy-report-contract"
+    "openapi-input-baseline"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "The strict policy loader accepts only declared OpenAPI contract, severity-reclassification, and waiver forms; unknown keys, duplicate targets, invalid locators, hashes, dates, and severities produce configuration diagnostics.",
-    "Report schema 0.3 validates OpenAPI findings only when they include source, effective severity, check ID, locator, message, an `openapi/v1:` fingerprint, base/candidate provenance, and a null or structured waiver; schema 0.2 remains available unchanged.",
-    "Report sorting, canonical serialization, waiver representation, and status precedence remain deterministic, with error diagnostics taking priority over unwaived error findings.",
-    "`cd scanner && uv run --locked pytest tests/test_config.py tests/test_contracts.py tests/test_report.py tests/test_schema.py` and the existing golden suite pass.",
+    "Candidate and baseline readers accept only regular `.yaml`, `.yml`, or `.json` files at the declaration's byte-identical relative path, independently enforce the 5 MiB raw-byte limit, retain raw SHA-256 values, and return deterministic canonical JSON only after validation.",
+    "Preflight returns error OpenAPI diagnostics and no runner-ready result for missing, non-regular, oversized, malformed, unsupported-version, external-reference, or unresolved-internal-reference inputs.",
+    "Local Git access resolves the supplied baseline ref once to an immutable local commit and reads the exact same relative-path blob with argv-only, read-only plumbing; unavailable refs, missing or invalid baseline entries, and Git/object faults use the contracted diagnostic outcomes without checkout or network side effects.",
+    "The selected YAML dependency is pinned in `pyproject.toml` and `uv.lock`, and isolated tests prove unsafe constructors are not executed and no result is ready until both inputs validate.",
+    "`cd scanner && uv run --locked pytest tests/openapi/test_preflight.py tests/openapi/test_git.py` passes.",
     "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
   ]
 }

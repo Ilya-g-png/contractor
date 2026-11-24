@@ -12,7 +12,7 @@
   "run_branch": "CD-9-add-the-pinned-safe-oasdiff-openapi",
   "run_branch_origin": "created",
   "base_branch": "main",
-  "base_commit": "bd72f6d1f4e537d231d30900cc54fa28392d7982",
+  "base_commit": "6ee6c1aa9a82cb59b4141e25016d353a1e8f88b6",
   "active_worker_branch": null,
   "origin_jira_key": "CD-9",
   "seed_sources": [],

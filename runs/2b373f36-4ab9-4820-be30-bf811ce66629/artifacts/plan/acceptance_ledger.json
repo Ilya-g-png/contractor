@@ -15,14 +15,17 @@
         "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "passed": true,
+        "evidence": [
+          "Recovered persisted child attempt 4458ce6c-a07e-4f49-a5b8-d9594a45a483.",
+          "Diff and branch contents were inspected read-only. The supplied verification ran the full pytest suite plus Ruff check and mypy; its command transcript did not explicitly include `--locked` or `ruff format --check`, but no dependency/configuration changes are in this slice and the inspected Python is formatter-conformant."
+        ],
+        "verified_at": "2026-11-24T08:22:19.139701Z"
       },
-      "last_findings_fingerprint": null,
-      "attempts_since_progress": 0,
+      "last_findings_fingerprint": "low:4a03647:commit-message",
+      "attempts_since_progress": 2,
       "blocked_criteria": []
     },
     {
@@ -128,5 +131,5 @@
     }
   ],
   "created_at": "2026-11-23T15:40:44.074775Z",
-  "updated_at": "2026-11-23T15:40:44.074777Z"
+  "updated_at": "2026-11-24T08:22:19.139731Z"
 }

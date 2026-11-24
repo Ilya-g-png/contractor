@@ -207,5 +207,11 @@
       },
       "short_name": null
     }
+  },
+  "control": {
+    "pauseRequested": false,
+    "pauseRequestedAt": null,
+    "pauseRequestedBy": null,
+    "pauseAppliedAt": null
   }
 }
