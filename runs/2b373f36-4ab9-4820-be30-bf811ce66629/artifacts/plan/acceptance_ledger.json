@@ -72,13 +72,17 @@
         "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
       ],
       "review_required": true,
-      "status": "blocked",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "passed": true,
+        "evidence": [
+          "Accepted. The implementation review remains valid, and the developer's newly supplied report satisfies both previously unverified gates under the operator's guidance.",
+          "The updated task output now includes a developer_report naming both exact commands, their exit codes, and their passing summaries. The reported last 20 output lines reside in the linked task response and were not reproduced in the updated task output.",
+          "2b373f36-4ab9-4820-be30-bf811ce66629/reviewer_decision.json"
+        ],
+        "verified_at": "2026-11-24T09:28:38.462986Z"
       },
-      "last_findings_fingerprint": "openapi-verified-runner:locked-gates-unverified:ff5df4c-subject",
+      "last_findings_fingerprint": "d33a3f0526ab8a7b2cd92e1020801d0a6823302045796fc3edd199adac5ab505",
       "attempts_since_progress": 0,
       "blocked_criteria": []
     },
@@ -135,5 +139,5 @@
     }
   ],
   "created_at": "2026-11-23T15:40:44.074775Z",
-  "updated_at": "2026-11-24T09:27:50.139683Z"
+  "updated_at": "2026-11-24T09:28:38.463010Z"
 }

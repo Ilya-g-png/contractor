@@ -1,19 +1,19 @@
 {
-  "contract_id": "contract-0003",
+  "contract_id": "contract-0004",
   "selected_item_ids": [
-    "openapi-verified-runner"
+    "openapi-comparison-integration"
   ],
   "selected_task_ids": [
-    "openapi-verified-runner"
+    "openapi-comparison-integration"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "The tool provider recognizes only the contracted macOS, Linux amd64, and Linux arm64 oasdiff v1.39.0 archives and exact SHA-256 values; unsupported, absent, checksum-invalid, unsafe, or wrong-version binaries return `openapi-tool-unavailable` without a scan-time download.",
-    "The runner uses an argv sequence containing only the approved `changelog` profile, `--format=json`, `--level=INFO`, exactly one `--allow-external-refs=false`, `--`, and adapter-created paths; it neither invokes a shell nor forwards candidate or Git paths.",
-    "Canonical inputs are created beneath a private temporary directory with read-only permissions, stdin is disconnected, stdout and stderr are collected concurrently with 16 MiB and 1 MiB caps, and timeout is bounded at 60 seconds.",
-    "Timeout, output-cap, startup, non-zero-exit, and malformed-output conditions return their contracted diagnostics and no partial structured records.",
-    "`cd scanner && uv run --locked pytest tests/openapi/test_tool.py tests/openapi/test_runner.py` passes.",
+    "With no OpenAPI declarations, existing command behavior remains compatible; with declarations, omitting `--baseline-ref` emits an OpenAPI report diagnostic and exits 2, while a successful baseline resolution is shared by all comparisons.",
+    "The coordinator composes the completed declaration/report, input/baseline, and runner contracts so that valid no-change results add neither OpenAPI finding nor OpenAPI diagnostic, while any failed input, Git, runner, or normalization stage adds an error diagnostic, zero policy findings for that comparison, and an inconclusive aggregate result.",
+    "Every accepted tool record is normalized deterministically into a source `openapi` finding with required locator and provenance; each fingerprint includes contract ID, check ID, normalized locator, and tool identity but excludes message and effective severity.",
+    "Severity reclassification changes only effective severity, and an exact, unexpired waiver remains visible while matching contract ID, check ID, normalized operation locator, fingerprint, and baseline raw SHA-256.",
+    "`cd scanner && uv run --locked pytest tests/openapi/test_coordinator.py tests/openapi/test_normalize.py tests/openapi/test_policy.py tests/test_cli.py` passes.",
     "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
   ]
 }
