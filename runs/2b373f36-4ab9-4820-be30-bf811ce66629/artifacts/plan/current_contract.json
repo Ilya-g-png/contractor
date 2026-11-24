@@ -1,19 +1,19 @@
 {
-  "contract_id": "contract-0002",
+  "contract_id": "contract-0003",
   "selected_item_ids": [
-    "openapi-input-baseline"
+    "openapi-verified-runner"
   ],
   "selected_task_ids": [
-    "openapi-input-baseline"
+    "openapi-verified-runner"
   ],
   "review_required": true,
   "reason": "Continue implementation of the selected acceptance item until criteria pass.",
   "criteria": [
-    "Candidate and baseline readers accept only regular `.yaml`, `.yml`, or `.json` files at the declaration's byte-identical relative path, independently enforce the 5 MiB raw-byte limit, retain raw SHA-256 values, and return deterministic canonical JSON only after validation.",
-    "Preflight returns error OpenAPI diagnostics and no runner-ready result for missing, non-regular, oversized, malformed, unsupported-version, external-reference, or unresolved-internal-reference inputs.",
-    "Local Git access resolves the supplied baseline ref once to an immutable local commit and reads the exact same relative-path blob with argv-only, read-only plumbing; unavailable refs, missing or invalid baseline entries, and Git/object faults use the contracted diagnostic outcomes without checkout or network side effects.",
-    "The selected YAML dependency is pinned in `pyproject.toml` and `uv.lock`, and isolated tests prove unsafe constructors are not executed and no result is ready until both inputs validate.",
-    "`cd scanner && uv run --locked pytest tests/openapi/test_preflight.py tests/openapi/test_git.py` passes.",
+    "The tool provider recognizes only the contracted macOS, Linux amd64, and Linux arm64 oasdiff v1.39.0 archives and exact SHA-256 values; unsupported, absent, checksum-invalid, unsafe, or wrong-version binaries return `openapi-tool-unavailable` without a scan-time download.",
+    "The runner uses an argv sequence containing only the approved `changelog` profile, `--format=json`, `--level=INFO`, exactly one `--allow-external-refs=false`, `--`, and adapter-created paths; it neither invokes a shell nor forwards candidate or Git paths.",
+    "Canonical inputs are created beneath a private temporary directory with read-only permissions, stdin is disconnected, stdout and stderr are collected concurrently with 16 MiB and 1 MiB caps, and timeout is bounded at 60 seconds.",
+    "Timeout, output-cap, startup, non-zero-exit, and malformed-output conditions return their contracted diagnostics and no partial structured records.",
+    "`cd scanner && uv run --locked pytest tests/openapi/test_tool.py tests/openapi/test_runner.py` passes.",
     "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
   ]
 }
