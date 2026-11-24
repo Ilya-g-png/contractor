@@ -3,11 +3,16 @@ import random
 import subprocess
 import sys
 import tempfile
+import tomllib
 from pathlib import Path
 from typing import NamedTuple
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 GOLDEN_NAME = "expected-report.json"
+BASELINE_REQUIRED_STDERR = (
+    b"dogwatch:openapi-baseline-ref-required: "
+    b"OpenAPI contracts require --baseline-ref\n"
+)
 STRIPPED_VARS = ("TZ", "LANG", "PYTHONHASHSEED", "HOME")
 
 # IC-7 variant table: (TZ, LC_ALL = LANG). An unavailable locale falls back
@@ -35,6 +40,15 @@ def discover_configs() -> list[Path]:
 
 def golden_path(config: Path) -> Path:
     return config.with_name(GOLDEN_NAME)
+
+
+def expected_outcome(config: Path) -> tuple[int, bytes]:
+    # The harness never passes --baseline-ref, so a config that declares
+    # OpenAPI contracts must report the missing-baseline diagnostic and exit 2.
+    document = tomllib.loads(config.read_text("utf-8"))
+    if document.get("openapi", {}).get("contracts"):
+        return 2, BASELINE_REQUIRED_STDERR
+    return 0, b""
 
 
 def variant_env(k: int, home: str) -> dict[str, str]:

@@ -1,5 +1,12 @@
 {
-  "diagnostics": [],
+  "diagnostics": [
+    {
+      "id": "openapi-baseline-ref-required",
+      "message": "OpenAPI contracts require --baseline-ref",
+      "severity": "error",
+      "source": "openapi"
+    }
+  ],
   "findings": [],
   "policy": {
     "digest": {
@@ -12,5 +19,5 @@
     "version": "0.1.0"
   },
   "schema_version": "0.3",
-  "status": "pass"
+  "status": "inconclusive"
 }

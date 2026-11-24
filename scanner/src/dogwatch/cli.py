@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 from collections.abc import Sequence
+from pathlib import Path
 from typing import NoReturn
 
 from dogwatch import __version__
@@ -13,6 +14,7 @@ from dogwatch.diagnostics import (
     render,
     render_diagnostics,
 )
+from dogwatch.openapi.coordinator import compare_openapi_contracts
 from dogwatch.output import STDOUT, write_report
 from dogwatch.report import (
     Finding,
@@ -42,6 +44,7 @@ def _parser() -> argparse.ArgumentParser:
     check = commands.add_parser("check")
     check.add_argument("--config", default=DEFAULT_CONFIG, metavar="PATH")
     check.add_argument("--output", default=DEFAULT_OUTPUT, metavar="PATH")
+    check.add_argument("--baseline-ref", metavar="REF")
     return parser
 
 
@@ -59,6 +62,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             f"output path {output_arg} is the same file as config {config_arg}"
         )
     findings, diagnostics = scan(policy)
+    if policy.contracts:
+        comparisons = compare_openapi_contracts(
+            policy, args.baseline_ref, Path(config_arg).resolve().parent
+        )
+        findings += comparisons.findings
+        diagnostics += comparisons.diagnostics
     report = build_report(policy, __version__, findings, diagnostics)
     data = serialize_canonical(report)
     try:

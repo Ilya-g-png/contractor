@@ -19,9 +19,12 @@ declares the package `bookshop` with root `src`, the exclusion
 `src/bookshop/legacy/**` (matching the files under `src/bookshop/legacy/`),
 the `forbid` rule `no-legacy`, the `layers` rule `ui-above-domain` and one
 OpenAPI contract `bookshop-api` whose static spec is checked in at
-`api/bookshop-api.yaml`. Nothing parses the spec in this version, and the
-rule selectors are not resolved against the tree. Its golden reports
-`status: "pass"` with no findings and no diagnostics.
+`api/bookshop-api.yaml`. The rule selectors are not resolved against the
+tree, and the spec is never parsed: the golden harness runs
+`dogwatch check` without `--baseline-ref`, so the declared contract yields
+the `openapi-baseline-ref-required` error diagnostic before any contract
+is read. Its golden reports `status: "inconclusive"` with that diagnostic
+and no findings.
 
 Every exclusion pattern must keep matching at least one regular file under a
 declared package directory, or the config fails with `exclude-unmatched`.

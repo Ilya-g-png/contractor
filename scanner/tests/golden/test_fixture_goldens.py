@@ -18,6 +18,7 @@ from tests.golden.harness import (
     REPO_ROOT,
     VARIANTS,
     discover_configs,
+    expected_outcome,
     golden_path,
     run_scanner,
 )
@@ -64,13 +65,14 @@ def test_output_matches_golden(config: Path, k: int) -> None:
 
     result = run_scanner(config, k)
 
-    if result.returncode != 0:
+    expected_code, expected_stderr = expected_outcome(config)
+    if result.returncode != expected_code:
         pytest.fail(
             f"dogwatch exited {result.returncode}; stderr:\n"
             + result.stderr.decode("utf-8", "replace"),
             pytrace=False,
         )
-    assert result.stderr == b""
+    assert result.stderr == expected_stderr
     if result.output != expected:
         pytest.fail(_unified_diff(expected, result.output), pytrace=False)
     for location in {result.cwd, os.path.realpath(result.cwd)}:
@@ -88,7 +90,8 @@ def test_repeated_runs_are_identical(config: Path) -> None:
     first = run_scanner(config, 0)
     second = run_scanner(config, 0)
 
-    assert first.returncode == second.returncode == 0
+    assert first.returncode == second.returncode == expected_outcome(config)[0]
+    assert first.stderr == second.stderr == expected_outcome(config)[1]
     assert first.output == second.output
 
 
@@ -100,9 +103,15 @@ def test_golden_satisfies_report_contract(config: Path) -> None:
     schema: dict[str, Any] = json.loads(SCHEMA_PATH.read_bytes())
 
     Draft202012Validator(schema).validate(report)
-    assert report["status"] == "pass"
+    expected_code, _ = expected_outcome(config)
+    if expected_code == 0:
+        assert report["status"] == "pass"
+        assert report["diagnostics"] == []
+    else:
+        assert report["status"] == "inconclusive"
+        assert report["diagnostics"]
+        assert all(item["severity"] == "error" for item in report["diagnostics"])
     assert report["findings"] == []
-    assert report["diagnostics"] == []
     assert report["scanner"]["version"] == __version__
     assert report["policy"]["path"] == "dogwatch.toml"
     assert (

@@ -18,6 +18,8 @@ from dogwatch import cli
 from dogwatch.cli import main
 from dogwatch.config import DogwatchConfig, load_policy
 from dogwatch.diagnostics import SOURCE_SYNTAX_INVALID, Diagnostic
+from dogwatch.openapi.runner import RunnerResult
+from dogwatch.openapi.tool import ToolResult
 from dogwatch.report import Finding, Locator, derive_status
 
 SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "report-0.3.schema.json"
@@ -146,6 +148,90 @@ def test_valid_config_file_output(run: Callable[..., Run], tmp_path: Path) -> No
         ["dogwatch.toml", "report.json", "src", "src/acme_shop"]
         + [f"src/acme_shop/{m}" for m in PACKAGE_MODULES]
     )
+
+
+def test_openapi_declaration_requires_baseline_ref_in_report(
+    run: Callable[..., Run], tmp_path: Path
+) -> None:
+    minimal_project(
+        tmp_path,
+        MINIMAL
+        + '[[openapi.contracts]]\nid = "public-api"\npath = "api/openapi.yaml"\n',
+    )
+    result = run("check", "--config", "dogwatch.toml", "--output", "report.json")
+    report = validate_report((tmp_path / "report.json").read_bytes())
+    assert result.code == 2
+    assert report["status"] == "inconclusive"
+    assert report["findings"] == []
+    assert report["diagnostics"][0]["source"] == "openapi"
+    assert report["diagnostics"][0]["id"] == "openapi-baseline-ref-required"
+    assert (
+        result.err == b"dogwatch:openapi-baseline-ref-required: "
+        b"OpenAPI contracts require --baseline-ref\n"
+    )
+
+
+def test_openapi_command_uses_resolved_baseline_for_no_change(
+    run: Callable[..., Run], tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    minimal_project(
+        tmp_path,
+        MINIMAL
+        + '[[openapi.contracts]]\nid = "public-api"\npath = "api/openapi.json"\n',
+    )
+    contract = tmp_path / "api" / "openapi.json"
+    contract.parent.mkdir()
+    contract.write_text(
+        '{"openapi":"3.0.3","info":{"title":"Example","version":"1"},"paths":{}}'
+    )
+    subprocess.run(["git", "init", str(tmp_path)], check=True, capture_output=True)
+    subprocess.run(
+        ["git", "-C", str(tmp_path), "add", "api/openapi.json"],
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        [
+            "git",
+            "-C",
+            str(tmp_path),
+            "-c",
+            "user.email=test@example.test",
+            "-c",
+            "user.name=Test",
+            "commit",
+            "-m",
+            "baseline",
+        ],
+        check=True,
+        capture_output=True,
+    )
+    from dogwatch.openapi import coordinator
+
+    monkeypatch.setattr(
+        coordinator,
+        "resolve_verified_oasdiff",
+        lambda cache: ToolResult(tmp_path / "verified-oasdiff", ()),
+    )
+
+    def unchanged(executable: Path, base: bytes, candidate: bytes) -> RunnerResult:
+        assert base == candidate
+        return RunnerResult((), ())
+
+    monkeypatch.setattr(coordinator, "run_oasdiff", unchanged)
+    result = run(
+        "check",
+        "--config",
+        "dogwatch.toml",
+        "--baseline-ref",
+        "HEAD",
+        "--output",
+        "report.json",
+    )
+    report = validate_report((tmp_path / "report.json").read_bytes())
+    assert result == Run(0, b"", b"")
+    assert report["status"] == "pass"
+    assert report["findings"] == report["diagnostics"] == []
 
 
 def test_valid_config_stdout_output(run: Callable[..., Run], tmp_path: Path) -> None:

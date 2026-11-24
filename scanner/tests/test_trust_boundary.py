@@ -12,7 +12,7 @@ from typing import Any
 import pytest
 
 from dogwatch.cli import main
-from tests.golden.harness import discover_configs, golden_path
+from tests.golden.harness import discover_configs, expected_outcome, golden_path
 
 CONFIGS = {config.parent.name: config for config in discover_configs()}
 FIXTURES = ["minimal", "full-surface"]
@@ -93,8 +93,8 @@ def test_minimal_never_opens_lists_or_imports_package_directory(
     code = _check(config, output)
 
     captured = capsysbinary.readouterr()
-    assert code == 0
-    assert captured.err == b""
+    assert code == expected_outcome(config)[0]
+    assert captured.err == expected_outcome(config)[1]
     assert _report(output, captured.out) == golden_path(config).read_bytes()
     assert os.path.realpath(config) in calls
     assert [call for call in calls if _under_any(call, packages)] == []
@@ -116,8 +116,8 @@ def test_full_surface_lists_only_package_directories_and_opens_no_file_there(
     code = _check(config, output)
 
     captured = capsysbinary.readouterr()
-    assert code == 0
-    assert captured.err == b""
+    assert code == expected_outcome(config)[0]
+    assert captured.err == expected_outcome(config)[1]
     assert _report(output, captured.out) == golden_path(config).read_bytes()
     assert os.path.realpath(config) in opened
     assert [call for call in opened if _under_any(call, packages)] == []
@@ -145,8 +145,8 @@ def test_source_that_raises_on_import_does_not_change_outcome(
     code = _check(config, "-")
 
     captured = capsysbinary.readouterr()
-    assert code == 0
-    assert captured.err == b""
+    assert code == expected_outcome(config)[0]
+    assert captured.err == expected_outcome(config)[1]
     assert captured.out == golden_path(CONFIGS[fixture]).read_bytes()
     assert _imported_package_modules(packages) == []
 
@@ -170,8 +170,8 @@ def test_run_succeeds_with_network_disabled(
     code = _check(config, "-")
 
     captured = capsysbinary.readouterr()
-    assert code == 0
-    assert captured.err == b""
+    assert code == expected_outcome(config)[0]
+    assert captured.err == expected_outcome(config)[1]
     assert captured.out == golden_path(config).read_bytes()
     assert attempts == []
     assert _imported_package_modules(packages) == []
