@@ -1,0 +1,9 @@
+[python]
+
+[[python.packages]]
+name = "fixture_api"
+root = "src"
+
+[[openapi.contracts]]
+id = "pets-api"
+path = "api/openapi.yaml"

@@ -1,0 +1,36 @@
+{
+  "category": "enum-or-constraint-break",
+  "description": "The candidate removes the species enum value bird and lowers name maxLength from 64 to 32.",
+  "tool": {
+    "records": [
+      {
+        "id": "request-property-enum-value-removed",
+        "text": "removed the enum value 'bird' from the request property 'species'",
+        "level": 3,
+        "operation": "POST",
+        "operationId": "createPet",
+        "path": "/pets",
+        "section": "paths",
+        "fingerprint": "0e7b14c9f2a6"
+      },
+      {
+        "id": "request-property-max-length-decreased",
+        "text": "the 'name' request property's maxLength was decreased from '64' to '32'",
+        "level": 3,
+        "operation": "POST",
+        "operationId": "createPet",
+        "path": "/pets",
+        "section": "paths",
+        "fingerprint": "d4b8e21f7c03"
+      }
+    ]
+  },
+  "expected": {
+    "exit_code": 1,
+    "check_ids": [
+      "request-property-enum-value-removed",
+      "request-property-max-length-decreased"
+    ],
+    "diagnostic_ids": []
+  }
+}

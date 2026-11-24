@@ -1,0 +1,12 @@
+{
+  "category": "missing-baseline",
+  "description": "The baseline commit holds the contract only at api/legacy-openapi.yaml; the configured path is absent there and is not substituted.",
+  "tool": null,
+  "expected": {
+    "exit_code": 2,
+    "check_ids": [],
+    "diagnostic_ids": [
+      "openapi-baseline-invalid"
+    ]
+  }
+}

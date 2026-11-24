@@ -1,0 +1,42 @@
+{
+  "diagnostics": [],
+  "findings": [
+    {
+      "check_id": "api-removed-without-deprecation",
+      "fingerprint": "openapi/v1:52dde17de0819562a891ae25482b970c4a1f4f965c3abbc1c7694fe49f6d9ae9",
+      "locator": {
+        "json_pointer": "/paths/~1pets~1{petId}/delete",
+        "operation": "DELETE /pets/{petId}",
+        "path": "api/openapi.yaml"
+      },
+      "message": "api removed without deprecation",
+      "provenance": {
+        "base": {
+          "commit": "e4f43569588a23a865cacbf19acdd533c79eb9ff",
+          "path": "api/openapi.yaml",
+          "ref": "baseline",
+          "sha256": "718e7cc38e111c3643b3ff74c9dcaf0e60f46c590cc7ad3cfcce5175ab9e4b5d"
+        },
+        "candidate": {
+          "path": "api/openapi.yaml",
+          "sha256": "aa714a2ba8cd915c2add762d75c5c3302f23b482e4751d1cdab596b56caefbaf"
+        }
+      },
+      "severity": "error",
+      "source": "openapi",
+      "waiver": null
+    }
+  ],
+  "policy": {
+    "digest": {
+      "sha256": "4a05cda7b2d53cdc7dface731065ade333ee11d34c71063e2ba540aacaa5687e"
+    },
+    "path": "dogwatch.toml"
+  },
+  "scanner": {
+    "name": "dogwatch",
+    "version": "0.1.0"
+  },
+  "schema_version": "0.3",
+  "status": "fail"
+}

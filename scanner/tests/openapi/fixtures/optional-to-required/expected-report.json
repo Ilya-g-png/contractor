@@ -1,0 +1,42 @@
+{
+  "diagnostics": [],
+  "findings": [
+    {
+      "check_id": "request-property-became-required",
+      "fingerprint": "openapi/v1:6d3a54b7ea5b9fa8a943e898de94e6044cfcd8868816f7a05cf971da50252743",
+      "locator": {
+        "json_pointer": "/paths/~1pets/post",
+        "operation": "POST /pets",
+        "path": "api/openapi.yaml"
+      },
+      "message": "the request property 'nickname' became required",
+      "provenance": {
+        "base": {
+          "commit": "e4f43569588a23a865cacbf19acdd533c79eb9ff",
+          "path": "api/openapi.yaml",
+          "ref": "baseline",
+          "sha256": "718e7cc38e111c3643b3ff74c9dcaf0e60f46c590cc7ad3cfcce5175ab9e4b5d"
+        },
+        "candidate": {
+          "path": "api/openapi.yaml",
+          "sha256": "023172b72ee2971e0f98912ff063eaf3b405fcb1a6d9b684c45e48484b3515e6"
+        }
+      },
+      "severity": "error",
+      "source": "openapi",
+      "waiver": null
+    }
+  ],
+  "policy": {
+    "digest": {
+      "sha256": "4a05cda7b2d53cdc7dface731065ade333ee11d34c71063e2ba540aacaa5687e"
+    },
+    "path": "dogwatch.toml"
+  },
+  "scanner": {
+    "name": "dogwatch",
+    "version": "0.1.0"
+  },
+  "schema_version": "0.3",
+  "status": "fail"
+}

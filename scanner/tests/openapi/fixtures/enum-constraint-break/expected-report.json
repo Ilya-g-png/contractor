@@ -1,0 +1,67 @@
+{
+  "diagnostics": [],
+  "findings": [
+    {
+      "check_id": "request-property-enum-value-removed",
+      "fingerprint": "openapi/v1:1cf1eb0242338e062500e83a69ead31d3f39199b5b74cd913460e08c568ae7c4",
+      "locator": {
+        "json_pointer": "/paths/~1pets/post",
+        "operation": "POST /pets",
+        "path": "api/openapi.yaml"
+      },
+      "message": "removed the enum value 'bird' from the request property 'species'",
+      "provenance": {
+        "base": {
+          "commit": "e4f43569588a23a865cacbf19acdd533c79eb9ff",
+          "path": "api/openapi.yaml",
+          "ref": "baseline",
+          "sha256": "718e7cc38e111c3643b3ff74c9dcaf0e60f46c590cc7ad3cfcce5175ab9e4b5d"
+        },
+        "candidate": {
+          "path": "api/openapi.yaml",
+          "sha256": "fdb38c40121843511cea10e7f827157e369ee7901c6b6373055feec227271427"
+        }
+      },
+      "severity": "error",
+      "source": "openapi",
+      "waiver": null
+    },
+    {
+      "check_id": "request-property-max-length-decreased",
+      "fingerprint": "openapi/v1:6f4dea9d733ac9de5d289761b67fe79dc5ba7648aeacf0a2ef0499973ea7481b",
+      "locator": {
+        "json_pointer": "/paths/~1pets/post",
+        "operation": "POST /pets",
+        "path": "api/openapi.yaml"
+      },
+      "message": "the 'name' request property's maxLength was decreased from '64' to '32'",
+      "provenance": {
+        "base": {
+          "commit": "e4f43569588a23a865cacbf19acdd533c79eb9ff",
+          "path": "api/openapi.yaml",
+          "ref": "baseline",
+          "sha256": "718e7cc38e111c3643b3ff74c9dcaf0e60f46c590cc7ad3cfcce5175ab9e4b5d"
+        },
+        "candidate": {
+          "path": "api/openapi.yaml",
+          "sha256": "fdb38c40121843511cea10e7f827157e369ee7901c6b6373055feec227271427"
+        }
+      },
+      "severity": "error",
+      "source": "openapi",
+      "waiver": null
+    }
+  ],
+  "policy": {
+    "digest": {
+      "sha256": "4a05cda7b2d53cdc7dface731065ade333ee11d34c71063e2ba540aacaa5687e"
+    },
+    "path": "dogwatch.toml"
+  },
+  "scanner": {
+    "name": "dogwatch",
+    "version": "0.1.0"
+  },
+  "schema_version": "0.3",
+  "status": "fail"
+}

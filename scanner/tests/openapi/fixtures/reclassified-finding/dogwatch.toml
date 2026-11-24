@@ -1,0 +1,14 @@
+[python]
+
+[[python.packages]]
+name = "fixture_api"
+root = "src"
+
+[[openapi.contracts]]
+id = "pets-api"
+path = "api/openapi.yaml"
+
+[[openapi.severity]]
+check_id = "api-removed-without-deprecation"
+severity = "warning"
+reason = "Pet deletion is retired behind a feature flag"

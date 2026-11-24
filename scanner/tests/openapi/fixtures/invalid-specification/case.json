@@ -1,0 +1,12 @@
+{
+  "category": "invalid-specification",
+  "description": "The candidate references an undefined schema, so preflight rejects it before oasdiff runs.",
+  "tool": null,
+  "expected": {
+    "exit_code": 2,
+    "check_ids": [],
+    "diagnostic_ids": [
+      "openapi-input-invalid"
+    ]
+  }
+}

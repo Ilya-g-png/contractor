@@ -1,0 +1,25 @@
+{
+  "category": "optional-to-required-field",
+  "description": "The optional request property nickname becomes required.",
+  "tool": {
+    "records": [
+      {
+        "id": "request-property-became-required",
+        "text": "the request property 'nickname' became required",
+        "level": 3,
+        "operation": "POST",
+        "operationId": "createPet",
+        "path": "/pets",
+        "section": "paths",
+        "fingerprint": "a83f60c2d915"
+      }
+    ]
+  },
+  "expected": {
+    "exit_code": 1,
+    "check_ids": [
+      "request-property-became-required"
+    ],
+    "diagnostic_ids": []
+  }
+}

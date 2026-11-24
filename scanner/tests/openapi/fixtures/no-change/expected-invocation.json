@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "{substitute}",
+    "changelog",
+    "--format=json",
+    "--level=INFO",
+    "--allow-external-refs=false",
+    "--",
+    "{private}/base.json",
+    "{private}/candidate.json"
+  ],
+  "cwd": "{private}",
+  "environment": {
+    "HOME": "{private}",
+    "PATH": "/bin:/usr/bin",
+    "TMPDIR": "{private}"
+  },
+  "limits": {
+    "stderr_bytes": 1048576,
+    "stdout_bytes": 16777216,
+    "timeout_seconds": 60
+  },
+  "observed": {
+    "cwd": "{private}",
+    "inputs": {
+      "base": {
+        "mode": "0400",
+        "sha256": "f7e7022aa8ff8ab56ae16ea526474cd1e4b8c6f0436c33920e23add46ee2517e"
+      },
+      "candidate": {
+        "mode": "0400",
+        "sha256": "f7e7022aa8ff8ab56ae16ea526474cd1e4b8c6f0436c33920e23add46ee2517e"
+      }
+    },
+    "private_directory_mode": "0700",
+    "stdin_bytes": 0
+  }
+}

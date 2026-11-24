@@ -1,0 +1,14 @@
+{
+  "category": "timeout-or-tool-failure",
+  "description": "The substitute exits successfully with truncated JSON.",
+  "tool": {
+    "stdout": "[{\"id\": \"api-removed-without-deprecation\""
+  },
+  "expected": {
+    "exit_code": 2,
+    "check_ids": [],
+    "diagnostic_ids": [
+      "openapi-tool-failed"
+    ]
+  }
+}

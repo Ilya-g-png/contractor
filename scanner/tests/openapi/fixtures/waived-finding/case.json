@@ -1,0 +1,25 @@
+{
+  "category": "ignored-or-reclassified",
+  "description": "An exact waiver annotates the removed-operation finding, which stays in the report without failing the gate.",
+  "tool": {
+    "records": [
+      {
+        "id": "api-removed-without-deprecation",
+        "text": "api removed without deprecation",
+        "level": 3,
+        "operation": "DELETE",
+        "operationId": "deletePet",
+        "path": "/pets/{petId}",
+        "section": "paths",
+        "fingerprint": "5c1d2e9a7b40"
+      }
+    ]
+  },
+  "expected": {
+    "exit_code": 0,
+    "check_ids": [
+      "api-removed-without-deprecation"
+    ],
+    "diagnostic_ids": []
+  }
+}
