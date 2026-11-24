@@ -17,7 +17,7 @@ def _imported_modules(path: Path) -> list[str]:
     return names
 
 
-def test_src_imports_only_stdlib_or_dogwatch() -> None:
+def test_src_imports_only_stdlib_dogwatch_or_approved_yaml() -> None:
     sources = sorted((SCANNER / "src").rglob("*.py"))
     assert sources
 
@@ -26,13 +26,13 @@ def test_src_imports_only_stdlib_or_dogwatch() -> None:
         for path in sources
         for name in _imported_modules(path)
         if name.partition(".")[0] not in sys.stdlib_module_names
-        and name.partition(".")[0] != "dogwatch"
+        and name.partition(".")[0] not in {"dogwatch", "yaml"}
     ]
 
     assert offending == []
 
 
-def test_no_runtime_dependencies() -> None:
+def test_only_approved_yaml_runtime_dependency() -> None:
     pyproject = tomllib.loads((SCANNER / "pyproject.toml").read_text("utf-8"))
 
-    assert pyproject["project"]["dependencies"] == []
+    assert pyproject["project"]["dependencies"] == ["pyyaml==6.0.3"]
