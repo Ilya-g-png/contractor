@@ -1,6 +1,25 @@
 [
   {
-    "runtime_agent_id": "ce4e0b11-d2f2-4a3f-a035-3fb26ba21f50",
+    "runtime_agent_id": "sdk-developer:53c7cfa6-4e52-4569-8430-549162d45a23",
+    "run_id": "2b373f36-4ab9-4820-be30-bf811ce66629",
+    "role": "developer",
+    "read_roots": [
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/2b373f36-4ab9-4820-be30-bf811ce66629/worktrees/bridgit/2b373f36-4ab9-4820-be30-bf811ce66629/task/openapi-fixture-matrix",
+      "/Users/iliaglushkov/Documents/sandbox/contractor",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/2b373f36-4ab9-4820-be30-bf811ce66629",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/2b373f36-4ab9-4820-be30-bf811ce66629/artifacts",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/2b373f36-4ab9-4820-be30-bf811ce66629/logs",
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7"
+    ],
+    "write_roots": [
+      "/Users/iliaglushkov/.amneboard/workspaces/ea2c1ce7-180a-4682-8a11-22e47a4fc892/sessions/e598a3d9-e934-4000-8140-2dafa7f8d2d7/runs/2b373f36-4ab9-4820-be30-bf811ce66629/worktrees/bridgit/2b373f36-4ab9-4820-be30-bf811ce66629/task/openapi-fixture-matrix"
+    ],
+    "scope_label": "openapi-fixture-matrix",
+    "parent_agent_id": null,
+    "active": false
+  },
+  {
+    "runtime_agent_id": "developer-verify:sdk-developer-53c7cfa6-4e52-4569-8430-549162d45a23",
     "run_id": "2b373f36-4ab9-4820-be30-bf811ce66629",
     "role": "reviewer",
     "read_roots": [
@@ -12,7 +31,7 @@
     ],
     "write_roots": [],
     "scope_label": null,
-    "parent_agent_id": null,
+    "parent_agent_id": "sdk-developer:53c7cfa6-4e52-4569-8430-549162d45a23",
     "active": false
   }
 ]

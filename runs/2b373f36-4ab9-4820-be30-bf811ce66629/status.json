@@ -209,9 +209,9 @@
     }
   },
   "control": {
-    "pauseRequested": false,
-    "pauseRequestedAt": null,
-    "pauseRequestedBy": null,
+    "pauseRequested": true,
+    "pauseRequestedAt": "2026-11-24T10:52:28.056637+00:00",
+    "pauseRequestedBy": "control_plane",
     "pauseAppliedAt": null
   }
 }

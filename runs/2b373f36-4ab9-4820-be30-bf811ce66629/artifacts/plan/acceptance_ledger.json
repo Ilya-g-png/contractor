@@ -101,13 +101,16 @@
         "`cd scanner && uv run --locked ruff format --check . && uv run --locked ruff check . && uv run --locked mypy` passes."
       ],
       "review_required": true,
-      "status": "pending",
+      "status": "passed",
       "last_verification": {
-        "passed": false,
-        "evidence": [],
-        "verified_at": null
+        "passed": true,
+        "evidence": [
+          "All previously flagged findings are resolved: the full-surface golden is regenerated to the contract-mandated inconclusive/exit-2 outcome with the openapi-baseline-ref-required diagnostic and the harness, regenerator and trust-boundary tests now derive that expectation from each fixture's declarations (runtime full suite: 591 passed); the commit subject was reworded to the 54-character imperative form; and the exact criterion-5 (91 passed) and criterion-6 (ruff format --check, ruff check, mypy all green) commands were run and captured. All six acceptance criteria pass on HEAD edc6f2f.",
+          "2b373f36-4ab9-4820-be30-bf811ce66629/reviewer_decision.json"
+        ],
+        "verified_at": "2026-11-24T10:40:16.966356Z"
       },
-      "last_findings_fingerprint": null,
+      "last_findings_fingerprint": "366e774e3f3862ee45d1b33b2471498d40ace5dbd14009603f3b18c6a9268d4d",
       "attempts_since_progress": 0,
       "blocked_criteria": []
     },
@@ -139,5 +142,5 @@
     }
   ],
   "created_at": "2026-11-23T15:40:44.074775Z",
-  "updated_at": "2026-11-24T09:28:38.463010Z"
+  "updated_at": "2026-11-24T10:40:16.966372Z"
 }
